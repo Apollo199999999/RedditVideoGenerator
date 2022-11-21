@@ -40,9 +40,11 @@
                 Height="437"
                 Margin="0,10,0,0"
                 VerticalAlignment="Stretch"
+                FontFamily="Lucida Console"
                 FontSize="14"
                 IsReadOnly="True"
-                IsReadOnlyCaretVisible="True" />
+                IsReadOnlyCaretVisible="True"
+                Loaded="ConsoleOutput_Loaded" />
         </StackPanel>
 
     </Grid>

@@ -20,3 +20,9 @@ C:\Users\fligh\source\repos\RedditVideoGenerator\RedditVideoGenerator\obj\Debug\
 C:\Users\fligh\source\repos\RedditVideoGenerator\RedditVideoGenerator\obj\Debug\RedditVideoGenerator.csproj.CopyComplete
 C:\Users\fligh\source\repos\RedditVideoGenerator\RedditVideoGenerator\obj\Debug\RedditVideoGenerator.exe
 C:\Users\fligh\source\repos\RedditVideoGenerator\RedditVideoGenerator\obj\Debug\RedditVideoGenerator.pdb
+C:\Users\fligh\source\repos\RedditVideoGenerator\RedditVideoGenerator\bin\Debug\Newtonsoft.Json.dll
+C:\Users\fligh\source\repos\RedditVideoGenerator\RedditVideoGenerator\bin\Debug\Reddit.NET.dll
+C:\Users\fligh\source\repos\RedditVideoGenerator\RedditVideoGenerator\bin\Debug\RestSharp.dll
+C:\Users\fligh\source\repos\RedditVideoGenerator\RedditVideoGenerator\bin\Debug\Newtonsoft.Json.xml
+C:\Users\fligh\source\repos\RedditVideoGenerator\RedditVideoGenerator\bin\Debug\Reddit.NET.xml
+C:\Users\fligh\source\repos\RedditVideoGenerator\RedditVideoGenerator\bin\Debug\RestSharp.xml
