@@ -32,6 +32,9 @@ namespace RedditVideoGenerator
             //update app variables
             AppVariables.PostTitle = posts[r].Title;
             AppVariables.PostAuthor = posts[r].Author;
+            AppVariables.PostCommentCount = posts[r].Listing.NumComments;
+            AppVariables.PostUpvoteCount = posts[r].UpVotes;
+            AppVariables.PostCreationDate = posts[r].Created;
 
             return "t3_" + posts[r].Id;
         }

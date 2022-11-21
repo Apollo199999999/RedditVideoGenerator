@@ -29,3 +29,5 @@ C:\Users\fligh\source\repos\RedditVideoGenerator\RedditVideoGenerator\bin\Debug\
 C:\Users\fligh\source\repos\RedditVideoGenerator\RedditVideoGenerator\obj\Debug\Controls\CommentCard.g.cs
 C:\Users\fligh\source\repos\RedditVideoGenerator\RedditVideoGenerator\obj\Debug\Controls\CommentCard.baml
 C:\Users\fligh\source\repos\RedditVideoGenerator\RedditVideoGenerator\bin\Debug\HtmlToXamlConverter.dll
+C:\Users\fligh\source\repos\RedditVideoGenerator\RedditVideoGenerator\obj\Debug\Controls\TitleCard.g.cs
+C:\Users\fligh\source\repos\RedditVideoGenerator\RedditVideoGenerator\obj\Debug\Controls\TitleCard.baml

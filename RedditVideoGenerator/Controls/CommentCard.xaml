@@ -8,8 +8,9 @@
     xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
     Width="1920"
     Height="1080"
-    Background="#1a1a1a"
+    Background="#282c34"
     mc:Ignorable="d">
+
     <StackPanel Margin="40">
         <Border
             Padding="0,0,0,20"
@@ -81,7 +82,7 @@
         </StackPanel>
 
         <StackPanel
-            Margin="0,20,0,0"
+            Margin="0,25,0,0"
             HorizontalAlignment="Right"
             VerticalAlignment="Bottom"
             Orientation="Horizontal">
@@ -98,14 +99,25 @@
             <TextBlock
                 x:Name="CommentUpvoteCountText"
                 Margin="10,0,0,0"
+                VerticalAlignment="Center"
                 FontFamily="/Resources/#Noto Sans"
                 FontSize="32"
                 Foreground="#FF4500"
                 Text="69k upvotes" />
 
             <TextBlock
+                Margin="15,0,0,0"
+                VerticalAlignment="Center"
+                FontFamily="/Resources/#Noto Sans"
+                FontSize="48"
+                FontWeight="Bold"
+                Foreground="#818384"
+                Text="·" />
+
+            <TextBlock
                 x:Name="CommentDateText"
-                Margin="30,0,0,0"
+                Margin="15,0,0,0"
+                VerticalAlignment="Center"
                 FontFamily="/Resources/#Noto Sans"
                 FontSize="32"
                 Foreground="#818384"

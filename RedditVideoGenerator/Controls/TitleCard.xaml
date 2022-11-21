@@ -1,0 +1,139 @@
+﻿<UserControl
+    x:Class="RedditVideoGenerator.Controls.TitleCard"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:RedditVideoGenerator"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+    Width="1920"
+    Height="1080"
+    Background="#282c34"
+    mc:Ignorable="d">
+
+    <StackPanel
+        Margin="80"
+        VerticalAlignment="Center"
+        Orientation="Vertical">
+        <Grid HorizontalAlignment="Stretch" VerticalAlignment="Center">
+            <StackPanel Orientation="Horizontal">
+                <TextBlock
+                    x:Name="PostSubredditText"
+                    Margin="0,0,0,0"
+                    VerticalAlignment="Center"
+                    FontFamily="/Resources/#Noto Sans"
+                    FontSize="32"
+                    FontWeight="Bold"
+                    Foreground="#818384"
+                    Text="r/Subreddit" />
+
+                <TextBlock
+                    Margin="15,0,0,0"
+                    VerticalAlignment="Center"
+                    FontFamily="/Resources/#Noto Sans"
+                    FontSize="48"
+                    FontWeight="Bold"
+                    Foreground="#818384"
+                    Text="·" />
+
+                <TextBlock
+                    x:Name="PostAuthorText"
+                    Margin="15,0,0,0"
+                    VerticalAlignment="Center"
+                    FontFamily="/Resources/#Noto Sans"
+                    FontSize="32"
+                    Foreground="#818384"
+                    Text="u/Username" />
+            </StackPanel>
+
+            <Image
+                Width="85"
+                Height="85"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Center"
+                Source="/Resources/reddit-logo.png" />
+        </Grid>
+
+        <TextBlock
+            x:Name="PostTitleText"
+            Margin="0,20,0,0"
+            HorizontalAlignment="Left"
+            VerticalAlignment="Top"
+            FontFamily="/Resources/#IBM Plex Sans"
+            FontSize="48"
+            FontWeight="Bold"
+            Foreground="#d7dadc"
+            Text="Post title Lorem Ipsum Dolor Sit Amet Consecutor Consecutive I don't remember the rest."
+            TextTrimming="CharacterEllipsis"
+            TextWrapping="Wrap" />
+
+        <StackPanel
+            Margin="0,25,0,0"
+            HorizontalAlignment="Right"
+            VerticalAlignment="Bottom"
+            Orientation="Horizontal">
+            <ui:SymbolIcon
+                FontSize="32"
+                Foreground="#FF4500"
+                RenderTransformOrigin="0.5,0.5"
+                Symbol="ArrowOutlineUpRight32">
+                <ui:SymbolIcon.RenderTransform>
+                    <RotateTransform Angle="-45" />
+                </ui:SymbolIcon.RenderTransform>
+            </ui:SymbolIcon>
+
+            <TextBlock
+                x:Name="PostUpvoteCountText"
+                Margin="10,0,0,0"
+                VerticalAlignment="Center"
+                FontFamily="/Resources/#Noto Sans"
+                FontSize="32"
+                Foreground="#FF4500"
+                Text="69k upvotes" />
+
+            <TextBlock
+                Margin="15,0,0,0"
+                VerticalAlignment="Center"
+                FontFamily="/Resources/#Noto Sans"
+                FontSize="48"
+                FontWeight="Bold"
+                Foreground="#818384"
+                Text="·" />
+
+            <StackPanel Margin="15,0,0,0" Orientation="Horizontal">
+                <ui:SymbolIcon
+                    VerticalAlignment="Center"
+                    FontSize="32"
+                    Foreground="#818384"
+                    Symbol="ChatEmpty32" />
+                <TextBlock
+                    x:Name="PostCommentCountText"
+                    Margin="10,0,0,0"
+                    VerticalAlignment="Center"
+                    FontFamily="/Resources/#Noto Sans"
+                    FontSize="32"
+                    Foreground="#818384"
+                    Text="39k comments" />
+            </StackPanel>
+
+            <TextBlock
+                Margin="15,0,0,0"
+                VerticalAlignment="Center"
+                FontFamily="/Resources/#Noto Sans"
+                FontSize="48"
+                FontWeight="Bold"
+                Foreground="#818384"
+                Text="·" />
+
+            <TextBlock
+                x:Name="PostDateText"
+                Margin="15,0,0,0"
+                VerticalAlignment="Center"
+                FontFamily="/Resources/#Noto Sans"
+                FontSize="32"
+                Foreground="#818384"
+                Text="10/1/2022" />
+        </StackPanel>
+
+    </StackPanel>
+</UserControl>

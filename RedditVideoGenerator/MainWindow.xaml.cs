@@ -110,6 +110,18 @@ namespace RedditVideoGenerator
             //get id of random top monthly post
             string TopPostID = redditFunctions.GetRandomTopMonthlyPostID();
 
+            //create title image
+            TitleCard titleCard = new TitleCard();
+            titleCard.PostAuthorText.Text = "u/" + AppVariables.PostAuthor;
+            titleCard.PostSubredditText.Text = "r/" + AppVariables.SubReddit;
+            titleCard.PostTitleText.Text = AppVariables.PostTitle;
+            titleCard.PostUpvoteCountText.Text = AppVariables.PostUpvoteCount.ToKMB() + " upvotes";
+            titleCard.PostCommentCountText.Text = AppVariables.PostCommentCount.ToKMB() + " comments";
+            titleCard.PostDateText.Text = AppVariables.PostCreationDate.ToUniversalTime().ToString("dd MMMM yyyy, HH:mm") + " UTC";
+
+            //save control
+            SaveControlAsImage(titleCard, Path.Combine(AppVariables.FramesDirectory, "title.png"));
+
             //get top comments from said post
             List<Comment> comments = redditFunctions.GetPostTopComments(TopPostID);
 
