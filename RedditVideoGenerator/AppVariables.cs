@@ -19,5 +19,7 @@ namespace RedditVideoGenerator
 
         //reddit variables
         public static string SubReddit = "AskReddit";
+        public static string PostTitle;
+        public static string PostAuthor;
     }
 }

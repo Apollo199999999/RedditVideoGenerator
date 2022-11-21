@@ -1,0 +1,115 @@
+﻿<UserControl
+    x:Class="RedditVideoGenerator.Controls.CommentCard"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:htmltextblock="http://www.quickzip.org/BaseControls"
+    xmlns:local="clr-namespace:RedditVideoGenerator.Controls"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+    Width="1920"
+    Height="1080"
+    Background="#1a1a1a"
+    mc:Ignorable="d">
+    <StackPanel Margin="40">
+        <Border
+            Padding="0,0,0,20"
+            HorizontalAlignment="Stretch"
+            VerticalAlignment="Top"
+            BorderBrush="#818384"
+            BorderThickness="0,0,0,1">
+            <Grid>
+                <StackPanel>
+                    <TextBlock
+                        x:Name="PostSubredditText"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Top"
+                        FontFamily="/Resources/#IBM Plex Sans"
+                        FontSize="36"
+                        FontWeight="Bold"
+                        Foreground="#818384"
+                        Text="r/Subreddit"
+                        TextTrimming="CharacterEllipsis"
+                        TextWrapping="NoWrap" />
+
+                    <TextBlock
+                        x:Name="PostTitleText"
+                        Margin="0,5,0,0"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Top"
+                        FontFamily="/Resources/#IBM Plex Sans"
+                        FontSize="36"
+                        FontWeight="Bold"
+                        Foreground="#818384"
+                        Text="Post title Lorem Ipsum Dolor Sit Amet Consecutor Consecutive I don't remember the rest."
+                        TextTrimming="CharacterEllipsis"
+                        TextWrapping="NoWrap" />
+                </StackPanel>
+
+                <Image
+                    Width="85"
+                    Height="85"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Center"
+                    Source="/Resources/reddit-logo.png" />
+            </Grid>
+        </Border>
+
+        <StackPanel Margin="0,20,0,0">
+            <StackPanel Orientation="Horizontal">
+                <ui:SymbolIcon
+                    FontSize="32"
+                    Foreground="#818384"
+                    Symbol="ChatEmpty32" />
+                <TextBlock
+                    x:Name="CommentAuthorText"
+                    Margin="10,0,0,0"
+                    FontFamily="/Resources/#Noto Sans"
+                    FontSize="32"
+                    Foreground="#818384"
+                    Text="u/Username" />
+            </StackPanel>
+
+            <htmltextblock:HtmlTextBlock
+                x:Name="CommentBodyText"
+                Margin="0,20,0,0"
+                FontFamily="/Resources/#Noto Sans"
+                FontSize="32"
+                Foreground="#d7dadc"
+                LineHeight="1.25"
+                TextWrapping="Wrap" />
+        </StackPanel>
+
+        <StackPanel
+            Margin="0,20,0,0"
+            HorizontalAlignment="Right"
+            VerticalAlignment="Bottom"
+            Orientation="Horizontal">
+            <ui:SymbolIcon
+                FontSize="32"
+                Foreground="#FF4500"
+                RenderTransformOrigin="0.5,0.5"
+                Symbol="ArrowOutlineUpRight32">
+                <ui:SymbolIcon.RenderTransform>
+                    <RotateTransform Angle="-45" />
+                </ui:SymbolIcon.RenderTransform>
+            </ui:SymbolIcon>
+
+            <TextBlock
+                x:Name="CommentUpvoteCountText"
+                Margin="10,0,0,0"
+                FontFamily="/Resources/#Noto Sans"
+                FontSize="32"
+                Foreground="#FF4500"
+                Text="69k upvotes" />
+
+            <TextBlock
+                x:Name="CommentDateText"
+                Margin="30,0,0,0"
+                FontFamily="/Resources/#Noto Sans"
+                FontSize="32"
+                Foreground="#818384"
+                Text="10/1/2022" />
+        </StackPanel>
+    </StackPanel>
+</UserControl>

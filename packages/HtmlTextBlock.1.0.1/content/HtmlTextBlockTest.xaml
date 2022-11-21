@@ -1,0 +1,17 @@
+﻿<Window
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:bc="http://www.quickzip.org/BaseControls" x:Class="HtmlTextBlock.MainWindow"
+        Title="MainWindow" Height="250" Width="450">
+    <DockPanel>
+        <bc:HtmlTextBlock HorizontalAlignment="Left" TextWrapping="Wrap" 
+                                     Html="{Binding Text, ElementName=tb}"
+                                     DockPanel.Dock="Top"
+                                     />
+        <TextBlock Text="[b] [i] [u] [a href=xx] [br] supported." DockPanel.Dock="Bottom" />
+        <TextBox TextWrapping="Wrap" AcceptsReturn="True" VerticalScrollBarVisibility="Visible"
+            x:Name="tb" Text="The [i][u]quick brown fox[/i][/u] jumps over the [b]lazy dog[/b]" />
+    </DockPanel>
+
+
+</Window>

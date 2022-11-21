@@ -6,7 +6,7 @@
     xmlns:local="clr-namespace:RedditVideoGenerator"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
-    Title="RedditVideoGenerator"
+    Title="RedditVideoGenerator - Generate reddit videos from r/AskReddit and upload them to YouTube automatically"
     Width="900"
     Height="600"
     ExtendsContentIntoTitleBar="True"
@@ -18,7 +18,7 @@
     mc:Ignorable="d">
     <Grid>
         <ui:TitleBar
-            Title="RedditVideoGenerator - Generate reddit videos and upload them to YouTube automatically"
+            Title="RedditVideoGenerator - Generate reddit videos from r/AskReddit and upload them to YouTube automatically"
             CanMaximize="False"
             Icon="/Resources/icon.ico"
             ShowMaximize="False"
@@ -28,7 +28,7 @@
             <TextBlock
                 FontSize="28"
                 FontWeight="Bold"
-                Text="Reddit Video Generator" />
+                Text="r/AskReddit Reddit Video Generator" />
 
             <TextBlock
                 Margin="0,10,0,0"

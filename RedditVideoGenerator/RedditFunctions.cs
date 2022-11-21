@@ -28,6 +28,11 @@ namespace RedditVideoGenerator
             Random rnd = new Random();
             int r = rnd.Next(posts.Count);
             ConsoleOut.AppendText("> Got post: " + posts[r].Title + "\r\n");
+
+            //update app variables
+            AppVariables.PostTitle = posts[r].Title;
+            AppVariables.PostAuthor = posts[r].Author;
+
             return "t3_" + posts[r].Id;
         }
 

@@ -1,2 +1,2 @@
 # RedditVideoGenerator
- Generate reddit videos and upload them to YouTube automatically.
+Generate r/AskReddit reddit videos and upload them to YouTube automatically.
