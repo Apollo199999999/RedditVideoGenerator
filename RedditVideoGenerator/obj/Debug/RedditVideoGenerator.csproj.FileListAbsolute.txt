@@ -28,7 +28,4 @@ C:\Users\fligh\source\repos\RedditVideoGenerator\RedditVideoGenerator\bin\Debug\
 C:\Users\fligh\source\repos\RedditVideoGenerator\RedditVideoGenerator\bin\Debug\RestSharp.xml
 C:\Users\fligh\source\repos\RedditVideoGenerator\RedditVideoGenerator\obj\Debug\Controls\CommentCard.g.cs
 C:\Users\fligh\source\repos\RedditVideoGenerator\RedditVideoGenerator\obj\Debug\Controls\CommentCard.baml
-C:\Users\fligh\source\repos\RedditVideoGenerator\RedditVideoGenerator\obj\Debug\HtmlTextBlockTest.baml
-C:\Users\fligh\source\repos\RedditVideoGenerator\RedditVideoGenerator\obj\Debug\HtmlTextBlockTest.g.cs
-C:\Users\fligh\source\repos\RedditVideoGenerator\RedditVideoGenerator\bin\Debug\HtmlTextBlock.dll
-C:\Users\fligh\source\repos\RedditVideoGenerator\RedditVideoGenerator\bin\Debug\HtmlTextBlock.pdb
+C:\Users\fligh\source\repos\RedditVideoGenerator\RedditVideoGenerator\bin\Debug\HtmlToXamlConverter.dll

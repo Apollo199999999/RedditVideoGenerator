@@ -18,6 +18,8 @@ using RedditVideoGenerator.Controls;
 using System.CodeDom;
 using System.Globalization;
 using static RedditVideoGenerator.TypeExtensions;
+using System.Text.RegularExpressions;
+using System.Diagnostics;
 
 namespace RedditVideoGenerator
 {
@@ -121,10 +123,16 @@ namespace RedditVideoGenerator
             {
                 if (comment.Author != null && comment.Body != null && comment.Body != "[deleted]")
                 {
+                    //set commentcard properties
                     commentCard.CommentAuthorText.Text = "u/" + comment.Author;
-                    commentCard.CommentBodyText.Html = comment.BodyHTML.Replace('<','[').Replace('>',']');
+                    HtmlRichTextBoxBehavior.SetText(commentCard.CommentBodyText, comment.BodyHTML);
+                    commentCard.CommentBodyText.Document.PagePadding = new Thickness(0);
+                    commentCard.CommentBodyText.Document.FontSize = 32;
+                    commentCard.CommentBodyText.Document.FontFamily = new FontFamily(@"/Resources/#Noto Sans");
                     commentCard.CommentUpvoteCountText.Text = comment.UpVotes.ToKMB() + " upvotes";
-                    commentCard.CommentDateText.Text = comment.Created.ToUniversalTime().ToString("dd MMMM yyyy, HH:mm");
+                    commentCard.CommentDateText.Text = comment.Created.ToUniversalTime().ToString("dd MMMM yyyy, HH:mm") + " UTC";
+
+                    //save control
                     SaveControlAsImage(commentCard, Path.Combine(AppVariables.FramesDirectory, comment.Id + ".png"));
                 }
             }
