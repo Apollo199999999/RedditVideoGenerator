@@ -1,0 +1,49 @@
+﻿<ui:UiWindow
+    x:Class="RedditVideoGenerator.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:RedditVideoGenerator"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+    Title="RedditVideoGenerator"
+    Width="900"
+    Height="600"
+    ExtendsContentIntoTitleBar="True"
+    Icon="/Resources/icon.ico"
+    ResizeMode="NoResize"
+    WindowBackdropType="Mica"
+    WindowCornerPreference="Round"
+    WindowStartupLocation="CenterScreen"
+    mc:Ignorable="d">
+    <Grid>
+        <ui:TitleBar
+            Title="RedditVideoGenerator - Generate reddit videos and upload them to YouTube automatically"
+            CanMaximize="False"
+            Icon="/Resources/icon.ico"
+            ShowMaximize="False"
+            UseSnapLayout="True" />
+
+        <StackPanel Margin="20,51,20,20">
+            <TextBlock
+                FontSize="28"
+                FontWeight="Bold"
+                Text="Reddit Video Generator" />
+
+            <TextBlock
+                Margin="0,10,0,0"
+                FontSize="14"
+                Text="Generator console output:" />
+
+            <TextBox
+                x:Name="ConsoleOutput"
+                Height="437"
+                Margin="0,10,0,0"
+                VerticalAlignment="Stretch"
+                FontSize="14"
+                IsReadOnly="True"
+                IsReadOnlyCaretVisible="True" />
+        </StackPanel>
+
+    </Grid>
+</ui:UiWindow>
