@@ -51,6 +51,19 @@ namespace RedditVideoGenerator
         }
 
         #region Helper functions
+        public string StringFromRichTextBox(RichTextBox rtb)
+        {
+            TextRange textRange = new TextRange(
+                // TextPointer to the start of content in the RichTextBox.
+                rtb.Document.ContentStart,
+                // TextPointer to the end of content in the RichTextBox.
+                rtb.Document.ContentEnd
+            );
+
+            // The Text property on a TextRange object returns a string
+            // representing the plain text content of the TextRange.
+            return textRange.Text;
+        }
 
         public void SaveControlAsImage(Control control, string path)
         {
@@ -84,6 +97,8 @@ namespace RedditVideoGenerator
             //show some initialization text
             ConsoleOutput.AppendText("> Initializing RedditVideoGenerator...\r\n");
 
+            #region Intialization code
+
             //store MainWindow as an instance in AppVariables
             AppVariables.mainWindow = this;
 
@@ -98,6 +113,8 @@ namespace RedditVideoGenerator
 
             ConsoleOutput.AppendText("> Intialization complete \r\n");
 
+            #endregion
+
             //wait a while
             await Task.Delay(100);
 
@@ -106,18 +123,27 @@ namespace RedditVideoGenerator
             //wait a while
             await Task.Delay(500);
 
+            #region Reddit API Queries and Video Generation
+
             //start redditfunctions
             RedditFunctions redditFunctions = new RedditFunctions();
 
+            #region Get random top monthly post
             //GET COMMENTS
             //get id of random top monthly post
             string TopPostID = redditFunctions.GetRandomTopMonthlyPostID();
 
-            ConsoleOutput.AppendText("> Got post: " + AppVariables.PostTitle + "\r\n");
+            ConsoleOutput.AppendText(String.Format("> Got post: '{0}' with id: {1}\r\n", AppVariables.PostTitle, AppVariables.PostId));
 
             await Task.Delay(100);
 
+            #endregion
+
             ConsoleOutput.AppendText("> Creating title video...\r\n");
+
+            await Task.Delay(100);
+
+            #region Title Video Generation
 
             //create title image
             TitleCard titleCard = new TitleCard();
@@ -147,9 +173,9 @@ namespace RedditVideoGenerator
 
             //cmd commands to run
             string command1 = "cd " + AppVariables.ffmpegDirectory;
-            string command2 = System.String.Format("ffmpeg -loop 1 -i {0} -i {1} -c:v libx264 -tune stillimage -c:a aac -b:a 192k -pix_fmt yuv420p -shortest {2}", 
-                Path.Combine(AppVariables.FramesDirectory, "title.png"), 
-                Path.Combine(AppVariables.AudioDirectory, "title.wav"), 
+            string command2 = System.String.Format("ffmpeg -loop 1 -i {0} -i {1} -c:v libx264 -tune stillimage -c:a aac -b:a 192k -pix_fmt yuv420p -shortest {2}",
+                Path.Combine(AppVariables.FramesDirectory, "title.png"),
+                Path.Combine(AppVariables.AudioDirectory, "title.wav"),
                 Path.Combine(AppVariables.OutputDirectory, "title.mp4"));
 
             System.Diagnostics.Process process = new System.Diagnostics.Process();
@@ -167,14 +193,21 @@ namespace RedditVideoGenerator
 
             await Task.Delay(100);
 
+            #endregion
+
             ConsoleOutput.AppendText("> Getting top comments...\r\n");
 
+            await Task.Delay(100);
+
+            #region Get comments and set up comment card basic boilerplate
             //get top comments from said post
             List<Comment> comments = redditFunctions.GetPostTopComments(TopPostID);
 
             await Task.Delay(100);
 
             ConsoleOutput.AppendText("> Number of comments: " + comments.Count + "\r\n");
+
+            await Task.Delay(100);
 
             //init new comment card
             CommentCard commentCard = new CommentCard();
@@ -187,24 +220,56 @@ namespace RedditVideoGenerator
 
             commentCard.PostTitleText.Text = AppVariables.PostTitle;
 
+            #endregion
+
             //iterate through comments and generate comment cards
             foreach (Comment comment in comments)
             {
                 if (comment.Author != null && comment.Body != null && comment.Body != "[deleted]" && comment.Body != "[removed]")
                 {
+                    int FilenameCount = 0;
+
                     //set commentcard properties
                     commentCard.CommentAuthorText.Text = "u/" + comment.Author;
+                    commentCard.CommentUpvoteCountText.Text = comment.UpVotes.ToKMB() + " upvotes";
+                    commentCard.CommentDateText.Text = comment.Created.ToUniversalTime().ToString("dd MMMM yyyy, HH:mm") + " UTC";
                     HtmlRichTextBoxBehavior.SetText(commentCard.CommentBodyText, comment.BodyHTML);
                     commentCard.CommentBodyText.Document.PagePadding = new Thickness(0);
                     commentCard.CommentBodyText.Document.FontSize = 32;
                     commentCard.CommentBodyText.Document.FontFamily = new FontFamily(@"/Resources/NotoSans/#Noto Sans");
-                    commentCard.CommentUpvoteCountText.Text = comment.UpVotes.ToKMB() + " upvotes";
-                    commentCard.CommentDateText.Text = comment.Created.ToUniversalTime().ToString("dd MMMM yyyy, HH:mm") + " UTC";
+                    commentCard.CommentBodyText.Document.TextAlignment = TextAlignment.Left;
 
-                    //save control
-                    SaveControlAsImage(commentCard, Path.Combine(AppVariables.FramesDirectory, comment.Id + ".png"));
+                    //next, we extract the raw text from the richtextbox (which is the comment text) and clear it
+                    string[] commentSentences = Regex.Split(StringFromRichTextBox(commentCard.CommentBodyText).Trim(), @"(?<=[.!?])");
+                    commentCard.CommentBodyText.Document.Blocks.Clear();
+
+                    //iterate through sentences in commentsentences
+                    foreach (string sentence in commentSentences)
+                    {
+                        if (sentence != "" && sentence != " ")
+                        {
+                            commentCard.CommentBodyText.AppendText(sentence);
+
+                            //only check the commentbodytext height after appending the sentence to see if the text will overflow
+                            if (commentCard.CommentBodyText.Height > 725)
+                            {
+                                //clear the rtb and append text again 
+                                commentCard.CommentBodyText.Document.Blocks.Clear();
+                                commentCard.CommentBodyText.AppendText(sentence);
+                            }
+
+                            //save control
+                            SaveControlAsImage(commentCard, Path.Combine(AppVariables.FramesDirectory, FilenameCount.ToString() + ".png"));
+                            FilenameCount++;
+                        }
+                    }
+
+                    break;
                 }
+
             }
+
+            #endregion
 
         }
 

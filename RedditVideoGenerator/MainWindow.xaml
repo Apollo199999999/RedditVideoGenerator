@@ -44,7 +44,8 @@
                 FontSize="14"
                 IsReadOnly="True"
                 IsReadOnlyCaretVisible="True"
-                Loaded="ConsoleOutput_Loaded" />
+                Loaded="ConsoleOutput_Loaded"
+                TextWrapping="Wrap" />
         </StackPanel>
 
     </Grid>

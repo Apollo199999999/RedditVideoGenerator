@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.IO;
 using System.Web;
+using System.Threading;
 
 namespace RedditVideoGenerator
 {
@@ -29,6 +30,7 @@ namespace RedditVideoGenerator
         public static int PostUpvoteCount;
         public static DateTime PostCreationDate;
         public static bool PostIsNSFW;
+        public static string PostId;
 
     }
 }

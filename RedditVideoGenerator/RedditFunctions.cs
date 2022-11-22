@@ -33,6 +33,7 @@ namespace RedditVideoGenerator
             AppVariables.PostUpvoteCount = posts[r].UpVotes;
             AppVariables.PostCreationDate = posts[r].Created;
             AppVariables.PostIsNSFW = posts[r].NSFW;
+            AppVariables.PostId = posts[r].Id;
 
             return "t3_" + posts[r].Id;
         }
