@@ -16,6 +16,9 @@ namespace RedditVideoGenerator
         //directories used to store files
         public static string WorkingDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "RedditVideoGenerator");
         public static string FramesDirectory = Path.Combine(WorkingDirectory, "frames");
+        public static string AudioDirectory = Path.Combine(WorkingDirectory, "audio");
+        public static string OutputDirectory = Path.Combine(WorkingDirectory, "output");
+        public static string ffmpegDirectory = Path.Combine(Environment.CurrentDirectory, "Resources\\ffmpeg");
 
         //reddit variables
         public static string SubReddit = "AskReddit";
@@ -25,6 +28,7 @@ namespace RedditVideoGenerator
         public static int PostCommentCount;
         public static int PostUpvoteCount;
         public static DateTime PostCreationDate;
+        public static bool PostIsNSFW;
 
     }
 }

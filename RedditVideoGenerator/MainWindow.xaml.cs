@@ -20,6 +20,7 @@ using System.Globalization;
 using static RedditVideoGenerator.TypeExtensions;
 using System.Text.RegularExpressions;
 using System.Diagnostics;
+using System.Speech.Synthesis;
 
 namespace RedditVideoGenerator
 {
@@ -89,6 +90,8 @@ namespace RedditVideoGenerator
             //create neccessary directories
             Directory.CreateDirectory(AppVariables.WorkingDirectory);
             Directory.CreateDirectory(AppVariables.FramesDirectory);
+            Directory.CreateDirectory(AppVariables.AudioDirectory);
+            Directory.CreateDirectory(AppVariables.OutputDirectory);
 
             //allow some time in case some libraries/code hasn't loaded yet
             await Task.Delay(1000);
@@ -110,10 +113,22 @@ namespace RedditVideoGenerator
             //get id of random top monthly post
             string TopPostID = redditFunctions.GetRandomTopMonthlyPostID();
 
+            ConsoleOutput.AppendText("> Got post: " + AppVariables.PostTitle + "\r\n");
+
+            await Task.Delay(100);
+
+            ConsoleOutput.AppendText("> Creating title video...\r\n");
+
             //create title image
             TitleCard titleCard = new TitleCard();
             titleCard.PostAuthorText.Text = "u/" + AppVariables.PostAuthor;
             titleCard.PostSubredditText.Text = "r/" + AppVariables.SubReddit;
+
+            if (AppVariables.PostIsNSFW == true)
+            {
+                titleCard.PostNSFWTag.Text = "[nsfw] ";
+            }
+
             titleCard.PostTitleText.Text = AppVariables.PostTitle;
             titleCard.PostUpvoteCountText.Text = AppVariables.PostUpvoteCount.ToKMB() + " upvotes";
             titleCard.PostCommentCountText.Text = AppVariables.PostCommentCount.ToKMB() + " comments";
@@ -122,25 +137,67 @@ namespace RedditVideoGenerator
             //save control
             SaveControlAsImage(titleCard, Path.Combine(AppVariables.FramesDirectory, "title.png"));
 
+            //use microsoft tts api to read subreddit and post title
+            var synthesizer = new SpeechSynthesizer();
+            synthesizer.SetOutputToWaveFile(Path.Combine(AppVariables.AudioDirectory, "title.wav"));
+            synthesizer.Speak("r/" + AppVariables.SubReddit + ", " + AppVariables.PostTitle);
+            synthesizer.Dispose();
+
+            //run ffmpeg commands to generate title video
+
+            //cmd commands to run
+            string command1 = "cd " + AppVariables.ffmpegDirectory;
+            string command2 = System.String.Format("ffmpeg -loop 1 -i {0} -i {1} -c:v libx264 -tune stillimage -c:a aac -b:a 192k -pix_fmt yuv420p -shortest {2}", 
+                Path.Combine(AppVariables.FramesDirectory, "title.png"), 
+                Path.Combine(AppVariables.AudioDirectory, "title.wav"), 
+                Path.Combine(AppVariables.OutputDirectory, "title.mp4"));
+
+            System.Diagnostics.Process process = new System.Diagnostics.Process();
+            System.Diagnostics.ProcessStartInfo startInfo = new System.Diagnostics.ProcessStartInfo();
+            startInfo.WindowStyle = System.Diagnostics.ProcessWindowStyle.Hidden;
+            startInfo.FileName = "cmd.exe";
+            startInfo.Arguments = "/C " + command1 + " & " + command2;
+            process.StartInfo = startInfo;
+            process.Start();
+            process.WaitForExit();
+
+            //clean up and delete files
+            File.Delete(Path.Combine(AppVariables.FramesDirectory, "title.png"));
+            File.Delete(Path.Combine(AppVariables.AudioDirectory, "title.wav"));
+
+            await Task.Delay(100);
+
+            ConsoleOutput.AppendText("> Getting top comments...\r\n");
+
             //get top comments from said post
             List<Comment> comments = redditFunctions.GetPostTopComments(TopPostID);
+
+            await Task.Delay(100);
+
+            ConsoleOutput.AppendText("> Number of comments: " + comments.Count + "\r\n");
 
             //init new comment card
             CommentCard commentCard = new CommentCard();
             commentCard.PostSubredditText.Text = "r/" + AppVariables.SubReddit;
+
+            if (AppVariables.PostIsNSFW == true)
+            {
+                commentCard.PostNSFWTag.Text = "[nsfw] ";
+            }
+
             commentCard.PostTitleText.Text = AppVariables.PostTitle;
 
             //iterate through comments and generate comment cards
             foreach (Comment comment in comments)
             {
-                if (comment.Author != null && comment.Body != null && comment.Body != "[deleted]")
+                if (comment.Author != null && comment.Body != null && comment.Body != "[deleted]" && comment.Body != "[removed]")
                 {
                     //set commentcard properties
                     commentCard.CommentAuthorText.Text = "u/" + comment.Author;
                     HtmlRichTextBoxBehavior.SetText(commentCard.CommentBodyText, comment.BodyHTML);
                     commentCard.CommentBodyText.Document.PagePadding = new Thickness(0);
                     commentCard.CommentBodyText.Document.FontSize = 32;
-                    commentCard.CommentBodyText.Document.FontFamily = new FontFamily(@"/Resources/#Noto Sans");
+                    commentCard.CommentBodyText.Document.FontFamily = new FontFamily(@"/Resources/NotoSans/#Noto Sans");
                     commentCard.CommentUpvoteCountText.Text = comment.UpVotes.ToKMB() + " upvotes";
                     commentCard.CommentDateText.Text = comment.Created.ToUniversalTime().ToString("dd MMMM yyyy, HH:mm") + " UTC";
 

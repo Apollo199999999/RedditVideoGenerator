@@ -54,6 +54,12 @@ SOFTWARE.
 
 ------------------------------------------------------------------------------------------------------------------------------------------------------------
 
+FFmpeg (http://ffmpeg.org/)
+
+LGPLv2.1 License: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+
 RedditVideoGenerator's application icon was designed using the Fluency Icons made by Icons8, as well as the Reddit logo.
 Sources: https://icons8.com/icon/YHmiPcbhIHTX/showing-video-frames
 	    https://www.redditinc.com/brand

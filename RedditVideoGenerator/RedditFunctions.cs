@@ -16,8 +16,6 @@ namespace RedditVideoGenerator
         public RedditClient redditClient = new RedditClient(appId: APIKeys.RedditAppID, appSecret: APIKeys.RedditAppSecret, 
             accessToken: APIKeys.RedditAccessToken, refreshToken: APIKeys.RedditRefreshToken);
 
-        public TextBox ConsoleOut = AppVariables.mainWindow.ConsoleOutput;
-
         public string GetRandomTopMonthlyPostID()
         {
             //get top monthpy posts from subreddit
@@ -27,7 +25,6 @@ namespace RedditVideoGenerator
             //choose random post from list
             Random rnd = new Random();
             int r = rnd.Next(posts.Count);
-            ConsoleOut.AppendText("> Got post: " + posts[r].Title + "\r\n");
 
             //update app variables
             AppVariables.PostTitle = posts[r].Title;
@@ -35,19 +32,16 @@ namespace RedditVideoGenerator
             AppVariables.PostCommentCount = posts[r].Listing.NumComments;
             AppVariables.PostUpvoteCount = posts[r].UpVotes;
             AppVariables.PostCreationDate = posts[r].Created;
+            AppVariables.PostIsNSFW = posts[r].NSFW;
 
             return "t3_" + posts[r].Id;
         }
 
         public List<Comment> GetPostTopComments(string postID)
         {
-            ConsoleOut.AppendText("> Getting top comments...\r\n");
-
             //get top comments
             Post post = redditClient.Subreddit(AppVariables.SubReddit).Post(postID).About();
             List<Comment> comments =  post.Comments.GetTop(depth: 0, showMore: true);
-            
-            ConsoleOut.AppendText("> Number of comments: " + comments.Count + "\r\n");
 
             return comments;
         }

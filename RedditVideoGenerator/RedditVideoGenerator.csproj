@@ -134,115 +134,126 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
-    <Resource Include="Resources\NotoSans-Black.ttf">
+    <Content Include="Resources\NotoSans\NotoSans-Black.ttf">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Resources\NotoSans-BlackItalic.ttf">
+    </Content>
+    <Content Include="Resources\NotoSans\NotoSans-BlackItalic.ttf">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Resources\NotoSans-Bold.ttf">
+    </Content>
+    <Content Include="Resources\NotoSans\NotoSans-Bold.ttf">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Resources\NotoSans-BoldItalic.ttf">
+    </Content>
+    <Content Include="Resources\NotoSans\NotoSans-BoldItalic.ttf">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Resources\NotoSans-ExtraBold.ttf">
+    </Content>
+    <Content Include="Resources\NotoSans\NotoSans-ExtraBold.ttf">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Resources\NotoSans-ExtraBoldItalic.ttf">
+    </Content>
+    <Content Include="Resources\NotoSans\NotoSans-ExtraBoldItalic.ttf">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Resources\NotoSans-ExtraLight.ttf">
+    </Content>
+    <Content Include="Resources\NotoSans\NotoSans-ExtraLight.ttf">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Resources\NotoSans-ExtraLightItalic.ttf">
+    </Content>
+    <Content Include="Resources\NotoSans\NotoSans-ExtraLightItalic.ttf">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Resources\NotoSans-Italic.ttf">
+    </Content>
+    <Content Include="Resources\NotoSans\NotoSans-Italic.ttf">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Resources\NotoSans-Light.ttf">
+    </Content>
+    <Content Include="Resources\NotoSans\NotoSans-Light.ttf">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Resources\NotoSans-LightItalic.ttf">
+    </Content>
+    <Content Include="Resources\NotoSans\NotoSans-LightItalic.ttf">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Resources\NotoSans-Medium.ttf">
+    </Content>
+    <Content Include="Resources\NotoSans\NotoSans-Medium.ttf">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Resources\NotoSans-MediumItalic.ttf">
+    </Content>
+    <Content Include="Resources\NotoSans\NotoSans-MediumItalic.ttf">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Resources\NotoSans-Regular.ttf">
+    </Content>
+    <Content Include="Resources\NotoSans\NotoSans-Regular.ttf">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Resources\NotoSans-SemiBold.ttf">
+    </Content>
+    <Content Include="Resources\NotoSans\NotoSans-SemiBold.ttf">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Resources\NotoSans-SemiBoldItalic.ttf">
+    </Content>
+    <Content Include="Resources\NotoSans\NotoSans-SemiBoldItalic.ttf">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Resources\NotoSans-Thin.ttf">
+    </Content>
+    <Content Include="Resources\NotoSans\NotoSans-Thin.ttf">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Resources\NotoSans-ThinItalic.ttf">
+    </Content>
+    <Content Include="Resources\NotoSans\NotoSans-ThinItalic.ttf">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Resources\IBMPlexSans-Bold.ttf">
+    </Content>
+    <Content Include="Resources\IBMPlexSans\IBMPlexSans-Bold.ttf">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Resources\IBMPlexSans-BoldItalic.ttf">
+    </Content>
+    <Content Include="Resources\IBMPlexSans\IBMPlexSans-BoldItalic.ttf">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Resources\IBMPlexSans-ExtraLight.ttf">
+    </Content>
+    <Content Include="Resources\IBMPlexSans\IBMPlexSans-ExtraLight.ttf">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Resources\IBMPlexSans-ExtraLightItalic.ttf">
+    </Content>
+    <Content Include="Resources\IBMPlexSans\IBMPlexSans-ExtraLightItalic.ttf">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Resources\IBMPlexSans-Italic.ttf">
+    </Content>
+    <Content Include="Resources\IBMPlexSans\IBMPlexSans-Italic.ttf">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Resources\IBMPlexSans-Light.ttf">
+    </Content>
+    <Content Include="Resources\IBMPlexSans\IBMPlexSans-Light.ttf">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Resources\IBMPlexSans-LightItalic.ttf">
+    </Content>
+    <Content Include="Resources\IBMPlexSans\IBMPlexSans-LightItalic.ttf">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Resources\IBMPlexSans-Medium.ttf">
+    </Content>
+    <Content Include="Resources\IBMPlexSans\IBMPlexSans-Medium.ttf">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Resources\IBMPlexSans-MediumItalic.ttf">
+    </Content>
+    <Content Include="Resources\IBMPlexSans\IBMPlexSans-MediumItalic.ttf">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Resources\IBMPlexSans-Regular.ttf">
+    </Content>
+    <Content Include="Resources\IBMPlexSans\IBMPlexSans-Regular.ttf">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Resources\IBMPlexSans-SemiBold.ttf">
+    </Content>
+    <Content Include="Resources\IBMPlexSans\IBMPlexSans-SemiBold.ttf">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Resources\IBMPlexSans-SemiBoldItalic.ttf">
+    </Content>
+    <Content Include="Resources\IBMPlexSans\IBMPlexSans-SemiBoldItalic.ttf">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Resources\IBMPlexSans-Thin.ttf">
+    </Content>
+    <Content Include="Resources\IBMPlexSans\IBMPlexSans-Thin.ttf">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Resources\IBMPlexSans-ThinItalic.ttf">
+    </Content>
+    <Content Include="Resources\IBMPlexSans\IBMPlexSans-ThinItalic.ttf">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Resources\icon.ico">
+    <Content Include="Resources\icon.ico">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
+    </Content>
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Resources\reddit-logo.png">
+    <Content Include="Resources\reddit-logo.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Resources\ffmpeg\ffmpeg.exe">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\ffmpeg\ffplay.exe">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\ffmpeg\ffprobe.exe">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

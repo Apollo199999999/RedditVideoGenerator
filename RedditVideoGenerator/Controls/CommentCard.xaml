@@ -24,7 +24,7 @@
                         x:Name="PostSubredditText"
                         HorizontalAlignment="Left"
                         VerticalAlignment="Top"
-                        FontFamily="/Resources/#IBM Plex Sans"
+                        FontFamily="/Resources/IBMPlexSans/#IBM Plex Sans"
                         FontSize="36"
                         FontWeight="Bold"
                         Foreground="#818384"
@@ -38,13 +38,15 @@
                         Margin="0,5,0,0"
                         HorizontalAlignment="Left"
                         VerticalAlignment="Top"
-                        FontFamily="/Resources/#IBM Plex Sans"
+                        FontFamily="/Resources/IBMPlexSans/#IBM Plex Sans"
                         FontSize="36"
                         FontWeight="Bold"
                         Foreground="#818384"
                         Text="Post title Lorem Ipsum Dolor Sit Amet Consecutor Consecutive I don't remember the rest."
                         TextTrimming="CharacterEllipsis"
-                        TextWrapping="NoWrap" />
+                        TextWrapping="NoWrap">
+                        <Run x:Name="PostNSFWTag" Foreground="#ff585b" />
+                    </TextBlock>
                 </StackPanel>
 
                 <Image
@@ -65,7 +67,7 @@
                 <TextBlock
                     x:Name="CommentAuthorText"
                     Margin="10,0,0,0"
-                    FontFamily="/Resources/#Noto Sans"
+                    FontFamily="/Resources/NotoSans/#Noto Sans"
                     FontSize="32"
                     Foreground="#818384"
                     Text="u/Username" />
@@ -88,6 +90,7 @@
             Orientation="Horizontal">
             <ui:SymbolIcon
                 FontSize="32"
+                FontWeight="Bold"
                 Foreground="#FF4500"
                 RenderTransformOrigin="0.5,0.5"
                 Symbol="ArrowOutlineUpRight32">
@@ -100,15 +103,16 @@
                 x:Name="CommentUpvoteCountText"
                 Margin="10,0,0,0"
                 VerticalAlignment="Center"
-                FontFamily="/Resources/#Noto Sans"
+                FontFamily="/Resources/NotoSans/#Noto Sans"
                 FontSize="32"
+                FontWeight="Bold"
                 Foreground="#FF4500"
                 Text="69k upvotes" />
 
             <TextBlock
                 Margin="15,0,0,0"
                 VerticalAlignment="Center"
-                FontFamily="/Resources/#Noto Sans"
+                FontFamily="/Resources/NotoSans/#Noto Sans"
                 FontSize="48"
                 FontWeight="Bold"
                 Foreground="#818384"
@@ -118,7 +122,7 @@
                 x:Name="CommentDateText"
                 Margin="15,0,0,0"
                 VerticalAlignment="Center"
-                FontFamily="/Resources/#Noto Sans"
+                FontFamily="/Resources/NotoSans/#Noto Sans"
                 FontSize="32"
                 Foreground="#818384"
                 Text="10/1/2022" />
