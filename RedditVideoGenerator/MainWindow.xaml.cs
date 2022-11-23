@@ -1,26 +1,19 @@
-﻿using System;
+﻿using Reddit.Controllers;
+using RedditVideoGenerator.Controls;
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using System.Diagnostics;
+using System.IO;
+using System.Speech.AudioFormat;
+using System.Speech.Synthesis;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
 using System.Windows.Documents;
-using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.IO;
-using Reddit;
-using Reddit.Controllers;
-using RedditVideoGenerator.Controls;
-using System.CodeDom;
-using System.Globalization;
-using static RedditVideoGenerator.TypeExtensions;
-using System.Text.RegularExpressions;
-using System.Diagnostics;
-using System.Speech.Synthesis;
+using Wpf.Ui.Controls;
 
 namespace RedditVideoGenerator
 {
@@ -88,16 +81,37 @@ namespace RedditVideoGenerator
             viewbox.Child = null;
         }
 
+        public async Task StartProcess(string filepath, string args)
+        {
+            Process process = new Process();
+            ProcessStartInfo startInfo = new ProcessStartInfo();
+            startInfo.WindowStyle = ProcessWindowStyle.Minimized;
+            startInfo.FileName = filepath;
+            startInfo.Arguments = args;
+            process.StartInfo = startInfo;
+            process.Start();
+            await process.WaitForExitAsync();
+        }
+
+        public void SpeakText(string text, string path)
+        {
+            using (SpeechSynthesizer Synthesizer = new SpeechSynthesizer())
+            {
+                Synthesizer.SetOutputToWaveFile(path);
+                Synthesizer.Speak(text);
+            }
+        }
+
         #endregion
 
         #region Main function
 
         public async void Main()
         {
+            #region Intialization code
+
             //show some initialization text
             ConsoleOutput.AppendText("> Initializing RedditVideoGenerator...\r\n");
-
-            #region Intialization code
 
             //store MainWindow as an instance in AppVariables
             AppVariables.mainWindow = this;
@@ -108,28 +122,31 @@ namespace RedditVideoGenerator
             Directory.CreateDirectory(AppVariables.AudioDirectory);
             Directory.CreateDirectory(AppVariables.OutputDirectory);
 
+            //kill ffmpeg if running
+            await StartProcess("taskkill.exe", " /f /im ffmpeg.exe");
+
             //allow some time in case some libraries/code hasn't loaded yet
             await Task.Delay(1000);
 
             ConsoleOutput.AppendText("> Intialization complete \r\n");
 
-            #endregion
-
             //wait a while
             await Task.Delay(100);
+
+            #endregion
+
+            #region Reddit API Queries and Video Generation
+
+            #region Get random top monthly post
 
             ConsoleOutput.AppendText("> Getting random top monthly post from r/" + AppVariables.SubReddit + "\r\n");
 
             //wait a while
             await Task.Delay(500);
 
-            #region Reddit API Queries and Video Generation
-
             //start redditfunctions
             RedditFunctions redditFunctions = new RedditFunctions();
 
-            #region Get random top monthly post
-            //GET COMMENTS
             //get id of random top monthly post
             string TopPostID = redditFunctions.GetRandomTopMonthlyPostID();
 
@@ -139,11 +156,11 @@ namespace RedditVideoGenerator
 
             #endregion
 
+            #region Title Video Generation
+
             ConsoleOutput.AppendText("> Creating title video...\r\n");
 
             await Task.Delay(100);
-
-            #region Title Video Generation
 
             //create title image
             TitleCard titleCard = new TitleCard();
@@ -165,42 +182,34 @@ namespace RedditVideoGenerator
             SaveControlAsImage(titleCard, Path.Combine(AppVariables.FramesDirectory, "title.png"));
 
             //use microsoft tts api to read subreddit and post title
-            var TitleSynthesizer = new SpeechSynthesizer();
-            TitleSynthesizer.SetOutputToWaveFile(Path.Combine(AppVariables.AudioDirectory, "title.wav"));
-            TitleSynthesizer.Speak("r/" + AppVariables.SubReddit + ", " + titleCard.PostNSFWTag.Text + ", " + titleCard.PostTitleText.Text);
-            TitleSynthesizer.Dispose();
+            SpeakText("r/" + AppVariables.SubReddit + ", " + titleCard.PostNSFWTag.Text + ", " + titleCard.PostTitleText.Text,
+                Path.Combine(AppVariables.AudioDirectory, "title.wav"));
 
             //run ffmpeg commands to generate title video
-
-            //cmd commands to run
-            string TitleCommand1 = "cd " + AppVariables.FFmpegDirectory;
-            string TitleCommand2 = System.String.Format("ffmpeg -loop 1 -i {0} -i {1} -c:v libx264 -tune stillimage -c:a aac -b:a 192k -pix_fmt yuv420p -shortest {2}",
+            string TitleCommand = System.String.Format(" -nostdin -loop 1 -i {0} -i {1} -shortest -acodec copy -pix_fmt yuv420p {2}",
                 Path.Combine(AppVariables.FramesDirectory, "title.png"),
                 Path.Combine(AppVariables.AudioDirectory, "title.wav"),
-                Path.Combine(AppVariables.OutputDirectory, "title.mp4"));
+                Path.Combine(AppVariables.OutputDirectory, "title.mkv"));
 
-            System.Diagnostics.Process process = new System.Diagnostics.Process();
-            System.Diagnostics.ProcessStartInfo startInfo = new System.Diagnostics.ProcessStartInfo();
-            startInfo.WindowStyle = System.Diagnostics.ProcessWindowStyle.Hidden;
-            startInfo.FileName = "cmd.exe";
-            startInfo.Arguments = "/C " + TitleCommand1 + " & " + TitleCommand2;
-            process.StartInfo = startInfo;
-            process.Start();
-            process.WaitForExit();
+            await StartProcess(Path.Combine(AppVariables.FFmpegDirectory, "ffmpeg.exe"), TitleCommand);
+
+            //kill ffmpeg after
+            await StartProcess("taskkill.exe", " /f /im ffmpeg.exe");
 
             //clean up and delete files
             File.Delete(Path.Combine(AppVariables.FramesDirectory, "title.png"));
             File.Delete(Path.Combine(AppVariables.AudioDirectory, "title.wav"));
 
-            await Task.Delay(100);
+            await Task.Delay(500);
 
             #endregion
+
+            #region Get comments and set up comment card basic boilerplate
 
             ConsoleOutput.AppendText("> Getting top comments...\r\n");
 
             await Task.Delay(100);
 
-            #region Get comments and set up comment card basic boilerplate
             //get top comments from said post
             List<Comment> comments = redditFunctions.GetPostTopComments(TopPostID);
 
@@ -223,6 +232,8 @@ namespace RedditVideoGenerator
 
             #endregion
 
+            #region Comment video generation
+
             ConsoleOutput.AppendText("> Generating comment videos...\r\n");
 
             await Task.Delay(100);
@@ -230,7 +241,7 @@ namespace RedditVideoGenerator
             //iterate through comments and generate comment cards
             foreach (Comment comment in comments)
             {
-                if (comment.Author != null && comment.Body != null && comment.Body != "[deleted]" 
+                if (comment.Author != null && comment.Body != null && comment.Body != "[deleted]"
                     && comment.Body != "[removed]" && comment.Author.ToLower().Contains("moderator") == false)
                 {
                     int FilenameCount = 0;
@@ -267,38 +278,29 @@ namespace RedditVideoGenerator
                             SaveControlAsImage(commentCard, Path.Combine(AppVariables.FramesDirectory, FilenameCount.ToString() + ".png"));
 
                             //use microsoft tts api to read sentence
-                            var CommentSentenceSynth = new SpeechSynthesizer();
-                            CommentSentenceSynth.SetOutputToWaveFile(Path.Combine(AppVariables.AudioDirectory, FilenameCount.ToString() + ".wav"));
-                            CommentSentenceSynth.Speak(sentence);
-                            CommentSentenceSynth.Dispose();
+                            SpeakText(sentence, Path.Combine(AppVariables.AudioDirectory, FilenameCount.ToString() + ".wav"));
 
-                            //cmd commands to run
-                            string SentenceCommand1 = "cd " + AppVariables.FFmpegDirectory;
-                            string SentenceCommand2 = System.String.Format("ffmpeg -loop 1 -i {0} -i {1} -c:v libx264 -tune stillimage -c:a aac -b:a 192k -pix_fmt yuv420p -shortest {2}",
+                            //run ffmpeg
+                            string SentenceCommand = System.String.Format(" -nostdin -loop 1 -i {0} -i {1} -shortest -acodec copy -pix_fmt yuv420p {2}",
                                 Path.Combine(AppVariables.FramesDirectory, FilenameCount.ToString() + ".png"),
                                 Path.Combine(AppVariables.AudioDirectory, FilenameCount.ToString() + ".wav"),
-                                Path.Combine(CommentSentenceOutputDir, FilenameCount.ToString() + ".mp4"));
+                                Path.Combine(CommentSentenceOutputDir, FilenameCount.ToString() + ".mkv"));
 
-                            System.Diagnostics.Process proc = new System.Diagnostics.Process();
-                            System.Diagnostics.ProcessStartInfo startInformation = new System.Diagnostics.ProcessStartInfo();
-                            startInformation.WindowStyle = System.Diagnostics.ProcessWindowStyle.Hidden;
-                            startInformation.FileName = "cmd.exe";
-                            startInformation.Arguments = "/C " + SentenceCommand1 + " & " + SentenceCommand2;
-                            proc.StartInfo = startInformation;
-                            proc.Start();
-                            proc.WaitForExit();
+                            await StartProcess(Path.Combine(AppVariables.FFmpegDirectory, "ffmpeg.exe"), SentenceCommand);
+
+                            //kill ffmpeg after
+                            await StartProcess("taskkill.exe", " /f /im ffmpeg.exe");
 
                             //clean up and delete files
                             File.Delete(Path.Combine(AppVariables.FramesDirectory, FilenameCount.ToString() + ".png"));
                             File.Delete(Path.Combine(AppVariables.AudioDirectory, FilenameCount.ToString() + ".wav"));
 
-                            FilenameCount++;
+                            await Task.Delay(1000);
 
-                            await Task.Delay(200);
+                            FilenameCount++;
                         }
 
                     }
-
 
                     //combine all sentence videos
                     //create a new list and sort the files
@@ -315,27 +317,22 @@ namespace RedditVideoGenerator
                     sw.Dispose();
 
                     //cmd commands
-                    string CommentCommand1 = "cd " + AppVariables.FFmpegDirectory;
-                    string CommentCommand2 = String.Format("ffmpeg -f concat -safe 0 -i {0} -c copy {1}", 
-                        Path.Combine(CommentSentenceOutputDir, "FFmpegCommand.txt"), 
-                        Path.Combine(AppVariables.OutputDirectory, comment.Id + ".mp4"));
+                    string CommentCommand = String.Format(" -nostdin -f concat -safe 0 -i {0} -c copy {1}",
+                        Path.Combine(CommentSentenceOutputDir, "FFmpegCommand.txt"),
+                        Path.Combine(AppVariables.OutputDirectory, comment.Id + ".mkv"));
 
                     //run ffmpeg
-                    System.Diagnostics.Process CommentProc = new System.Diagnostics.Process();
-                    System.Diagnostics.ProcessStartInfo CommentStartInformation = new System.Diagnostics.ProcessStartInfo();
-                    CommentStartInformation.WindowStyle = System.Diagnostics.ProcessWindowStyle.Hidden;
-                    CommentStartInformation.FileName = "cmd.exe";
-                    CommentStartInformation.Arguments = "/C " + CommentCommand1 + " & " + CommentCommand2;
-                    CommentProc.StartInfo = CommentStartInformation;
-                    CommentProc.Start();
-                    CommentProc.WaitForExit();
+                    await StartProcess(Path.Combine(AppVariables.FFmpegDirectory, "ffmpeg.exe"), CommentCommand);
+
+                    //kill ffmpeg after
+                    await StartProcess("taskkill.exe", " /f /im ffmpeg.exe");
 
                     //clean up files
                     Directory.Delete(CommentSentenceOutputDir, true);
 
-                    await Task.Delay(200);
-
                     ConsoleOutput.AppendText("> Finished generating comment video for comment with id: " + comment.Id + "\r\n");
+
+                    await Task.Delay(500);
 
                 }
 
@@ -345,8 +342,11 @@ namespace RedditVideoGenerator
 
             #endregion
 
+            #endregion
+
         }
 
         #endregion
+
     }
 }
