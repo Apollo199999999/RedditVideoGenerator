@@ -1,4 +1,5 @@
-﻿using Reddit.Controllers;
+﻿using NAudio.Wave;
+using Reddit.Controllers;
 using RedditVideoGenerator.Controls;
 using System;
 using System.Collections.Generic;
@@ -13,7 +14,6 @@ using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using Wpf.Ui.Controls;
 
 namespace RedditVideoGenerator
 {
@@ -93,12 +93,40 @@ namespace RedditVideoGenerator
             await process.WaitForExitAsync();
         }
 
+        public static TimeSpan GetWavFileDuration(string fileName)
+        {
+            using (WaveFileReader wf = new WaveFileReader(fileName))
+            {
+                TimeSpan duration = wf.TotalTime;
+                wf.Dispose();
+                return duration;
+            }
+        }
+
+        public static void WriteSilence(WaveFormat waveFormat, int silenceMilliSecondLength, WaveFileWriter waveFileWriter)
+        {
+            int bytesPerMillisecond = waveFormat.AverageBytesPerSecond / 1000;
+            //an new all zero byte array will play silence
+            var silentBytes = new byte[silenceMilliSecondLength * bytesPerMillisecond];
+            waveFileWriter.Write(silentBytes, 0, silentBytes.Length);
+            waveFileWriter.Dispose();
+        }
+
         public void SpeakText(string text, string path)
         {
-            using (SpeechSynthesizer Synthesizer = new SpeechSynthesizer())
+            //i have discovered the problem. if the character is '.' the tts wont read and ffmpeg will freeze.
+            //use speech synthesiser to speak text
+            SpeechSynthesizer synthesizer = new SpeechSynthesizer();
+            synthesizer.SetOutputToWaveFile(path);
+            synthesizer.Speak(text);
+            synthesizer.Dispose();
+
+            if (GetWavFileDuration(path) == TimeSpan.Zero)
             {
-                Synthesizer.SetOutputToWaveFile(path);
-                Synthesizer.Speak(text);
+                //replace wav file with empty one with duration of half a second
+                WaveFormat waveFormat = new WaveFormat(8000, 8, 1);
+                WaveFileWriter waveFileWriter = new WaveFileWriter(path, waveFormat);
+                WriteSilence(waveFormat, 500, waveFileWriter);
             }
         }
 
@@ -295,8 +323,6 @@ namespace RedditVideoGenerator
                             File.Delete(Path.Combine(AppVariables.FramesDirectory, FilenameCount.ToString() + ".png"));
                             File.Delete(Path.Combine(AppVariables.AudioDirectory, FilenameCount.ToString() + ".wav"));
 
-                            await Task.Delay(1000);
-
                             FilenameCount++;
                         }
 
@@ -331,8 +357,6 @@ namespace RedditVideoGenerator
                     Directory.Delete(CommentSentenceOutputDir, true);
 
                     ConsoleOutput.AppendText("> Finished generating comment video for comment with id: " + comment.Id + "\r\n");
-
-                    await Task.Delay(500);
 
                 }
 
