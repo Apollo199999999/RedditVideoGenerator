@@ -55,18 +55,18 @@
         </Grid>
 
         <TextBlock
-            x:Name="PostTitleText"
             Margin="0,20,0,0"
             HorizontalAlignment="Stretch"
             VerticalAlignment="Top"
             FontFamily="/Resources/IBMPlexSans/#IBM Plex Sans"
             FontSize="48"
             FontWeight="Bold"
-            Foreground="#d7dadc"
-            Text="What is something that is considered socially attractive when you are physically attractive but isn't when you're ugly?"
             TextTrimming="CharacterEllipsis"
             TextWrapping="Wrap">
-            <Run x:Name="PostNSFWTag" Foreground="#ff585b" />
+            <Run x:Name="PostNSFWTag" Foreground="#ff585b" /><Run
+                x:Name="PostTitleText"
+                Foreground="#d7dadc"
+                Text="What is something that is considered socially attractive when you are physically attractive but isn't when you're ugly?" />
         </TextBlock>
 
         <StackPanel

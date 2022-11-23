@@ -19,7 +19,7 @@ namespace RedditVideoGenerator
         public static string FramesDirectory = Path.Combine(WorkingDirectory, "frames");
         public static string AudioDirectory = Path.Combine(WorkingDirectory, "audio");
         public static string OutputDirectory = Path.Combine(WorkingDirectory, "output");
-        public static string ffmpegDirectory = Path.Combine(Environment.CurrentDirectory, "Resources\\ffmpeg");
+        public static string FFmpegDirectory = Path.Combine(Environment.CurrentDirectory, "Resources\\ffmpeg");
 
         //reddit variables
         public static string SubReddit = "AskReddit";

@@ -152,6 +152,7 @@ namespace RedditVideoGenerator
 
             if (AppVariables.PostIsNSFW == true)
             {
+                //show nsfw tag
                 titleCard.PostNSFWTag.Text = "[nsfw] ";
             }
 
@@ -164,16 +165,16 @@ namespace RedditVideoGenerator
             SaveControlAsImage(titleCard, Path.Combine(AppVariables.FramesDirectory, "title.png"));
 
             //use microsoft tts api to read subreddit and post title
-            var synthesizer = new SpeechSynthesizer();
-            synthesizer.SetOutputToWaveFile(Path.Combine(AppVariables.AudioDirectory, "title.wav"));
-            synthesizer.Speak("r/" + AppVariables.SubReddit + ", " + AppVariables.PostTitle);
-            synthesizer.Dispose();
+            var TitleSynthesizer = new SpeechSynthesizer();
+            TitleSynthesizer.SetOutputToWaveFile(Path.Combine(AppVariables.AudioDirectory, "title.wav"));
+            TitleSynthesizer.Speak("r/" + AppVariables.SubReddit + ", " + titleCard.PostNSFWTag.Text + ", " + titleCard.PostTitleText.Text);
+            TitleSynthesizer.Dispose();
 
             //run ffmpeg commands to generate title video
 
             //cmd commands to run
-            string command1 = "cd " + AppVariables.ffmpegDirectory;
-            string command2 = System.String.Format("ffmpeg -loop 1 -i {0} -i {1} -c:v libx264 -tune stillimage -c:a aac -b:a 192k -pix_fmt yuv420p -shortest {2}",
+            string TitleCommand1 = "cd " + AppVariables.FFmpegDirectory;
+            string TitleCommand2 = System.String.Format("ffmpeg -loop 1 -i {0} -i {1} -c:v libx264 -tune stillimage -c:a aac -b:a 192k -pix_fmt yuv420p -shortest {2}",
                 Path.Combine(AppVariables.FramesDirectory, "title.png"),
                 Path.Combine(AppVariables.AudioDirectory, "title.wav"),
                 Path.Combine(AppVariables.OutputDirectory, "title.mp4"));
@@ -182,7 +183,7 @@ namespace RedditVideoGenerator
             System.Diagnostics.ProcessStartInfo startInfo = new System.Diagnostics.ProcessStartInfo();
             startInfo.WindowStyle = System.Diagnostics.ProcessWindowStyle.Hidden;
             startInfo.FileName = "cmd.exe";
-            startInfo.Arguments = "/C " + command1 + " & " + command2;
+            startInfo.Arguments = "/C " + TitleCommand1 + " & " + TitleCommand2;
             process.StartInfo = startInfo;
             process.Start();
             process.WaitForExit();
@@ -222,12 +223,21 @@ namespace RedditVideoGenerator
 
             #endregion
 
+            ConsoleOutput.AppendText("> Generating comment videos...\r\n");
+
+            await Task.Delay(100);
+
             //iterate through comments and generate comment cards
             foreach (Comment comment in comments)
             {
-                if (comment.Author != null && comment.Body != null && comment.Body != "[deleted]" && comment.Body != "[removed]")
+                if (comment.Author != null && comment.Body != null && comment.Body != "[deleted]" 
+                    && comment.Body != "[removed]" && comment.Author.ToLower().Contains("moderator") == false)
                 {
                     int FilenameCount = 0;
+
+                    //create directory in output dir for storing video files
+                    string CommentSentenceOutputDir = Path.Combine(AppVariables.OutputDirectory, comment.Id);
+                    Directory.CreateDirectory(CommentSentenceOutputDir);
 
                     //set commentcard properties
                     commentCard.CommentAuthorText.Text = "u/" + comment.Author;
@@ -246,28 +256,92 @@ namespace RedditVideoGenerator
                     //iterate through sentences in commentsentences
                     foreach (string sentence in commentSentences)
                     {
+                        //there's a problem with this, this means that the rtb wont keep formatting (screw it idc anymore)
                         if (sentence != "" && sentence != " ")
                         {
+                            //append text and scroll to end
                             commentCard.CommentBodyText.AppendText(sentence);
-
-                            //only check the commentbodytext height after appending the sentence to see if the text will overflow
-                            if (commentCard.CommentBodyText.Height > 725)
-                            {
-                                //clear the rtb and append text again 
-                                commentCard.CommentBodyText.Document.Blocks.Clear();
-                                commentCard.CommentBodyText.AppendText(sentence);
-                            }
+                            commentCard.CommentBodyText.ScrollToEnd();
 
                             //save control
                             SaveControlAsImage(commentCard, Path.Combine(AppVariables.FramesDirectory, FilenameCount.ToString() + ".png"));
+
+                            //use microsoft tts api to read sentence
+                            var CommentSentenceSynth = new SpeechSynthesizer();
+                            CommentSentenceSynth.SetOutputToWaveFile(Path.Combine(AppVariables.AudioDirectory, FilenameCount.ToString() + ".wav"));
+                            CommentSentenceSynth.Speak(sentence);
+                            CommentSentenceSynth.Dispose();
+
+                            //cmd commands to run
+                            string SentenceCommand1 = "cd " + AppVariables.FFmpegDirectory;
+                            string SentenceCommand2 = System.String.Format("ffmpeg -loop 1 -i {0} -i {1} -c:v libx264 -tune stillimage -c:a aac -b:a 192k -pix_fmt yuv420p -shortest {2}",
+                                Path.Combine(AppVariables.FramesDirectory, FilenameCount.ToString() + ".png"),
+                                Path.Combine(AppVariables.AudioDirectory, FilenameCount.ToString() + ".wav"),
+                                Path.Combine(CommentSentenceOutputDir, FilenameCount.ToString() + ".mp4"));
+
+                            System.Diagnostics.Process proc = new System.Diagnostics.Process();
+                            System.Diagnostics.ProcessStartInfo startInformation = new System.Diagnostics.ProcessStartInfo();
+                            startInformation.WindowStyle = System.Diagnostics.ProcessWindowStyle.Hidden;
+                            startInformation.FileName = "cmd.exe";
+                            startInformation.Arguments = "/C " + SentenceCommand1 + " & " + SentenceCommand2;
+                            proc.StartInfo = startInformation;
+                            proc.Start();
+                            proc.WaitForExit();
+
+                            //clean up and delete files
+                            File.Delete(Path.Combine(AppVariables.FramesDirectory, FilenameCount.ToString() + ".png"));
+                            File.Delete(Path.Combine(AppVariables.AudioDirectory, FilenameCount.ToString() + ".wav"));
+
                             FilenameCount++;
+
+                            await Task.Delay(200);
                         }
+
                     }
 
-                    break;
+
+                    //combine all sentence videos
+                    //create a new list and sort the files
+                    var list = Directory.GetFiles(CommentSentenceOutputDir);
+                    Array.Sort(list, new AlphanumComparatorFast());
+
+                    StreamWriter sw = File.CreateText(Path.Combine(CommentSentenceOutputDir, "FFmpegCommand.txt"));
+                    //write video filepaths to a txt file
+                    foreach (string file in list)
+                    {
+                        sw.WriteLine(String.Format("file '{0}'", Path.GetFileName(file)));
+                    }
+                    sw.Close();
+                    sw.Dispose();
+
+                    //cmd commands
+                    string CommentCommand1 = "cd " + AppVariables.FFmpegDirectory;
+                    string CommentCommand2 = String.Format("ffmpeg -f concat -safe 0 -i {0} -c copy {1}", 
+                        Path.Combine(CommentSentenceOutputDir, "FFmpegCommand.txt"), 
+                        Path.Combine(AppVariables.OutputDirectory, comment.Id + ".mp4"));
+
+                    //run ffmpeg
+                    System.Diagnostics.Process CommentProc = new System.Diagnostics.Process();
+                    System.Diagnostics.ProcessStartInfo CommentStartInformation = new System.Diagnostics.ProcessStartInfo();
+                    CommentStartInformation.WindowStyle = System.Diagnostics.ProcessWindowStyle.Hidden;
+                    CommentStartInformation.FileName = "cmd.exe";
+                    CommentStartInformation.Arguments = "/C " + CommentCommand1 + " & " + CommentCommand2;
+                    CommentProc.StartInfo = CommentStartInformation;
+                    CommentProc.Start();
+                    CommentProc.WaitForExit();
+
+                    //clean up files
+                    Directory.Delete(CommentSentenceOutputDir, true);
+
+                    await Task.Delay(200);
+
+                    ConsoleOutput.AppendText("> Finished generating comment video for comment with id: " + comment.Id + "\r\n");
+
                 }
 
             }
+
+            ConsoleOutput.AppendText("> Finished generating all comment videos.\r\n");
 
             #endregion
 

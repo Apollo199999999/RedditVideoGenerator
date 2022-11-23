@@ -33,7 +33,6 @@
                         TextWrapping="NoWrap" />
 
                     <TextBlock
-                        x:Name="PostTitleText"
                         MaxWidth="1735"
                         Margin="0,5,0,0"
                         HorizontalAlignment="Left"
@@ -41,11 +40,12 @@
                         FontFamily="/Resources/IBMPlexSans/#IBM Plex Sans"
                         FontSize="36"
                         FontWeight="Bold"
-                        Foreground="#818384"
-                        Text="Post title Lorem Ipsum Dolor Sit Amet Consecutor Consecutive I don't remember the rest."
                         TextTrimming="CharacterEllipsis"
                         TextWrapping="NoWrap">
-                        <Run x:Name="PostNSFWTag" Foreground="#ff585b" />
+                        <Run x:Name="PostNSFWTag" Foreground="#ff585b" /><Run
+                            x:Name="PostTitleText"
+                            Foreground="#818384"
+                            Text="Post title Lorem Ipsum Dolor Sit Amet Consecutor Consecutive I don't remember the rest." />
                     </TextBlock>
                 </StackPanel>
 
@@ -75,16 +75,17 @@
 
             <RichTextBox
                 x:Name="CommentBodyText"
-                Margin="-9,20,0,0"
+                MaxHeight="725"
                 Background="Transparent"
                 BorderThickness="0"
                 Foreground="#d7dadc"
                 IsDocumentEnabled="True"
-                IsReadOnly="True" />
+                IsReadOnly="True"
+                VerticalScrollBarVisibility="Hidden" />
         </StackPanel>
 
         <StackPanel
-            Margin="0,25,0,0"
+            Margin="0,20,0,0"
             HorizontalAlignment="Right"
             VerticalAlignment="Bottom"
             Orientation="Horizontal">

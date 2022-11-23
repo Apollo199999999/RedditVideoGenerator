@@ -79,6 +79,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="AlphanumComparatorFast.cs" />
     <Compile Include="Controls\CommentCard.xaml.cs">
       <DependentUpon>CommentCard.xaml</DependentUpon>
     </Compile>
