@@ -40,6 +40,7 @@
                         FontFamily="/Resources/IBMPlexSans/#IBM Plex Sans"
                         FontSize="36"
                         FontWeight="Bold"
+                        Foreground="#818384"
                         TextTrimming="CharacterEllipsis"
                         TextWrapping="NoWrap">
                         <Run x:Name="PostNSFWTag" Foreground="#ff585b" /><Run

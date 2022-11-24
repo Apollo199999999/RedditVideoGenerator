@@ -43,6 +43,12 @@ namespace RedditVideoGenerator
             Main();
         }
 
+        private void ConsoleOutput_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            //scroll to end
+            ConsoleOutput.ScrollToEnd();
+        }
+
         #region Helper functions
         public string StringFromRichTextBox(RichTextBox rtb)
         {
@@ -407,7 +413,7 @@ namespace RedditVideoGenerator
             {
                 //normalise videos
                 await StartProcess(Path.Combine(AppVariables.FFmpegDirectory, "ffmpeg.exe"), 
-                    String.Format(" -i {0} -acodec aac -ac 2 -ar 48000 -vcodec libx264 -s 1920x1080 -r 25 -bsf:v h264_mp4toannexb {1}", 
+                    String.Format(" -i {0} -acodec aac -ac 1 -ar 48000 -vcodec libx264 -s 1920x1080 -filter:v fps=25 -vsync cfr -bsf:v h264_mp4toannexb {1}", 
                     file, 
                     Path.Combine(AppVariables.OutputDirectory, Path.GetFileNameWithoutExtension(file) + ".mp4")));
 
@@ -440,6 +446,17 @@ namespace RedditVideoGenerator
             //kill ffmpeg after
             await StartProcess("taskkill.exe", " /f /im ffmpeg.exe");
 
+            //clean up files in output directory
+            var FilesList = Directory.GetFiles(AppVariables.OutputDirectory);
+
+            foreach (string file in FilesList)
+            {
+                if (Path.GetFileName(file) != "output.mp4")
+                {
+                    File.Delete(file);
+                }
+            }
+
             ConsoleOutput.AppendText("> Done concatenating videos.\r\n");
 
             #endregion
@@ -449,6 +466,5 @@ namespace RedditVideoGenerator
         }
 
         #endregion
-
     }
 }

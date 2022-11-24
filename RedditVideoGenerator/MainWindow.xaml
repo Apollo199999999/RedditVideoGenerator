@@ -46,7 +46,8 @@
                 IsReadOnlyCaretVisible="True"
                 Loaded="ConsoleOutput_Loaded"
                 TextWrapping="Wrap"
-                VerticalScrollBarVisibility="Visible" />
+                VerticalScrollBarVisibility="Visible"
+                TextChanged="ConsoleOutput_TextChanged"/>
         </StackPanel>
 
     </Grid>
