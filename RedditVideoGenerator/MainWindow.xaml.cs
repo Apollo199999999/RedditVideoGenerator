@@ -85,7 +85,7 @@ namespace RedditVideoGenerator
         {
             Process process = new Process();
             ProcessStartInfo startInfo = new ProcessStartInfo();
-            startInfo.WindowStyle = ProcessWindowStyle.Minimized;
+            startInfo.WindowStyle = ProcessWindowStyle.Hidden;
             startInfo.FileName = filepath;
             startInfo.Arguments = args;
             process.StartInfo = startInfo;
@@ -114,7 +114,6 @@ namespace RedditVideoGenerator
 
         public void SpeakText(string text, string path)
         {
-            //i have discovered the problem. if the character is '.' the tts wont read and ffmpeg will freeze.
             //use speech synthesiser to speak text
             SpeechSynthesizer synthesizer = new SpeechSynthesizer();
             synthesizer.SetOutputToWaveFile(path);
