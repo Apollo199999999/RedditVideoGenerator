@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
 using Reddit;
@@ -13,8 +14,34 @@ namespace RedditVideoGenerator
 {
     public class RedditFunctions
     {
-        public RedditClient redditClient = new RedditClient(appId: APIKeys.RedditAppID, appSecret: APIKeys.RedditAppSecret, 
-            accessToken: APIKeys.RedditAccessToken, refreshToken: APIKeys.RedditRefreshToken);
+        public RedditClient redditClient;
+
+        public void InitializeRedditClient()
+        {
+            try
+            {
+                //init reddit client
+                redditClient = new RedditClient(appId: APIKeys.RedditAppID, appSecret: APIKeys.RedditAppSecret, 
+                    accessToken: APIKeys.RedditAccessToken, refreshToken: APIKeys.RedditRefreshToken);
+
+                //try querying something from reddit
+                var subreddit = redditClient.Subreddit(AppVariables.SubReddit);
+                List<Post> posts = subreddit.Posts.GetTop(new TimedCatSrListingInput());
+            }
+            catch
+            {
+                //show error message, then exit app
+                MessageBoxResult messageBox = MessageBox.Show("Unable to initialize Reddit Client to contact Reddit. " +
+                    "Check your internet connection and try again later.", "Error contacting reddit",
+                    MessageBoxButton.OK, MessageBoxImage.Error);
+
+                if (messageBox == MessageBoxResult.OK)
+                {
+                    Application.Current.Shutdown();
+                }
+
+            }
+        }
 
         public string GetRandomTopMonthlyPostID()
         {
@@ -35,15 +62,15 @@ namespace RedditVideoGenerator
             AppVariables.PostIsNSFW = posts[r].NSFW;
             AppVariables.PostId = posts[r].Id;
 
-            return "t3_" + posts[r].Id;
+            //return "t3_" + posts[r].Id;
+            return "t3_yoe69r";
         }
 
         public List<Comment> GetPostTopComments(string postID)
         {
             //get top comments
             Post post = redditClient.Subreddit(AppVariables.SubReddit).Post(postID).About();
-            List<Comment> comments =  post.Comments.GetTop(depth: 0, showMore: true, limit: 40);
-
+            List<Comment> comments = post.Comments.GetTop(depth: 0, showMore: true, limit: 40);
             return comments;
         }
     }

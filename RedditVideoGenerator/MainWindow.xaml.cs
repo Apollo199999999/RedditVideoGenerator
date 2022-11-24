@@ -135,7 +135,7 @@ namespace RedditVideoGenerator
 
         public async void Main()
         {
-            #region Intialization code
+            #region Initialization code
 
             //show some initialization text
             ConsoleOutput.AppendText("> Initializing RedditVideoGenerator...\r\n");
@@ -155,7 +155,7 @@ namespace RedditVideoGenerator
             //allow some time in case some libraries/code hasn't loaded yet
             await Task.Delay(1000);
 
-            ConsoleOutput.AppendText("> Intialization complete \r\n");
+            ConsoleOutput.AppendText("> Initialization complete \r\n");
 
             //wait a while
             await Task.Delay(100);
@@ -164,15 +164,28 @@ namespace RedditVideoGenerator
 
             #region Reddit API Queries and Video Generation
 
+            #region Initialize Reddit Client
+
+            ConsoleOutput.AppendText("> Initializing Reddit Client...\r\n");
+
+            await Task.Delay(100);
+
+            //start redditfunctions
+            RedditFunctions redditFunctions = new RedditFunctions();
+            redditFunctions.InitializeRedditClient();
+
+            ConsoleOutput.AppendText("> Done initializing Reddit Client.\r\n");
+
+            await Task.Delay(100);
+
+            #endregion
+
             #region Get random top monthly post
 
             ConsoleOutput.AppendText("> Getting random top monthly post from r/" + AppVariables.SubReddit + "\r\n");
 
             //wait a while
             await Task.Delay(500);
-
-            //start redditfunctions
-            RedditFunctions redditFunctions = new RedditFunctions();
 
             //get id of random top monthly post
             string TopPostID = redditFunctions.GetRandomTopMonthlyPostID();
@@ -185,7 +198,7 @@ namespace RedditVideoGenerator
 
             #region Title Video Generation
 
-            ConsoleOutput.AppendText("> Creating title video...\r\n");
+            ConsoleOutput.AppendText("> Generating title video...\r\n");
 
             await Task.Delay(100);
 
@@ -228,6 +241,10 @@ namespace RedditVideoGenerator
             File.Delete(Path.Combine(AppVariables.AudioDirectory, "title.wav"));
 
             await Task.Delay(500);
+
+            ConsoleOutput.AppendText("> Done generating title video.\r\n");
+
+            await Task.Delay(100);
 
             #endregion
 
@@ -288,7 +305,7 @@ namespace RedditVideoGenerator
                     commentCard.CommentBodyText.Document.TextAlignment = TextAlignment.Left;
 
                     //next, we extract the raw text from the richtextbox (which is the comment text) and clear it
-                    string[] commentSentences = Regex.Split(StringFromRichTextBox(commentCard.CommentBodyText).Trim(), @"(?<=[.!?])");
+                    string[] commentSentences = Regex.Split(StringFromRichTextBox(commentCard.CommentBodyText).Trim(), @"(?<=[.!?])|(?=[\n])");
                     commentCard.CommentBodyText.Document.Blocks.Clear();
 
                     //iterate through sentences in commentsentences
@@ -362,6 +379,55 @@ namespace RedditVideoGenerator
             }
 
             ConsoleOutput.AppendText("> Finished generating all comment videos.\r\n");
+
+            await Task.Delay(100);
+
+            #endregion
+
+            #region Video concatenation
+
+            ConsoleOutput.AppendText("> Concatenating videos...\r\n");
+
+            await Task.Delay(100);
+
+            //copy transition video from resources to output dir
+            File.Copy(Path.Combine(AppVariables.ResourcesDirectory, "transition.mkv"), 
+                Path.Combine(AppVariables.OutputDirectory, "transition.mkv"));
+
+            //iterate through videos in output directory, generating a text file of videos.
+            var VideosList = Directory.GetFiles(AppVariables.OutputDirectory);
+
+            StreamWriter streamWriter = File.CreateText(Path.Combine(AppVariables.OutputDirectory, "FFmpegCommand.txt"));
+            streamWriter.WriteLine("file 'title.mkv'");
+
+            //write video filepaths to a txt file
+            foreach (string file in VideosList)
+            {
+                //normalise videos
+                await StartProcess(Path.Combine(AppVariables.FFmpegDirectory, "ffmpeg.exe"), 
+                    String.Format(" -i {0} -acodec libvo_aacenc -vcodec libx264 -s 1920x1080 -r 25 -strict experimental {1}", file, file));
+
+                if (Path.GetFileName(file) != "transition.mkv" && Path.GetFileName(file) != "title.mkv")
+                {
+                    streamWriter.WriteLine("file 'transition.mkv'");
+                    streamWriter.WriteLine(String.Format("file '{0}'", Path.GetFileName(file)));
+                }
+            }
+            streamWriter.Close();
+            streamWriter.Dispose();
+
+            //cmd commands
+            string VideoCommand = String.Format(" -nostdin -f concat -safe 0 -i {0} -c copy {1}",
+                Path.Combine(AppVariables.OutputDirectory, "FFmpegCommand.txt"),
+                Path.Combine(AppVariables.OutputDirectory, AppVariables.PostTitle + ".mkv"));
+
+            //run ffmpeg
+            await StartProcess(Path.Combine(AppVariables.FFmpegDirectory, "ffmpeg.exe"), VideoCommand);
+
+            //kill ffmpeg after
+            await StartProcess("taskkill.exe", " /f /im ffmpeg.exe");
+
+            ConsoleOutput.AppendText("> Done concatenating videos.\r\n");
 
             #endregion
 
