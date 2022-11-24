@@ -69,7 +69,7 @@ namespace RedditVideoGenerator
         {
             //get top comments
             Post post = redditClient.Subreddit(AppVariables.SubReddit).Post(postID).About();
-            List<Comment> comments = post.Comments.GetTop(depth: 0, showMore: true, limit: 90);
+            List<Comment> comments = post.Comments.GetTop(depth: 0, showMore: true, limit: 200);
             return comments;
         }
     }

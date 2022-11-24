@@ -349,7 +349,7 @@ namespace RedditVideoGenerator
                     var list = Directory.GetFiles(CommentSentenceOutputDir);
                     Array.Sort(list, new AlphanumComparatorFast());
 
-                    StreamWriter sw = File.CreateText(Path.Combine(CommentSentenceOutputDir, "FFmpegCommand.txt"));
+                    StreamWriter sw = File.CreateText(Path.Combine(CommentSentenceOutputDir, "FFmpegFiles.txt"));
                     //write video filepaths to a txt file
                     foreach (string file in list)
                     {
@@ -360,7 +360,7 @@ namespace RedditVideoGenerator
 
                     //cmd commands
                     string CommentCommand = String.Format(" -nostdin -f concat -safe 0 -i {0} -c copy {1}",
-                        Path.Combine(CommentSentenceOutputDir, "FFmpegCommand.txt"),
+                        Path.Combine(CommentSentenceOutputDir, "FFmpegFiles.txt"),
                         Path.Combine(AppVariables.OutputDirectory, comment.Id + ".mkv"));
 
                     //run ffmpeg
@@ -384,11 +384,13 @@ namespace RedditVideoGenerator
 
             #endregion
 
-            #region Video concatenation
+            #region Video Concatenation
 
             ConsoleOutput.AppendText("> Concatenating videos...\r\n");
 
             await Task.Delay(100);
+
+            //AT THIS STAGE, THE OUTPUT FOLDER SHOULD ONLY CONTAIN .MKV VIDEOS
 
             //copy transition video from resources to output dir
             File.Copy(Path.Combine(AppVariables.ResourcesDirectory, "transition.mkv"), 
@@ -397,30 +399,41 @@ namespace RedditVideoGenerator
             //iterate through videos in output directory, generating a text file of videos.
             var VideosList = Directory.GetFiles(AppVariables.OutputDirectory);
 
-            StreamWriter streamWriter = File.CreateText(Path.Combine(AppVariables.OutputDirectory, "FFmpegCommand.txt"));
-            streamWriter.WriteLine("file 'title.mkv'");
+            StreamWriter streamWriter = File.CreateText(Path.Combine(AppVariables.OutputDirectory, "FFmpegFiles.txt"));
+            streamWriter.WriteLine("file 'title.mp4'");
 
             //write video filepaths to a txt file
             foreach (string file in VideosList)
             {
                 //normalise videos
                 await StartProcess(Path.Combine(AppVariables.FFmpegDirectory, "ffmpeg.exe"), 
-                    String.Format(" -i {0} -acodec libvo_aacenc -vcodec libx264 -s 1920x1080 -r 25 -strict experimental {1}", file, file));
+                    String.Format(" -i {0} -acodec aac -ac 2 -ar 48000 -vcodec libx264 -s 1920x1080 -r 25 -bsf:v h264_mp4toannexb {1}", 
+                    file, 
+                    Path.Combine(AppVariables.OutputDirectory, Path.GetFileNameWithoutExtension(file) + ".mp4")));
 
-                if (Path.GetFileName(file) != "transition.mkv" && Path.GetFileName(file) != "title.mkv")
+                //kill ffmpeg after
+                await StartProcess("taskkill.exe", " /f /im ffmpeg.exe");
+
+                File.Delete(file);
+               
+                if (Path.GetFileNameWithoutExtension(file) != "transition" && Path.GetFileNameWithoutExtension(file) != "title")
                 {
-                    streamWriter.WriteLine("file 'transition.mkv'");
-                    streamWriter.WriteLine(String.Format("file '{0}'", Path.GetFileName(file)));
+                    streamWriter.WriteLine("file 'transition.mp4'");
+                    streamWriter.WriteLine(String.Format("file '{0}'", Path.Combine(AppVariables.OutputDirectory, Path.GetFileNameWithoutExtension(file) + ".mp4")));
                 }
+
             }
+
             streamWriter.Close();
             streamWriter.Dispose();
 
+            //AT THIS POINT, ALL THE MKV VIDEOS HAVE BEEN CONVERTED TO MP4, AND A TEXT FILE CONTAINING ALL THE MP4 FILES TO CONCATENATE HAS BEEN GENERATED FOR FFMPEG
+
             //cmd commands
             string VideoCommand = String.Format(" -nostdin -f concat -safe 0 -i {0} -c copy {1}",
-                Path.Combine(AppVariables.OutputDirectory, "FFmpegCommand.txt"),
-                Path.Combine(AppVariables.OutputDirectory, AppVariables.PostTitle + ".mkv"));
-
+                Path.Combine(AppVariables.OutputDirectory, "FFmpegFiles.txt"),
+                Path.Combine(AppVariables.OutputDirectory, "output.mp4"));
+            Debug.WriteLine(VideoCommand);
             //run ffmpeg
             await StartProcess(Path.Combine(AppVariables.FFmpegDirectory, "ffmpeg.exe"), VideoCommand);
 
