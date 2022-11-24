@@ -125,7 +125,7 @@ namespace RedditVideoGenerator
                 //replace wav file with empty one with duration of half a second
                 WaveFormat waveFormat = new WaveFormat(8000, 8, 1);
                 WaveFileWriter waveFileWriter = new WaveFileWriter(path, waveFormat);
-                WriteSilence(waveFormat, 500, waveFileWriter);
+                WriteSilence(waveFormat, 200, waveFileWriter);
             }
         }
 

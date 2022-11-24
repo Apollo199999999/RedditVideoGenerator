@@ -76,7 +76,7 @@
             <RichTextBox
                 x:Name="CommentBodyText"
                 MaxHeight="725"
-                Margin="-9,20,0,0"
+                Margin="0,20,0,0"
                 Background="Transparent"
                 BorderThickness="0"
                 Foreground="#d7dadc"
