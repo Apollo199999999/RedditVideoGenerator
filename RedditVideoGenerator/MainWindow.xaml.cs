@@ -172,7 +172,7 @@ namespace RedditVideoGenerator
 
             #region Initialize Reddit Client
 
-            ConsoleOutput.AppendText("> Initializing Reddit Client...\r\n");
+            ConsoleOutput.AppendText("> Initializing Reddit client...\r\n");
 
             await Task.Delay(100);
 
@@ -180,7 +180,7 @@ namespace RedditVideoGenerator
             RedditFunctions redditFunctions = new RedditFunctions();
             redditFunctions.InitializeRedditClient();
 
-            ConsoleOutput.AppendText("> Done initializing Reddit Client.\r\n");
+            ConsoleOutput.AppendText("> Done initializing Reddit client.\r\n");
 
             await Task.Delay(100);
 
@@ -232,10 +232,10 @@ namespace RedditVideoGenerator
                 Path.Combine(AppVariables.AudioDirectory, "title.wav"));
 
             //run ffmpeg commands to generate title video
-            string TitleCommand = System.String.Format(" -nostdin -loop 1 -i {0} -i {1} -shortest -acodec copy -pix_fmt yuv420p {2}",
+            string TitleCommand = System.String.Format(" -nostdin -loop 1 -i {0} -i {1} -shortest -vcodec libx264 -acodec aac -ac 1 -ar 48000 -pix_fmt yuv420p -s 1920x1080 -bsf:v h264_mp4toannexb -r 30 -fps_mode cfr {2}",
                 Path.Combine(AppVariables.FramesDirectory, "title.png"),
                 Path.Combine(AppVariables.AudioDirectory, "title.wav"),
-                Path.Combine(AppVariables.OutputDirectory, "title.mkv"));
+                Path.Combine(AppVariables.OutputDirectory, "title.mp4"));
 
             await StartProcess(Path.Combine(AppVariables.FFmpegDirectory, "ffmpeg.exe"), TitleCommand);
 
@@ -331,10 +331,10 @@ namespace RedditVideoGenerator
                             SpeakText(sentence, Path.Combine(AppVariables.AudioDirectory, FilenameCount.ToString() + ".wav"));
 
                             //run ffmpeg
-                            string SentenceCommand = System.String.Format(" -nostdin -loop 1 -i {0} -i {1} -shortest -acodec copy -pix_fmt yuv420p {2}",
+                            string SentenceCommand = System.String.Format(" -nostdin -loop 1 -i {0} -i {1} -shortest -vcodec libx264 -acodec aac -ac 1 -ar 48000 -pix_fmt yuv420p -s 1920x1080 -bsf:v h264_mp4toannexb -r 30 -fps_mode cfr {2}",
                                 Path.Combine(AppVariables.FramesDirectory, FilenameCount.ToString() + ".png"),
                                 Path.Combine(AppVariables.AudioDirectory, FilenameCount.ToString() + ".wav"),
-                                Path.Combine(CommentSentenceOutputDir, FilenameCount.ToString() + ".mkv"));
+                                Path.Combine(CommentSentenceOutputDir, FilenameCount.ToString() + ".mp4"));
 
                             await StartProcess(Path.Combine(AppVariables.FFmpegDirectory, "ffmpeg.exe"), SentenceCommand);
 
@@ -365,9 +365,9 @@ namespace RedditVideoGenerator
                     sw.Dispose();
 
                     //cmd commands
-                    string CommentCommand = String.Format(" -nostdin -f concat -safe 0 -i {0} -c copy {1}",
+                    string CommentCommand = String.Format(" -nostdin -f concat -safe 0 -i {0} -c copy -r 30 -fps_mode cfr {1}",
                         Path.Combine(CommentSentenceOutputDir, "FFmpegFiles.txt"),
-                        Path.Combine(AppVariables.OutputDirectory, comment.Id + ".mkv"));
+                        Path.Combine(AppVariables.OutputDirectory, comment.Id + ".mp4"));
 
                     //run ffmpeg
                     await StartProcess(Path.Combine(AppVariables.FFmpegDirectory, "ffmpeg.exe"), CommentCommand);
@@ -396,11 +396,9 @@ namespace RedditVideoGenerator
 
             await Task.Delay(100);
 
-            //AT THIS STAGE, THE OUTPUT FOLDER SHOULD ONLY CONTAIN .MKV VIDEOS
-
             //copy transition video from resources to output dir
-            File.Copy(Path.Combine(AppVariables.ResourcesDirectory, "transition.mkv"), 
-                Path.Combine(AppVariables.OutputDirectory, "transition.mkv"));
+            File.Copy(Path.Combine(AppVariables.ResourcesDirectory, "transition.mp4"), 
+                Path.Combine(AppVariables.OutputDirectory, "transition.mp4"));
 
             //iterate through videos in output directory, generating a text file of videos.
             var VideosList = Directory.GetFiles(AppVariables.OutputDirectory);
@@ -411,17 +409,6 @@ namespace RedditVideoGenerator
             //write video filepaths to a txt file
             foreach (string file in VideosList)
             {
-                //normalise videos
-                await StartProcess(Path.Combine(AppVariables.FFmpegDirectory, "ffmpeg.exe"), 
-                    String.Format(" -i {0} -acodec aac -ac 1 -ar 48000 -vcodec libx264 -s 1920x1080 -filter:v fps=25 -vsync cfr -bsf:v h264_mp4toannexb {1}", 
-                    file, 
-                    Path.Combine(AppVariables.OutputDirectory, Path.GetFileNameWithoutExtension(file) + ".mp4")));
-
-                //kill ffmpeg after
-                await StartProcess("taskkill.exe", " /f /im ffmpeg.exe");
-
-                File.Delete(file);
-               
                 if (Path.GetFileNameWithoutExtension(file) != "transition" && Path.GetFileNameWithoutExtension(file) != "title")
                 {
                     streamWriter.WriteLine("file 'transition.mp4'");
@@ -433,10 +420,9 @@ namespace RedditVideoGenerator
             streamWriter.Close();
             streamWriter.Dispose();
 
-            //AT THIS POINT, ALL THE MKV VIDEOS HAVE BEEN CONVERTED TO MP4, AND A TEXT FILE CONTAINING ALL THE MP4 FILES TO CONCATENATE HAS BEEN GENERATED FOR FFMPEG
 
             //cmd commands
-            string VideoCommand = String.Format(" -nostdin -f concat -safe 0 -i {0} -c copy {1}",
+            string VideoCommand = String.Format(" -nostdin -f concat -safe 0 -i {0} -c copy -r 30 -fps_mode cfr {1}",
                 Path.Combine(AppVariables.OutputDirectory, "FFmpegFiles.txt"),
                 Path.Combine(AppVariables.OutputDirectory, "output.mp4"));
             Debug.WriteLine(VideoCommand);

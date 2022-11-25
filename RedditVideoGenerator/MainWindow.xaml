@@ -33,7 +33,7 @@
             <TextBlock
                 Margin="0,10,0,0"
                 FontSize="14"
-                Text="Generator console output:" />
+                Text="Generator output:" />
 
             <TextBox
                 x:Name="ConsoleOutput"
@@ -45,9 +45,9 @@
                 IsReadOnly="True"
                 IsReadOnlyCaretVisible="True"
                 Loaded="ConsoleOutput_Loaded"
+                TextChanged="ConsoleOutput_TextChanged"
                 TextWrapping="Wrap"
-                VerticalScrollBarVisibility="Visible"
-                TextChanged="ConsoleOutput_TextChanged"/>
+                VerticalScrollBarVisibility="Visible" />
         </StackPanel>
 
     </Grid>

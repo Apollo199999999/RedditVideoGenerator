@@ -31,8 +31,8 @@ namespace RedditVideoGenerator
             catch
             {
                 //show error message, then exit app
-                MessageBoxResult messageBox = MessageBox.Show("Unable to initialize Reddit Client to contact Reddit. " +
-                    "Check your internet connection and try again later.", "Error contacting reddit",
+                MessageBoxResult messageBox = MessageBox.Show("Unable to initialize Reddit client to contact Reddit. " +
+                    "Check your internet connection and try again later.", "Error contacting Reddit",
                     MessageBoxButton.OK, MessageBoxImage.Error);
 
                 if (messageBox == MessageBoxResult.OK)
