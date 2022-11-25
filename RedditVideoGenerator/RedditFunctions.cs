@@ -47,7 +47,7 @@ namespace RedditVideoGenerator
         {
             //get top monthpy posts from subreddit
             var subreddit = redditClient.Subreddit(AppVariables.SubReddit);
-            List<Post> posts = subreddit.Posts.GetTop(new TimedCatSrListingInput(t: "month", limit: 100));
+            List<Post> posts = subreddit.Posts.GetTop(new TimedCatSrListingInput(t: "year", limit: 100));
 
             //choose random post from list
             Random rnd = new Random();
@@ -69,7 +69,7 @@ namespace RedditVideoGenerator
         {
             //get top comments
             Post post = redditClient.Subreddit(AppVariables.SubReddit).Post(postID).About();
-            List<Comment> comments = post.Comments.GetTop(depth: 0, showMore: true, limit: 200);
+            List<Comment> comments = post.Comments.GetTop(depth: 0, showMore: true, limit: 500);
             return comments;
         }
     }

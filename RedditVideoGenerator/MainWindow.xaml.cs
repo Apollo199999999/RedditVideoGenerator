@@ -14,6 +14,8 @@ using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using Shell32;
+using System.Linq;
 
 namespace RedditVideoGenerator
 {
@@ -109,15 +111,6 @@ namespace RedditVideoGenerator
             }
         }
 
-        public static void WriteSilence(WaveFormat waveFormat, int silenceMilliSecondLength, WaveFileWriter waveFileWriter)
-        {
-            int bytesPerMillisecond = waveFormat.AverageBytesPerSecond / 1000;
-            //an new all zero byte array will play silence
-            var silentBytes = new byte[silenceMilliSecondLength * bytesPerMillisecond];
-            waveFileWriter.Write(silentBytes, 0, silentBytes.Length);
-            waveFileWriter.Dispose();
-        }
-
         public void SpeakText(string text, string path)
         {
             //use speech synthesiser to speak text
@@ -128,10 +121,35 @@ namespace RedditVideoGenerator
 
             if (GetWavFileDuration(path) == TimeSpan.Zero)
             {
-                //replace wav file with empty one with duration of half a second
-                WaveFormat waveFormat = new WaveFormat(8000, 8, 1);
-                WaveFileWriter waveFileWriter = new WaveFileWriter(path, waveFormat);
-                WriteSilence(waveFormat, 200, waveFileWriter);
+                //replace wav file with empty one with duration of 200ms
+                PromptBuilder empty = new PromptBuilder();
+                empty.AppendText(".");
+                empty.AppendBreak(TimeSpan.FromMilliseconds(200));
+
+                SpeechSynthesizer EmptySynthesizer = new SpeechSynthesizer();
+                EmptySynthesizer.SetOutputToWaveFile(path);
+                EmptySynthesizer.Speak(empty);
+                EmptySynthesizer.Dispose();
+            }
+        }
+
+        public static bool GetDuration(string filename, out TimeSpan duration)
+        {
+            try
+            {
+                var shl = new Shell();
+                var fldr = shl.NameSpace(Path.GetDirectoryName(filename));
+                var itm = fldr.ParseName(Path.GetFileName(filename));
+
+                // Index 27 is the video duration [This may not always be the case]
+                var propValue = fldr.GetDetailsOf(itm, 27);
+
+                return TimeSpan.TryParse(propValue, out duration);
+            }
+            catch (Exception)
+            {
+                duration = new TimeSpan();
+                return false;
             }
         }
 
@@ -186,9 +204,9 @@ namespace RedditVideoGenerator
 
             #endregion
 
-            #region Get random top monthly post
+            #region Get random top yearly post
 
-            ConsoleOutput.AppendText("> Getting random top monthly post from r/" + AppVariables.SubReddit + "\r\n");
+            ConsoleOutput.AppendText("> Getting random top yearly post from r/" + AppVariables.SubReddit + "\r\n");
 
             //wait a while
             await Task.Delay(500);
@@ -265,10 +283,6 @@ namespace RedditVideoGenerator
 
             await Task.Delay(100);
 
-            ConsoleOutput.AppendText("> Number of comments: " + comments.Count + "\r\n");
-
-            await Task.Delay(100);
-
             //init new comment card
             CommentCard commentCard = new CommentCard();
             commentCard.PostSubredditText.Text = "r/" + AppVariables.SubReddit;
@@ -291,6 +305,27 @@ namespace RedditVideoGenerator
             //iterate through comments and generate comment cards
             foreach (Comment comment in comments)
             {
+                //check total duration of videos in output dir to see if it exceeds 15 mins, and if so, break out of foreach loop and dont generate comment video
+                TimeSpan TotalDuration = new TimeSpan();
+
+                var OutputVideos = Directory.GetFiles(AppVariables.OutputDirectory);
+
+                foreach (string video in OutputVideos)
+                {
+                    TimeSpan VideoDuration;
+
+                    if (GetDuration(video, out VideoDuration))
+                    {
+                        TotalDuration += VideoDuration;
+                    }
+                }
+
+                if (TotalDuration >= new TimeSpan(0, 0, 15, 0))
+                {
+                    break;
+                }
+
+
                 if (comment.Author != null && comment.Body != null && comment.Body != "[deleted]"
                     && comment.Body != "[removed]" && comment.Author.ToLower().Contains("moderator") == false)
                 {
@@ -317,7 +352,6 @@ namespace RedditVideoGenerator
                     //iterate through sentences in commentsentences
                     foreach (string sentence in commentSentences)
                     {
-                        //there's a problem with this, this means that the rtb wont keep formatting (screw it idc anymore)
                         if (sentence != "" && sentence != " ")
                         {
                             //append text and scroll to end
@@ -347,7 +381,6 @@ namespace RedditVideoGenerator
 
                             FilenameCount++;
                         }
-
                     }
 
                     //combine all sentence videos
@@ -356,11 +389,13 @@ namespace RedditVideoGenerator
                     Array.Sort(list, new AlphanumComparatorFast());
 
                     StreamWriter sw = File.CreateText(Path.Combine(CommentSentenceOutputDir, "FFmpegFiles.txt"));
+
                     //write video filepaths to a txt file
                     foreach (string file in list)
                     {
                         sw.WriteLine(String.Format("file '{0}'", Path.GetFileName(file)));
                     }
+
                     sw.Close();
                     sw.Dispose();
 
@@ -379,7 +414,6 @@ namespace RedditVideoGenerator
                     Directory.Delete(CommentSentenceOutputDir, true);
 
                     ConsoleOutput.AppendText("> Finished generating comment video for comment with id: " + comment.Id + "\r\n");
-
                 }
 
             }
@@ -397,18 +431,21 @@ namespace RedditVideoGenerator
             await Task.Delay(100);
 
             //copy transition video from resources to output dir
-            File.Copy(Path.Combine(AppVariables.ResourcesDirectory, "transition.mp4"), 
+            File.Copy(Path.Combine(AppVariables.ResourcesDirectory, "transition.mp4"),
                 Path.Combine(AppVariables.OutputDirectory, "transition.mp4"));
 
             //iterate through videos in output directory, generating a text file of videos.
-            var VideosList = Directory.GetFiles(AppVariables.OutputDirectory);
+            DirectoryInfo VideosListDirInfo = new DirectoryInfo(AppVariables.OutputDirectory);
+            FileInfo[] VideosList = VideosListDirInfo.GetFiles().OrderBy(p => p.CreationTime).ToArray();
 
             StreamWriter streamWriter = File.CreateText(Path.Combine(AppVariables.OutputDirectory, "FFmpegFiles.txt"));
             streamWriter.WriteLine("file 'title.mp4'");
 
             //write video filepaths to a txt file
-            foreach (string file in VideosList)
+            foreach (FileInfo fileInfo in VideosList)
             {
+                string file = fileInfo.FullName;
+
                 if (Path.GetFileNameWithoutExtension(file) != "transition" && Path.GetFileNameWithoutExtension(file) != "title")
                 {
                     streamWriter.WriteLine("file 'transition.mp4'");
@@ -417,15 +454,22 @@ namespace RedditVideoGenerator
 
             }
 
+            //copy outro video from resources to output dir
+            File.Copy(Path.Combine(AppVariables.ResourcesDirectory, "outro.mp4"),
+                Path.Combine(AppVariables.OutputDirectory, "outro.mp4"));
+
+            //add outro video to ffmpegfiles.txt
+            streamWriter.WriteLine("file 'transition.mp4'");
+            streamWriter.WriteLine("file 'outro.mp4'");
+
             streamWriter.Close();
             streamWriter.Dispose();
-
 
             //cmd commands
             string VideoCommand = String.Format(" -nostdin -f concat -safe 0 -i {0} -c copy -r 30 -fps_mode cfr {1}",
                 Path.Combine(AppVariables.OutputDirectory, "FFmpegFiles.txt"),
                 Path.Combine(AppVariables.OutputDirectory, "output.mp4"));
-            Debug.WriteLine(VideoCommand);
+
             //run ffmpeg
             await StartProcess(Path.Combine(AppVariables.FFmpegDirectory, "ffmpeg.exe"), VideoCommand);
 
