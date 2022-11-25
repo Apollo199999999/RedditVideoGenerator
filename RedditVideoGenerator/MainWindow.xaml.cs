@@ -352,35 +352,32 @@ namespace RedditVideoGenerator
                     //iterate through sentences in commentsentences
                     foreach (string sentence in commentSentences)
                     {
-                        if (sentence != "" && sentence != " ")
-                        {
-                            //append text and scroll to end
-                            commentCard.CommentBodyText.AppendText(sentence);
-                            commentCard.CommentBodyText.ScrollToEnd();
+                        //append text and scroll to end
+                        commentCard.CommentBodyText.AppendText(sentence);
+                        commentCard.CommentBodyText.ScrollToEnd();
 
-                            //save control
-                            SaveControlAsImage(commentCard, Path.Combine(AppVariables.FramesDirectory, FilenameCount.ToString() + ".png"));
+                        //save control
+                        SaveControlAsImage(commentCard, Path.Combine(AppVariables.FramesDirectory, FilenameCount.ToString() + ".png"));
 
-                            //use microsoft tts api to read sentence
-                            SpeakText(sentence, Path.Combine(AppVariables.AudioDirectory, FilenameCount.ToString() + ".wav"));
+                        //use microsoft tts api to read sentence
+                        SpeakText(sentence, Path.Combine(AppVariables.AudioDirectory, FilenameCount.ToString() + ".wav"));
 
-                            //run ffmpeg
-                            string SentenceCommand = System.String.Format(" -nostdin -loop 1 -i {0} -i {1} -shortest -vcodec libx264 -acodec aac -ac 1 -ar 48000 -pix_fmt yuv420p -s 1920x1080 -bsf:v h264_mp4toannexb -r 30 -fps_mode cfr {2}",
-                                Path.Combine(AppVariables.FramesDirectory, FilenameCount.ToString() + ".png"),
-                                Path.Combine(AppVariables.AudioDirectory, FilenameCount.ToString() + ".wav"),
-                                Path.Combine(CommentSentenceOutputDir, FilenameCount.ToString() + ".mp4"));
+                        //run ffmpeg
+                        string SentenceCommand = System.String.Format(" -nostdin -loop 1 -i {0} -i {1} -shortest -vcodec libx264 -acodec aac -ac 1 -ar 48000 -pix_fmt yuv420p -s 1920x1080 -bsf:v h264_mp4toannexb -r 30 -fps_mode cfr {2}",
+                            Path.Combine(AppVariables.FramesDirectory, FilenameCount.ToString() + ".png"),
+                            Path.Combine(AppVariables.AudioDirectory, FilenameCount.ToString() + ".wav"),
+                            Path.Combine(CommentSentenceOutputDir, FilenameCount.ToString() + ".mp4"));
 
-                            await StartProcess(Path.Combine(AppVariables.FFmpegDirectory, "ffmpeg.exe"), SentenceCommand);
+                        await StartProcess(Path.Combine(AppVariables.FFmpegDirectory, "ffmpeg.exe"), SentenceCommand);
 
-                            //kill ffmpeg after
-                            await StartProcess("taskkill.exe", " /f /im ffmpeg.exe");
+                        //kill ffmpeg after
+                        await StartProcess("taskkill.exe", " /f /im ffmpeg.exe");
 
-                            //clean up and delete files
-                            File.Delete(Path.Combine(AppVariables.FramesDirectory, FilenameCount.ToString() + ".png"));
-                            File.Delete(Path.Combine(AppVariables.AudioDirectory, FilenameCount.ToString() + ".wav"));
+                        //clean up and delete files
+                        File.Delete(Path.Combine(AppVariables.FramesDirectory, FilenameCount.ToString() + ".png"));
+                        File.Delete(Path.Combine(AppVariables.AudioDirectory, FilenameCount.ToString() + ".wav"));
 
-                            FilenameCount++;
-                        }
+                        FilenameCount++;
                     }
 
                     //combine all sentence videos
