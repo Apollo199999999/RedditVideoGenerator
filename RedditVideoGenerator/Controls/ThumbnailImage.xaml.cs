@@ -49,6 +49,13 @@ namespace RedditVideoGenerator.Controls
                 TitleText.FontSize -= 1;
                 TitleText.UpdateLayout();
             }
+
+            //keep increasing fontsize while titletext height < 540
+            while (TitleText.ActualHeight < 540)
+            {
+                TitleText.FontSize += 1;
+                TitleText.UpdateLayout();
+            }
         }
 
         
