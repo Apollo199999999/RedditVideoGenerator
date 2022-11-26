@@ -28,11 +28,11 @@ namespace RedditVideoGenerator
                 var subreddit = redditClient.Subreddit(AppVariables.SubReddit);
                 List<Post> posts = subreddit.Posts.GetTop(new TimedCatSrListingInput());
             }
-            catch
+            catch (Exception ex)
             {
                 //show error message, then exit app
                 MessageBoxResult messageBox = MessageBox.Show("Unable to initialize Reddit client to contact Reddit. " +
-                    "Check your internet connection and try again later.", "Error contacting Reddit",
+                    "Check your internet connection or try again later.\n" + "Reason: " + ex.Message, "Error contacting Reddit",
                     MessageBoxButton.OK, MessageBoxImage.Error);
 
                 if (messageBox == MessageBoxResult.OK)
