@@ -62,8 +62,7 @@ namespace RedditVideoGenerator
             AppVariables.PostIsNSFW = posts[r].NSFW;
             AppVariables.PostId = posts[r].Id;
 
-            //return "t3_" + posts[r].Id;
-            return "t3_unlhcx";
+            return "t3_" + posts[r].Id;
         }
 
         public List<Comment> GetPostTopComments(string postID)
