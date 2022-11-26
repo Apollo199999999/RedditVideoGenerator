@@ -16,7 +16,7 @@ namespace RedditVideoGenerator
     {
         public RedditClient redditClient;
 
-        public void InitializeRedditClient()
+        public void TryInitializeRedditClient()
         {
             try
             {
@@ -62,7 +62,8 @@ namespace RedditVideoGenerator
             AppVariables.PostIsNSFW = posts[r].NSFW;
             AppVariables.PostId = posts[r].Id;
 
-            return "t3_" + posts[r].Id;
+            //return "t3_" + posts[r].Id;
+            return "t3_unlhcx";
         }
 
         public List<Comment> GetPostTopComments(string postID)

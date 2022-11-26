@@ -113,6 +113,9 @@
     <Compile Include="Controls\CommentCard.xaml.cs">
       <DependentUpon>CommentCard.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\ThumbnailImage.xaml.cs">
+      <DependentUpon>ThumbnailImage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\TitleCard.xaml.cs">
       <DependentUpon>TitleCard.xaml</DependentUpon>
     </Compile>
@@ -120,6 +123,10 @@
     <Compile Include="RedditFunctions.cs" />
     <Compile Include="TypeExtensions.cs" />
     <Page Include="Controls\CommentCard.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\ThumbnailImage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

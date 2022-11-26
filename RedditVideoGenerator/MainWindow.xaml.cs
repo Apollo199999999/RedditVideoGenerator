@@ -196,7 +196,7 @@ namespace RedditVideoGenerator
 
             //start redditfunctions
             RedditFunctions redditFunctions = new RedditFunctions();
-            redditFunctions.InitializeRedditClient();
+            redditFunctions.TryInitializeRedditClient();
 
             ConsoleOutput.AppendText("> Done initializing Reddit client.\r\n");
 
@@ -344,9 +344,10 @@ namespace RedditVideoGenerator
                     commentCard.CommentBodyText.Document.FontSize = 32;
                     commentCard.CommentBodyText.Document.FontFamily = new FontFamily(@"/Resources/NotoSans/#Noto Sans");
                     commentCard.CommentBodyText.Document.TextAlignment = TextAlignment.Left;
+                    commentCard.CommentBodyText.Document.LineHeight = 1.0;
 
                     //next, we extract the raw text from the richtextbox (which is the comment text) and clear it
-                    string[] commentSentences = Regex.Split(StringFromRichTextBox(commentCard.CommentBodyText).Trim(), @"(?<=[.!?])|(?=[\n])");
+                    string[] commentSentences = Regex.Split(StringFromRichTextBox(commentCard.CommentBodyText).Trim().Replace("•\t", "• "), @"(?<=[.!?])|(?=[\n])");
                     commentCard.CommentBodyText.Document.Blocks.Clear();
 
                     //iterate through sentences in commentsentences
@@ -486,10 +487,28 @@ namespace RedditVideoGenerator
 
             ConsoleOutput.AppendText("> Done concatenating videos.\r\n");
 
-            #endregion
+            await Task.Delay(100);
 
             #endregion
 
+            #endregion
+
+            #region Youtube video configuration and uploading
+
+            #region Thumbnail generation
+
+            ConsoleOutput.AppendText("> Generating video thumbnail for YouTube...\r\n");
+
+            await Task.Delay(100);
+
+            //generate thumbnail
+            ThumbnailImage thumbnailImage = new ThumbnailImage();
+            thumbnailImage.ThumbnailAccentColor = Colors.Orange;
+            SaveControlAsImage(thumbnailImage, Path.Combine(AppVariables.OutputDirectory, "thumbnail.png"));
+
+            #endregion
+
+            #endregion
         }
 
         #endregion

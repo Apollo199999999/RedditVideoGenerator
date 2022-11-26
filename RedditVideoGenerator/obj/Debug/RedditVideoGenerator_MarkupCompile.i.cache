@@ -10,11 +10,11 @@ none
 false
 DEBUG;TRACE
 C:\Users\fligh\source\repos\RedditVideoGenerator\RedditVideoGenerator\App.xaml
-31098806610
+41663235803
 39-998013364
-14-141018083
+15410882952
 341783896666
-Controls\CommentCard.xaml;Controls\TitleCard.xaml;MainWindow.xaml;
+Controls\CommentCard.xaml;Controls\ThumbnailImage.xaml;Controls\TitleCard.xaml;MainWindow.xaml;
 
 True
 

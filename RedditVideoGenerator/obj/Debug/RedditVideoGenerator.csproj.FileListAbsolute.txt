@@ -87,3 +87,5 @@ C:\Users\fligh\source\repos\RedditVideoGenerator\RedditVideoGenerator\bin\Debug\
 C:\Users\fligh\source\repos\RedditVideoGenerator\RedditVideoGenerator\bin\Debug\Resources\outro.mp4
 C:\Users\fligh\source\repos\RedditVideoGenerator\RedditVideoGenerator\obj\Debug\Interop.Shell32.dll
 C:\Users\fligh\source\repos\RedditVideoGenerator\RedditVideoGenerator\obj\Debug\RedditVideoGenerator.csproj.ResolveComReference.cache
+C:\Users\fligh\source\repos\RedditVideoGenerator\RedditVideoGenerator\obj\Debug\Controls\ThumbnailImage.g.cs
+C:\Users\fligh\source\repos\RedditVideoGenerator\RedditVideoGenerator\obj\Debug\Controls\ThumbnailImage.baml
