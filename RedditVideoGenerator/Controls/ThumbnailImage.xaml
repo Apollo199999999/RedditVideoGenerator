@@ -9,13 +9,55 @@
     Width="1920"
     Height="1080"
     Background="#282c34"
-    mc:Ignorable="d"
-    x:Name="ThumbnailImageControl"
-    DataContext="{Binding RelativeSource={RelativeSource Self}}">
+    mc:Ignorable="d">
 
-    <Border BorderThickness="40" BorderBrush="{Binding ThumbnailAccentColor}">
+    <Border
+        x:Name="ThumbnailBorder"
+        BorderBrush="CornflowerBlue"
+        BorderThickness="40">
         <Grid>
-            
+            <StackPanel Orientation="Vertical">
+                <StackPanel
+                    Margin="40,40,0,0"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Top"
+                    Orientation="Horizontal">
+                    <Image
+                        Width="90"
+                        Height="90"
+                        VerticalAlignment="Center"
+                        Source="/Resources/snoo.png" />
+                    <TextBlock
+                        x:Name="SubredditText"
+                        Margin="30,0,0,0"
+                        VerticalAlignment="Center"
+                        FontFamily="/Resources/IBMPlexSans/#IBM Plex Sans"
+                        FontSize="64"
+                        FontWeight="Bold"
+                        Foreground="#d7dadc"
+                        Text="r/AskReddit" />
+                </StackPanel>
+
+                <TextBlock
+                    x:Name="TitleText"
+                    Width="1500"
+                    Margin="40,40,0,0"
+                    HorizontalAlignment="Left"
+                    FontFamily="/Resources/AlegreyaSans/#Alegreya Sans"
+                    FontSize="124"
+                    FontWeight="ExtraBold"
+                    Foreground="#d7dadc"
+                    Text="What is something that is considered socially attractive when you are physically attractive but isn't when you're ugly?"
+                    TextWrapping="Wrap" />
+            </StackPanel>
+
+            <Image
+                Width="250"
+                Height="170"
+                Margin="0,0,40,40"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Bottom"
+                Source="/Resources/TransparentChannelIcon.png" />
         </Grid>
     </Border>
 </UserControl>

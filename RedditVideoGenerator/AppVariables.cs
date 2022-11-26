@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.IO;
 using System.Web;
 using System.Threading;
+using System.Windows.Media;
 
 namespace RedditVideoGenerator
 {
@@ -32,6 +33,10 @@ namespace RedditVideoGenerator
         public static DateTime PostCreationDate;
         public static bool PostIsNSFW;
         public static string PostId;
+
+        //accent color of thumbnail
+        public static List<Color> ThumbnailAccentColors = 
+            new List<Color>() { Colors.Orange, Colors.Yellow, Colors.Green, Colors.CornflowerBlue, Colors.DarkSlateBlue, Colors.DarkOrange, Colors.OrangeRed, Color.FromRgb(255, 69, 0)};
 
     }
 }
