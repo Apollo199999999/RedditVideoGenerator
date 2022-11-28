@@ -508,9 +508,11 @@ namespace RedditVideoGenerator
 
             //init new thumbnail image and set properties
             ThumbnailImage thumbnailImage = new ThumbnailImage();
-            thumbnailImage.SetAccentColor(AppVariables.ThumbnailAccentColors[AccentIndex]);
+            //add delay to give time for controls to load
+            await Task.Delay(200);
             thumbnailImage.SubredditText.Text = "r/" + AppVariables.SubReddit;
             thumbnailImage.TitleText.Text = AppVariables.PostTitle;
+            thumbnailImage.SetAccentColor(AppVariables.ThumbnailAccentColors[AccentIndex]);
             //add delay to give time for titletext control to load and for layout to be updated
             await Task.Delay(200);
             thumbnailImage.SetVariableTitleFontSize();

@@ -47,7 +47,11 @@
                 Loaded="ConsoleOutput_Loaded"
                 TextChanged="ConsoleOutput_TextChanged"
                 TextWrapping="Wrap"
-                VerticalScrollBarVisibility="Visible" />
+                VerticalScrollBarVisibility="Visible">
+                <TextBox.ContextMenu>
+                    <ContextMenu Visibility="Collapsed" />
+                </TextBox.ContextMenu>
+            </TextBox>
         </StackPanel>
 
     </Grid>
