@@ -61,6 +61,9 @@ namespace RedditVideoGenerator
             AppVariables.PostCreationDate = posts[r].Created;
             AppVariables.PostIsNSFW = posts[r].NSFW;
             AppVariables.PostId = posts[r].Id;
+            AppVariables.PostPlatinumCount = posts[r].Awards.Platinum;
+            AppVariables.PostGoldCount = posts[r].Awards.Gold;
+            AppVariables.PostSilverCount = posts[r].Awards.Silver;
 
             return "t3_" + posts[r].Id;
         }

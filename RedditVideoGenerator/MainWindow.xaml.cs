@@ -156,7 +156,6 @@ namespace RedditVideoGenerator
         #endregion
 
         #region Main function
-
         public async void Main()
         {
             #region Initialization code
@@ -231,9 +230,29 @@ namespace RedditVideoGenerator
             titleCard.PostAuthorText.Text = "u/" + AppVariables.PostAuthor;
             titleCard.PostSubredditText.Text = "r/" + AppVariables.SubReddit;
 
+            //get post awards and show them if applicable
+            if (AppVariables.PostPlatinumCount >= 1)
+            {
+                titleCard.AwardsPanelSeparator.Visibility = Visibility.Visible;
+                titleCard.PlatinumAwardsPanel.Visibility = Visibility.Visible;
+                titleCard.PlatinumCount.Text = AppVariables.PostPlatinumCount.ToString();
+            }
+            if (AppVariables.PostGoldCount >= 1)
+            {
+                titleCard.AwardsPanelSeparator.Visibility = Visibility.Visible;
+                titleCard.GoldAwardsPanel.Visibility = Visibility.Visible;
+                titleCard.GoldCount.Text = AppVariables.PostGoldCount.ToString();
+            }
+            if (AppVariables.PostSilverCount >= 1)
+            {
+                titleCard.AwardsPanelSeparator.Visibility = Visibility.Visible;
+                titleCard.SilverAwardsPanel.Visibility = Visibility.Visible;
+                titleCard.SilverCount.Text = AppVariables.PostSilverCount.ToString();
+            }
+
+            //show nsfw tag if applicable
             if (AppVariables.PostIsNSFW == true)
             {
-                //show nsfw tag
                 titleCard.PostNSFWTag.Text = "[nsfw] ";
             }
 
@@ -272,7 +291,7 @@ namespace RedditVideoGenerator
 
             #endregion
 
-            #region Get comments and set up comment card basic boilerplate
+            #region Get top comments
 
             ConsoleOutput.AppendText("> Getting top comments...\r\n");
 
@@ -282,17 +301,6 @@ namespace RedditVideoGenerator
             List<Comment> comments = redditFunctions.GetPostTopComments(TopPostID);
 
             await Task.Delay(100);
-
-            //init new comment card
-            CommentCard commentCard = new CommentCard();
-            commentCard.PostSubredditText.Text = "r/" + AppVariables.SubReddit;
-
-            if (AppVariables.PostIsNSFW == true)
-            {
-                commentCard.PostNSFWTag.Text = "[nsfw] ";
-            }
-
-            commentCard.PostTitleText.Text = AppVariables.PostTitle;
 
             #endregion
 
@@ -325,10 +333,20 @@ namespace RedditVideoGenerator
                     break;
                 }
 
-
                 if (comment.Author != null && comment.Body != null && comment.Body != "[deleted]"
                     && comment.Body != "[removed]" && comment.Author.ToLower().Contains("moderator") == false)
                 {
+                    //init new comment card
+                    CommentCard commentCard = new CommentCard();
+                    commentCard.PostSubredditText.Text = "r/" + AppVariables.SubReddit;
+
+                    if (AppVariables.PostIsNSFW == true)
+                    {
+                        commentCard.PostNSFWTag.Text = "[nsfw] ";
+                    }
+
+                    commentCard.PostTitleText.Text = AppVariables.PostTitle;
+
                     int FilenameCount = 0;
 
                     //create directory in output dir for storing video files
@@ -337,6 +355,28 @@ namespace RedditVideoGenerator
 
                     //set commentcard properties
                     commentCard.CommentAuthorText.Text = "u/" + comment.Author;
+
+                    //show comment awards if applicable
+                    if (comment.Awards.Platinum >= 1)
+                    {
+                        commentCard.AwardsPanelSeparator.Visibility = Visibility.Visible;
+                        commentCard.PlatinumAwardsPanel.Visibility = Visibility.Visible;
+                        commentCard.PlatinumCount.Text = comment.Awards.Platinum.ToString();
+                    }
+                    if (comment.Awards.Gold >= 1)
+                    {
+                        commentCard.AwardsPanelSeparator.Visibility = Visibility.Visible;
+                        commentCard.GoldAwardsPanel.Visibility = Visibility.Visible;
+                        commentCard.GoldCount.Text = comment.Awards.Gold.ToString();
+                    }
+                    if (comment.Awards.Silver >= 1)
+                    {
+                        commentCard.AwardsPanelSeparator.Visibility = Visibility.Visible;
+                        commentCard.SilverAwardsPanel.Visibility = Visibility.Visible;
+                        commentCard.SilverCount.Text = comment.Awards.Silver.ToString();
+                    }
+
+                    //set commentcard properties
                     commentCard.CommentUpvoteCountText.Text = comment.UpVotes.ToKMB() + " upvotes";
                     commentCard.CommentDateText.Text = comment.Created.ToUniversalTime().ToString("dd MMMM yyyy, HH:mm") + " UTC";
                     HtmlRichTextBoxBehavior.SetText(commentCard.CommentBodyText, comment.BodyHTML);
@@ -345,6 +385,7 @@ namespace RedditVideoGenerator
                     commentCard.CommentBodyText.Document.FontFamily = new FontFamily(@"/Resources/NotoSans/#Noto Sans");
                     commentCard.CommentBodyText.Document.TextAlignment = TextAlignment.Left;
                     commentCard.CommentBodyText.Document.LineHeight = 1.0;
+                    
 
                     //next, we extract the raw text from the richtextbox (which is the comment text) and clear it
                     string[] commentSentences = Regex.Split(StringFromRichTextBox(commentCard.CommentBodyText).Trim().Replace("•\t", "• "), @"(?<=[.!?])|(?=[\n])");
@@ -466,7 +507,7 @@ namespace RedditVideoGenerator
             //cmd commands
             string VideoCommand = String.Format(" -nostdin -f concat -safe 0 -i {0} -c copy -r 30 -fps_mode cfr {1}",
                 Path.Combine(AppVariables.OutputDirectory, "FFmpegFiles.txt"),
-                Path.Combine(AppVariables.OutputDirectory, "output.mp4"));
+                Path.Combine(AppVariables.OutputDirectory, "output_temp.mp4"));
 
             //run ffmpeg
             await StartProcess(Path.Combine(AppVariables.FFmpegDirectory, "ffmpeg.exe"), VideoCommand);
@@ -479,7 +520,7 @@ namespace RedditVideoGenerator
 
             foreach (string file in FilesList)
             {
-                if (Path.GetFileName(file) != "output.mp4")
+                if (Path.GetFileName(file) != "output_temp.mp4")
                 {
                     File.Delete(file);
                 }
@@ -491,9 +532,56 @@ namespace RedditVideoGenerator
 
             #endregion
 
-            #endregion
+            #region Background music generation
 
-            #region Youtube video configuration and uploading
+            ConsoleOutput.AppendText("> Adding background music...\r\n");
+
+            await Task.Delay(100);
+
+            //get all available music
+            string[] BGMFiles = Directory.GetFiles(AppVariables.BGMusicDirectory);
+
+            //pick 3 random numbers to use as filename for music
+            List<int> RandomBGMFileNames = AppVariables.GenerateUniqueRandInt(0, BGMFiles.Length, 3);
+
+            string Bgm1Path = Path.Combine(AppVariables.BGMusicDirectory, RandomBGMFileNames[0].ToString() + ".wav");
+            string Bgm2Path = Path.Combine(AppVariables.BGMusicDirectory, RandomBGMFileNames[1].ToString() + ".wav");
+            string Bgm3Path = Path.Combine(AppVariables.BGMusicDirectory, RandomBGMFileNames[2].ToString() + ".wav");
+
+            //concat the 3 music files using ffmpeg
+            string BGMConcatCommand = String.Format(" -i {0} -i {1} -i {2} -filter_complex concat=n=3:v=0:a=1 -vn {3}",
+                Bgm1Path,
+                Bgm2Path,
+                Bgm3Path,
+                Path.Combine(AppVariables.AudioDirectory, "bgm.wav"));
+
+            //run ffmpeg
+            await StartProcess(Path.Combine(AppVariables.FFmpegDirectory, "ffmpeg.exe"), BGMConcatCommand);
+
+            //kill ffmpeg after
+            await StartProcess("taskkill.exe", " /f /im ffmpeg.exe");
+
+            //combine bgm with video
+            string BGMCombineCommand = String.Format(" -i {0} -stream_loop -1 -i {1} -filter_complex \"[0:a][1:a]amerge=inputs=2[a]\" -map 0:v -map \"[a]\" -c:v copy -ac 2 -shortest {2}",
+                Path.Combine(AppVariables.OutputDirectory, "output_temp.mp4"),
+                Path.Combine(AppVariables.AudioDirectory, "bgm.wav"),
+                Path.Combine(AppVariables.OutputDirectory, "output.mp4"));
+
+            //run ffmpeg
+            await StartProcess(Path.Combine(AppVariables.FFmpegDirectory, "ffmpeg.exe"), BGMCombineCommand);
+
+            //kill ffmpeg after
+            await StartProcess("taskkill.exe", " /f /im ffmpeg.exe");
+
+            //clean up
+            File.Delete(Path.Combine(AppVariables.OutputDirectory, "output_temp.mp4")); 
+            File.Delete(Path.Combine(AppVariables.AudioDirectory, "bgm.wav"));
+
+            ConsoleOutput.AppendText("> Done adding background music.\r\n");
+
+            await Task.Delay(100);
+
+            #endregion
 
             #region Thumbnail generation
 
@@ -516,6 +604,27 @@ namespace RedditVideoGenerator
             //add delay to give time for titletext control to load and for layout to be updated
             await Task.Delay(200);
             thumbnailImage.SetVariableTitleFontSize();
+
+            //show awards from post if applicable
+            if (AppVariables.PostPlatinumCount >= 1)
+            {
+                thumbnailImage.AwardsPanelSeparator.Visibility = Visibility.Visible;
+                thumbnailImage.PlatinumAwardsPanel.Visibility = Visibility.Visible;
+                thumbnailImage.PlatinumCount.Text = AppVariables.PostPlatinumCount.ToString();
+            }
+            if (AppVariables.PostGoldCount >= 1)
+            {
+                thumbnailImage.AwardsPanelSeparator.Visibility = Visibility.Visible;
+                thumbnailImage.GoldAwardsPanel.Visibility = Visibility.Visible;
+                thumbnailImage.GoldCount.Text = AppVariables.PostGoldCount.ToString();
+            }
+            if (AppVariables.PostSilverCount >= 1)
+            {
+                thumbnailImage.AwardsPanelSeparator.Visibility = Visibility.Visible;
+                thumbnailImage.SilverAwardsPanel.Visibility = Visibility.Visible;
+                thumbnailImage.SilverCount.Text = AppVariables.PostSilverCount.ToString();
+            }
+
             SaveControlAsImage(thumbnailImage, Path.Combine(AppVariables.OutputDirectory, "thumbnail.png"));
 
             ConsoleOutput.AppendText("> Thumbnail generation complete.\r\n");
@@ -525,6 +634,53 @@ namespace RedditVideoGenerator
             #endregion
 
             #endregion
+
+            #region Youtube video configuration and uploading
+
+            #region Confirmation on whether to upload video
+
+            MessageBoxResult YoutubeMsgBoxResult = MessageBox.Show("Do you want to upload this video to YouTube?", 
+                "Upload to YouTube?", MessageBoxButton.YesNo, MessageBoxImage.Question);
+
+            if (YoutubeMsgBoxResult == MessageBoxResult.No)
+            {
+                //remove invalid chars from post title
+                string CopiedVideoFilename = AppVariables.PostTitle;
+                string invalid = new string(Path.GetInvalidFileNameChars()) + new string(Path.GetInvalidPathChars());
+
+                foreach (char c in invalid)
+                {
+                    CopiedVideoFilename = CopiedVideoFilename.Replace(c.ToString(), "");
+                }
+
+                //copy the output and thumbnail to the user's desktop
+                File.Copy(Path.Combine(AppVariables.OutputDirectory, "output.mp4"), Path.Combine(AppVariables.UserDesktopDirectory, CopiedVideoFilename + ".mp4"));
+                File.Copy(Path.Combine(AppVariables.OutputDirectory, "thumbnail.png"), Path.Combine(AppVariables.UserDesktopDirectory, "thumbnail - " + CopiedVideoFilename + ".png"));
+
+                //show both files in file explorer
+                Process.Start("explorer.exe", "/select," + Path.Combine(AppVariables.UserDesktopDirectory, CopiedVideoFilename + ".mp4"));
+
+                //clean up working directory
+                Directory.Delete(AppVariables.WorkingDirectory, true);
+
+                //exit application
+                Application.Current.Shutdown();
+
+                return;
+            }
+
+            #endregion
+
+            #region YouTube video settings
+
+            //init video title string
+            string VideoTitle = String.Format("[r/{0}] {1}", AppVariables.SubReddit, AppVariables.PostTitle);
+
+            #endregion
+
+            #endregion
+
+            return;
         }
 
         #endregion

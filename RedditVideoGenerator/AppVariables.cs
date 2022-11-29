@@ -21,8 +21,11 @@ namespace RedditVideoGenerator
         public static string FramesDirectory = Path.Combine(WorkingDirectory, "frames");
         public static string AudioDirectory = Path.Combine(WorkingDirectory, "audio");
         public static string OutputDirectory = Path.Combine(WorkingDirectory, "output");
-        public static string FFmpegDirectory = Path.Combine(Environment.CurrentDirectory, "Resources\\ffmpeg");
+        public static string FFmpegDirectory = Path.Combine(Environment.CurrentDirectory, "Resources\\FFmpeg");
         public static string ResourcesDirectory = Path.Combine(Environment.CurrentDirectory, "Resources");
+        public static string BGMusicDirectory = Path.Combine(ResourcesDirectory, "bgm\\music");
+        public static string MusicLicenseDirectory = Path.Combine(ResourcesDirectory, "bgm\\licenses");
+        public static string UserDesktopDirectory = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory);
 
         //reddit variables
         public static string SubReddit = "AskReddit";
@@ -34,11 +37,15 @@ namespace RedditVideoGenerator
         public static DateTime PostCreationDate;
         public static bool PostIsNSFW;
         public static string PostId;
+        public static int PostPlatinumCount;
+        public static int PostGoldCount;
+        public static int PostSilverCount;
 
         //accent color of thumbnail
         public static List<Color> ThumbnailAccentColors =
-            new List<Color>() { Colors.Orange, Colors.Yellow, Colors.Green, Colors.CornflowerBlue, Colors.DarkSlateBlue, Colors.DarkOrange, Colors.OrangeRed, Color.FromRgb(255, 69, 0) };
-        
+            new List<Color>() { Colors.Orange, Colors.Yellow, Colors.LightGreen, Colors.CornflowerBlue, Colors.DarkSalmon, 
+                Colors.DarkOrange, Color.FromRgb(255, 69, 0), Color.FromRgb(255, 168, 0), Color.FromRgb(251, 19, 58) };
+
         //function to generate unique random numbers
         public static List<int> GenerateUniqueRandInt(int LowerBound, int UpperBound, int times)
         {
@@ -56,5 +63,9 @@ namespace RedditVideoGenerator
 
             return listNumbers;
         }
+
+        //YouTube variables
+        public static string title;
+        public static string description;
     }
 }

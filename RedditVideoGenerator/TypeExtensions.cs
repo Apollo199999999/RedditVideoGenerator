@@ -11,6 +11,7 @@ namespace RedditVideoGenerator
 {
     public static class TypeExtensions
     {
+        //converts long numbers to shortened version using suffixes like 'K' and 'M'
         public static string ToKMB(this int num)
         {
             if (num > 999999999 || num < -999999999)
@@ -54,5 +55,27 @@ namespace RedditVideoGenerator
             return process.HasExited ? Task.CompletedTask : tcs.Task;
         }
 
+        //extension function to replace first occurance of something in string
+        public static string ReplaceFirst(this string text, string search, string replace)
+        {
+            int pos = text.IndexOf(search);
+            if (pos < 0)
+            {
+                return text;
+            }
+            return text.Substring(0, pos) + replace + text.Substring(pos + search.Length);
+        }
+
+
+        //extension function to replace last occurance of something in string
+        public static string ReplaceLast(this string Source, string Find, string Replace)
+        {
+            int place = Source.LastIndexOf(Find);
+
+            if (place == -1)
+                return Source;
+
+            return Source.Remove(place, Find.Length).Insert(place, Replace);
+        }
     }
 }

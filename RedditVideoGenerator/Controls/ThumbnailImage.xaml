@@ -13,7 +13,7 @@
 
     <Border
         x:Name="ThumbnailBorder"
-        BorderBrush="CornflowerBlue"
+        BorderBrush="DarkSalmon"
         BorderThickness="40">
         <Grid>
             <StackPanel Orientation="Vertical">
@@ -32,10 +32,87 @@
                         Margin="30,0,0,0"
                         VerticalAlignment="Center"
                         FontFamily="/Resources/IBMPlexSans/#IBM Plex Sans"
-                        FontSize="64"
+                        FontSize="72"
                         FontWeight="Bold"
                         Foreground="#d7dadc"
                         Text="r/AskReddit" />
+
+                    <TextBlock
+                        x:Name="AwardsPanelSeparator"
+                        Margin="35,0,0,0"
+                        VerticalAlignment="Center"
+                        FontFamily="/Resources/IBMPlexSans/#IBM Plex Sans"
+                        FontSize="96"
+                        FontWeight="Bold"
+                        Foreground="#d7dadc"
+                        Text="·"
+                        Visibility="Collapsed" />
+
+                    <StackPanel
+                        x:Name="PlatinumAwardsPanel"
+                        Margin="35,0,0,0"
+                        VerticalAlignment="Center"
+                        Orientation="Horizontal"
+                        Visibility="Collapsed">
+                        <Image
+                            x:Name="PlatinumImg"
+                            Width="80"
+                            Height="80"
+                            Source="/Resources/awards/platinum.png" />
+                        <TextBlock
+                            x:Name="PlatinumCount"
+                            Margin="20,0,0,0"
+                            VerticalAlignment="Center"
+                            FontFamily="/Resources/IBMPlexSans/#IBM Plex Sans"
+                            FontSize="70"
+                            FontWeight="Bold"
+                            Foreground="#d7dadc"
+                            Text="69" />
+                    </StackPanel>
+
+                    <StackPanel
+                        x:Name="GoldAwardsPanel"
+                        Margin="35,0,0,0"
+                        VerticalAlignment="Center"
+                        Orientation="Horizontal"
+                        Visibility="Collapsed">
+                        <Image
+                            x:Name="GoldImg"
+                            Width="80"
+                            Height="80"
+                            Source="/Resources/awards/gold.png" />
+                        <TextBlock
+                            x:Name="GoldCount"
+                            Margin="20,0,0,0"
+                            VerticalAlignment="Center"
+                            FontFamily="/Resources/IBMPlexSans/#IBM Plex Sans"
+                            FontSize="70"
+                            FontWeight="Bold"
+                            Foreground="#d7dadc"
+                            Text="69" />
+                    </StackPanel>
+
+                    <StackPanel
+                        x:Name="SilverAwardsPanel"
+                        Margin="35,0,0,0"
+                        VerticalAlignment="Center"
+                        Orientation="Horizontal"
+                        Visibility="Collapsed">
+                        <Image
+                            x:Name="SilverImg"
+                            Width="80"
+                            Height="80"
+                            Source="/Resources/awards/silver.png" />
+                        <TextBlock
+                            x:Name="SilverCount"
+                            Margin="20,0,0,0"
+                            VerticalAlignment="Center"
+                            FontFamily="/Resources/IBMPlexSans/#IBM Plex Sans"
+                            FontSize="70"
+                            FontWeight="Bold"
+                            Foreground="#d7dadc"
+                            Text="69" />
+                    </StackPanel>
                 </StackPanel>
 
                 <TextBlock

@@ -44,6 +44,80 @@
                     FontSize="32"
                     Foreground="#818384"
                     Text="u/Username" />
+
+                <TextBlock
+                    x:Name="AwardsPanelSeparator"
+                    Margin="15,0,0,0"
+                    VerticalAlignment="Center"
+                    FontFamily="/Resources/NotoSans/#Noto Sans"
+                    FontSize="48"
+                    FontWeight="Bold"
+                    Foreground="#818384"
+                    Text="·"
+                    Visibility="Collapsed" />
+
+                <StackPanel
+                    x:Name="PlatinumAwardsPanel"
+                    Margin="15,0,0,0"
+                    VerticalAlignment="Center"
+                    Orientation="Horizontal"
+                    Visibility="Collapsed">
+                    <Image
+                        x:Name="PlatinumImg"
+                        Width="40"
+                        Height="40"
+                        Source="/Resources/awards/platinum.png" />
+                    <TextBlock
+                        x:Name="PlatinumCount"
+                        Margin="10,0,0,0"
+                        VerticalAlignment="Center"
+                        FontFamily="/Resources/NotoSans/#Noto Sans"
+                        FontSize="32"
+                        Foreground="#818384"
+                        Text="69" />
+                </StackPanel>
+
+                <StackPanel
+                    x:Name="GoldAwardsPanel"
+                    Margin="15,0,0,0"
+                    VerticalAlignment="Center"
+                    Orientation="Horizontal"
+                    Visibility="Collapsed">
+                    <Image
+                        x:Name="GoldImg"
+                        Width="40"
+                        Height="40"
+                        Source="/Resources/awards/gold.png" />
+                    <TextBlock
+                        x:Name="GoldCount"
+                        Margin="10,0,0,0"
+                        VerticalAlignment="Center"
+                        FontFamily="/Resources/NotoSans/#Noto Sans"
+                        FontSize="32"
+                        Foreground="#818384"
+                        Text="69" />
+                </StackPanel>
+
+                <StackPanel
+                    x:Name="SilverAwardsPanel"
+                    Margin="15,0,0,0"
+                    VerticalAlignment="Center"
+                    Orientation="Horizontal"
+                    Visibility="Collapsed">
+                    <Image
+                        x:Name="SilverImg"
+                        Width="40"
+                        Height="40"
+                        Source="/Resources/awards/silver.png" />
+                    <TextBlock
+                        x:Name="SilverCount"
+                        Margin="10,0,0,0"
+                        VerticalAlignment="Center"
+                        FontFamily="/Resources/NotoSans/#Noto Sans"
+                        FontSize="32"
+                        Foreground="#818384"
+                        Text="69" />
+                </StackPanel>
             </StackPanel>
 
             <Image

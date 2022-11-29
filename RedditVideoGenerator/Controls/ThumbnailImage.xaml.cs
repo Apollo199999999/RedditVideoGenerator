@@ -41,36 +41,60 @@ namespace RedditVideoGenerator.Controls
 
             //highlight the first 4 words from titletext
             var punctuation = TitleText.Text.Where(Char.IsPunctuation).Distinct().ToArray();
-            List<string> words = TitleText.Text.Split().Select(x => x.Trim(punctuation)).ToList();
+            List<string> words = TitleText.Text.Split(new char[0], StringSplitOptions.RemoveEmptyEntries).ToList();
+
+
 
             //calculate number of words to highlight
-            int NumberOfWordsToHighlight = 5;
+            int NumberOfStartWordsToHighlight = 5;
 
             if (words.Count <= 5)
             {
-                NumberOfWordsToHighlight = words.Count - 1;
+                NumberOfStartWordsToHighlight = words.Count - 1;
             }
             else
             {
-                NumberOfWordsToHighlight = 5;
+                NumberOfStartWordsToHighlight = 5;
             }
 
-            List<string> WordsToHighlight = words.Take(NumberOfWordsToHighlight).ToList();
+            List<string> StartWordsToHighlight = words.Take(NumberOfStartWordsToHighlight).ToList();
 
-            //split titletext by the random words, keeping delimiters
-            foreach (string word in WordsToHighlight)
+            //split titletext by the startwordstohighlihght, keeping delimiters
+
+            //insert delimiters to split the text at
+            foreach (string word in StartWordsToHighlight)
             {
-                if (WordsToHighlight.IndexOf(word) == 0)
+                if (StartWordsToHighlight.IndexOf(word) == 0)
                 {
                     //if word is first word of titletext.text, adjust split delimiters accordingly
-                    Regex regex = new Regex(word + " ");
-                    TitleText.Text = regex.Replace(TitleText.Text, word + "| ", 1);
-                    
+                    //add additional delimiter in front in case in titletext there is punctuation before the start of the word
+                    TitleText.Text = TitleText.Text.ReplaceFirst(word + " ", word + "| ");
                 }
                 else
                 {
-                    Regex regex = new Regex(" " + word + " ");
-                    TitleText.Text = regex.Replace(TitleText.Text, " |" + word + "| ", 1);
+                    TitleText.Text = TitleText.Text.ReplaceFirst(" " + word + " ", " |" + word + "| ");
+                }
+            }
+
+            List<string> LastWordsToHighlight = new List<string>();
+
+            //next, highlight the last 4 words if the title text has more than or equal to 12 words
+            if (words.Count >= 12)
+            {
+                LastWordsToHighlight = Enumerable.Reverse(words).Take(4).Reverse().ToList();
+
+                foreach (string word in LastWordsToHighlight)
+                {
+                    if (LastWordsToHighlight.IndexOf(word) == LastWordsToHighlight.Count() - 1)
+                    {
+                        //if word is last word of titletext.text, adjust split delimiters accordingly
+                        //add additional delimiter at the back in case in titletext there is punctuation at the end
+                        TitleText.Text = TitleText.Text.ReplaceLast(" " + word, " |" + word);
+                    }
+                    else
+                    {
+                        TitleText.Text = TitleText.Text.ReplaceLast(" " + word + " ", " |" + word + "| ");
+                    }
                 }
             }
 
@@ -81,7 +105,7 @@ namespace RedditVideoGenerator.Controls
             TitleText.Inlines.Clear();
             foreach (string phrase in TitleTextSplitWords)
             {
-                if (WordsToHighlight.Contains(phrase))
+                if (StartWordsToHighlight.Contains(phrase) || LastWordsToHighlight.Contains(phrase))
                 {
                     TitleText.Inlines.Add(new Run(phrase) { Foreground = AccentBrush });
                 }
