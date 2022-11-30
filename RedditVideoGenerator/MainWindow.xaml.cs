@@ -24,12 +24,15 @@ namespace RedditVideoGenerator
     /// </summary>
     public partial class MainWindow
     {
+        #region Window setup and event handlers
+
         public MainWindow()
         {
             InitializeComponent();
-
+            
             Loaded += (sender, args) =>
             {
+                //automatic theme switcher
                 Wpf.Ui.Appearance.Watcher.Watch(
                     this,                                  // Window class
                     Wpf.Ui.Appearance.BackgroundType.Mica, // Background type
@@ -50,6 +53,16 @@ namespace RedditVideoGenerator
             //scroll to end
             ConsoleOutput.ScrollToEnd();
         }
+
+
+        private void AboutBtn_Click(object sender, RoutedEventArgs e)
+        {
+            //show AboutWindow
+            AboutWindow aboutWindow = new AboutWindow();
+            aboutWindow.ShowDialog();
+        }
+
+        #endregion
 
         #region Helper functions
         public string StringFromRichTextBox(RichTextBox rtb)
@@ -654,8 +667,8 @@ namespace RedditVideoGenerator
                 }
 
                 //copy the output and thumbnail to the user's desktop
-                File.Copy(Path.Combine(AppVariables.OutputDirectory, "output.mp4"), Path.Combine(AppVariables.UserDesktopDirectory, CopiedVideoFilename + ".mp4"));
-                File.Copy(Path.Combine(AppVariables.OutputDirectory, "thumbnail.png"), Path.Combine(AppVariables.UserDesktopDirectory, "thumbnail - " + CopiedVideoFilename + ".png"));
+                File.Copy(Path.Combine(AppVariables.OutputDirectory, "output.mp4"), Path.Combine(AppVariables.UserDesktopDirectory, CopiedVideoFilename + ".mp4"), true);
+                File.Copy(Path.Combine(AppVariables.OutputDirectory, "thumbnail.png"), Path.Combine(AppVariables.UserDesktopDirectory, "thumbnail - " + CopiedVideoFilename + ".png"), true);
 
                 //show both files in file explorer
                 Process.Start("explorer.exe", "/select," + Path.Combine(AppVariables.UserDesktopDirectory, CopiedVideoFilename + ".mp4"));
@@ -684,5 +697,6 @@ namespace RedditVideoGenerator
         }
 
         #endregion
+
     }
 }

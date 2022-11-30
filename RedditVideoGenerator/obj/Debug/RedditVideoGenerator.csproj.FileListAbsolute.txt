@@ -141,3 +141,5 @@ C:\Users\fligh\source\repos\RedditVideoGenerator\RedditVideoGenerator\bin\Debug\
 C:\Users\fligh\source\repos\RedditVideoGenerator\RedditVideoGenerator\bin\Debug\Resources\awards\gold.png
 C:\Users\fligh\source\repos\RedditVideoGenerator\RedditVideoGenerator\bin\Debug\Resources\awards\platinum.png
 C:\Users\fligh\source\repos\RedditVideoGenerator\RedditVideoGenerator\bin\Debug\Resources\awards\silver.png
+C:\Users\fligh\source\repos\RedditVideoGenerator\RedditVideoGenerator\obj\Debug\AboutWindow.g.cs
+C:\Users\fligh\source\repos\RedditVideoGenerator\RedditVideoGenerator\obj\Debug\AboutWindow.baml

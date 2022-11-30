@@ -6,38 +6,60 @@
     xmlns:local="clr-namespace:RedditVideoGenerator"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
-    Title="RedditVideoGenerator - Generate reddit videos from r/AskReddit and upload them to YouTube automatically"
+    Title="RedditVideoGenerator - Generate r/AskReddit Reddit videos and upload them to YouTube automatically"
     Width="900"
     Height="600"
     ExtendsContentIntoTitleBar="True"
     Icon="/Resources/icon.ico"
-    ResizeMode="NoResize"
+    ResizeMode="CanResize"
     WindowBackdropType="Mica"
     WindowCornerPreference="Round"
     WindowStartupLocation="CenterScreen"
     mc:Ignorable="d">
     <Grid>
         <ui:TitleBar
-            Title="RedditVideoGenerator - Generate reddit videos from r/AskReddit and upload them to YouTube automatically"
-            CanMaximize="False"
+            Title="RedditVideoGenerator - Generate r/AskReddit Reddit videos and upload them to YouTube automatically"
             Icon="/Resources/icon.ico"
-            ShowMaximize="False"
             UseSnapLayout="True" />
 
-        <StackPanel Margin="20,51,20,20">
-            <TextBlock
-                FontSize="28"
-                FontWeight="Bold"
-                Text="r/AskReddit Reddit Video Generator" />
+        <Grid Margin="20,51,20,20">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="auto" />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+            <StackPanel Grid.Row="0" Grid.Column="0">
+                <TextBlock
+                    FontSize="28"
+                    FontWeight="Bold"
+                    Text="r/AskReddit Reddit Video Generator" />
 
-            <TextBlock
-                Margin="0,10,0,0"
-                FontSize="14"
-                Text="Generator output:" />
+                <TextBlock
+                    Margin="0,10,0,0"
+                    FontSize="14"
+                    Text="Generator output:" />
+            </StackPanel>
+
+            <ui:Button
+                x:Name="AboutBtn"
+                Grid.Row="0"
+                Grid.Column="1"
+                Width="40"
+                Height="40"
+                Padding="0"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Center"
+                Click="AboutBtn_Click">
+                <ui:SymbolIcon FontSize="24" Symbol="Info24" />
+            </ui:Button>
 
             <TextBox
                 x:Name="ConsoleOutput"
-                Height="437"
+                Grid.Row="1"
+                Grid.ColumnSpan="2"
                 Margin="0,10,0,0"
                 VerticalAlignment="Stretch"
                 FontFamily="Lucida Console"
@@ -52,7 +74,7 @@
                     <ContextMenu Visibility="Collapsed" />
                 </TextBox.ContextMenu>
             </TextBox>
-        </StackPanel>
+        </Grid>
 
     </Grid>
 </ui:UiWindow>

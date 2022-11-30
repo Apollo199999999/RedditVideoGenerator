@@ -75,8 +75,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 ------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 RedditVideoGenerator's application icon was designed using the Fluency Icons made by Icons8, as well as the Reddit logo.
-Sources: https://icons8.com/icon/YHmiPcbhIHTX/showing-video-frames
-	    https://www.redditinc.com/brand
+Sources: https://icons8.com/icon/YHmiPcbhIHTX/showing-video-frames and https://www.redditinc.com/brand
 
 ------------------------------------------------------------------------------------------------------------------------------------------------------------
 

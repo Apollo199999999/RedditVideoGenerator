@@ -8,11 +8,11 @@ using System.Windows;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("RedditVideoGenerator")]
-[assembly: AssemblyDescription("Generate reddit videos and upload them to YouTube automatically.")]
+[assembly: AssemblyDescription("Generate r/AskReddit Reddit videos and upload them to YouTube automatically")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
+[assembly: AssemblyCompany("ClickPhase")]
 [assembly: AssemblyProduct("RedditVideoGenerator")]
-[assembly: AssemblyCopyright("Copyright © 2022-present Matthias Wang")]
+[assembly: AssemblyCopyright("Copyright © 2022-present ClickPhase")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
