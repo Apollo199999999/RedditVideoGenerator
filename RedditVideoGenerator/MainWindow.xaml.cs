@@ -194,7 +194,7 @@ namespace RedditVideoGenerator
             File.Copy(Path.Combine(AppVariables.OutputDirectory, "thumbnail.png"), Path.Combine(AppVariables.UserDesktopDirectory, "thumbnail - " + CopiedVideoFilename + ".png"), true);
 
             //show both files in file explorer
-            Process.Start("explorer.exe", "/select," + Path.Combine(AppVariables.UserDesktopDirectory, CopiedVideoFilename + ".mp4"));
+            Process.Start("explorer.exe", "/select, \"" + Path.Combine(AppVariables.UserDesktopDirectory, CopiedVideoFilename + ".mp4") + "\"");
 
             //clean up working directory
             Directory.Delete(AppVariables.WorkingDirectory, true);
@@ -389,8 +389,8 @@ namespace RedditVideoGenerator
                         TotalDuration += VideoDuration;
                     }
                 }
-                //TODO: CHANGE 2 TO 15
-                if (TotalDuration >= new TimeSpan(0, 0, 1, 0))
+
+                if (TotalDuration >= new TimeSpan(0, 0, 15, 0))
                 {
                     break;
                 }
@@ -770,8 +770,8 @@ namespace RedditVideoGenerator
             YTVideo.Snippet.Tags = new string[] { "reddit", "r/askreddit", "funny", "comedy", "entertainment", "stories", "life", "video", "askreddit" };
             YTVideo.Snippet.CategoryId = "24"; // See https://developers.google.com/youtube/v3/docs/videoCategories/list
             YTVideo.Status = new VideoStatus();
-            YTVideo.Status.PrivacyStatus = "public"; // or "private" or "unlisted"
             YTVideo.Status.MadeForKids = false;
+            YTVideo.Status.PrivacyStatus = "public"; // or "private" or "unlisted"
             var filePath = Path.Combine(AppVariables.OutputDirectory, "output.mp4");
 
             ConsoleOutput.AppendText("> Done starting YouTube service.\r\n");
@@ -795,6 +795,7 @@ namespace RedditVideoGenerator
             if (AppVariables.ErrorUploadingVideo == true)
             {
                 CopyVideoAndThumbnailToDesktopWithShutdown();
+                return;
             }
 
             //set video thumbnail
@@ -814,6 +815,7 @@ namespace RedditVideoGenerator
             if (AppVariables.ErrorUploadingThumbnail == true)
             {
                 CopyVideoAndThumbnailToDesktopWithShutdown();
+                return;
             }
 
             ConsoleOutput.AppendText("> YouTube video link: https://youtu.be/" + AppVariables.YTVideoId + "\r\n");
