@@ -455,7 +455,9 @@
     <Content Include="Resources\AlegreyaSans\AlegreyaSans-ThinItalic.ttf">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <EmbeddedResource Include="Resources\client_secret.json" />
+    <EmbeddedResource Include="Resources\client_secret.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

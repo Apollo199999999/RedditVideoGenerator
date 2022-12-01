@@ -157,3 +157,4 @@ C:\Users\fligh\source\repos\RedditVideoGenerator\RedditVideoGenerator\bin\Debug\
 C:\Users\fligh\source\repos\RedditVideoGenerator\RedditVideoGenerator\bin\Debug\Google.Apis.Core.xml
 C:\Users\fligh\source\repos\RedditVideoGenerator\RedditVideoGenerator\bin\Debug\Google.Apis.YouTube.v3.pdb
 C:\Users\fligh\source\repos\RedditVideoGenerator\RedditVideoGenerator\bin\Debug\Google.Apis.YouTube.v3.xml
+C:\Users\fligh\source\repos\RedditVideoGenerator\RedditVideoGenerator\bin\Debug\Resources\client_secret.json

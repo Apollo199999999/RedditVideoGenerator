@@ -68,7 +68,8 @@ namespace RedditVideoGenerator
         }
 
         //YouTube variables
-        public static string title;
-        public static string description;
+        public static bool ErrorUploadingVideo = false;
+        public static bool ErrorUploadingThumbnail = false;
+        public static string YTVideoId;
     }
 }

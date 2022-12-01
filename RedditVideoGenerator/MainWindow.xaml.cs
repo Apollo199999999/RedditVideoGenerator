@@ -181,7 +181,7 @@ namespace RedditVideoGenerator
         {
             //copy video file and thumbnail to user desktop
             //remove invalid chars from post title
-            string CopiedVideoFilename = AppVariables.PostTitle;
+            string CopiedVideoFilename = AppVariables.PostId + " - " + AppVariables.PostTitle;
             string invalid = new string(Path.GetInvalidFileNameChars()) + new string(Path.GetInvalidPathChars());
 
             foreach (char c in invalid)
@@ -190,8 +190,8 @@ namespace RedditVideoGenerator
             }
 
             //copy the output and thumbnail to the user's desktop
-            File.Copy(Path.Combine(AppVariables.OutputDirectory, "output.mp4"), Path.Combine(AppVariables.UserDesktopDirectory, AppVariables.PostId + " - " + CopiedVideoFilename + ".mp4"), true);
-            File.Copy(Path.Combine(AppVariables.OutputDirectory, "thumbnail.png"), Path.Combine(AppVariables.UserDesktopDirectory, "thumbnail - " + AppVariables.PostId + " - " + CopiedVideoFilename + ".png"), true);
+            File.Copy(Path.Combine(AppVariables.OutputDirectory, "output.mp4"), Path.Combine(AppVariables.UserDesktopDirectory, CopiedVideoFilename + ".mp4"), true);
+            File.Copy(Path.Combine(AppVariables.OutputDirectory, "thumbnail.png"), Path.Combine(AppVariables.UserDesktopDirectory, "thumbnail - " + CopiedVideoFilename + ".png"), true);
 
             //show both files in file explorer
             Process.Start("explorer.exe", "/select," + Path.Combine(AppVariables.UserDesktopDirectory, CopiedVideoFilename + ".mp4"));
@@ -389,8 +389,8 @@ namespace RedditVideoGenerator
                         TotalDuration += VideoDuration;
                     }
                 }
-
-                if (TotalDuration >= new TimeSpan(0, 0, 15, 0))
+                //TODO: CHANGE 2 TO 15
+                if (TotalDuration >= new TimeSpan(0, 0, 1, 0))
                 {
                     break;
                 }
@@ -723,7 +723,7 @@ namespace RedditVideoGenerator
 
             //init video title and description
             string VideoTitle = String.Format("[r/{0}] {1}", AppVariables.SubReddit, AppVariables.PostTitle);
-            string VideoDescription = VideoTitle + "\n" + "Thanks for watching! Leave a like if you have enjoyed this video and subscribe to never miss an upload. \n" + "Music: ";
+            string VideoDescription = VideoTitle + "\n" + "Thanks for watching! Leave a like if you have enjoyed this video and subscribe to never miss an upload. \n\n" + "Music: \n";
 
             //get music credits to put in video description
             foreach (int i in RandomBGMFileNames)
@@ -750,7 +750,7 @@ namespace RedditVideoGenerator
                     CancellationToken.None
                 );
             }
-
+            
             ConsoleOutput.AppendText("> Starting YouTube service...\r\n");
 
             await Task.Delay(100);
@@ -771,6 +771,7 @@ namespace RedditVideoGenerator
             YTVideo.Snippet.CategoryId = "24"; // See https://developers.google.com/youtube/v3/docs/videoCategories/list
             YTVideo.Status = new VideoStatus();
             YTVideo.Status.PrivacyStatus = "public"; // or "private" or "unlisted"
+            YTVideo.Status.MadeForKids = false;
             var filePath = Path.Combine(AppVariables.OutputDirectory, "output.mp4");
 
             ConsoleOutput.AppendText("> Done starting YouTube service.\r\n");
@@ -791,6 +792,11 @@ namespace RedditVideoGenerator
                 await videosInsertRequest.UploadAsync();
             }
 
+            if (AppVariables.ErrorUploadingVideo == true)
+            {
+                CopyVideoAndThumbnailToDesktopWithShutdown();
+            }
+
             //set video thumbnail
             using (var fileStream = new FileStream(Path.Combine(AppVariables.OutputDirectory, "thumbnail.png"), FileMode.Open))
             {
@@ -798,14 +804,19 @@ namespace RedditVideoGenerator
 
                 await Task.Delay(100);
 
-                var videoThumbnailRequest = youtubeService.Thumbnails.Set(YTVideo.Id, fileStream, "image/png");
+                var videoThumbnailRequest = youtubeService.Thumbnails.Set(AppVariables.YTVideoId, fileStream, "image/png");
                 videoThumbnailRequest.ProgressChanged += VideoThumbnailRequest_ProgressChanged;
                 videoThumbnailRequest.ResponseReceived += VideoThumbnailRequest_ResponseReceived;
 
                 await videoThumbnailRequest.UploadAsync();
             }
 
-            ConsoleOutput.AppendText("> YouTube video link: https://youtu.be/" + YTVideo.Id + "\r\n");
+            if (AppVariables.ErrorUploadingThumbnail == true)
+            {
+                CopyVideoAndThumbnailToDesktopWithShutdown();
+            }
+
+            ConsoleOutput.AppendText("> YouTube video link: https://youtu.be/" + AppVariables.YTVideoId + "\r\n");
 
             await Task.Delay(100);
 
@@ -851,7 +862,7 @@ namespace RedditVideoGenerator
                     MessageBox.Show(String.Format("An error prevented the video upload from completing. You can try manually uploading the video to YouTube.\n{0}", progress.Exception),
                         "Error uploading video", MessageBoxButton.OK, MessageBoxImage.Error);
 
-                    CopyVideoAndThumbnailToDesktopWithShutdown();
+                    AppVariables.ErrorUploadingVideo = true;
 
                     break;
             }
@@ -863,6 +874,8 @@ namespace RedditVideoGenerator
             {
                 ConsoleOutput.AppendText(String.Format("> Video id '{0}' was successfully uploaded.", video.Id) + "\r\n");
             });
+
+            AppVariables.YTVideoId = video.Id;
 
             await Task.Delay(100);
         }
@@ -900,7 +913,7 @@ namespace RedditVideoGenerator
                     MessageBox.Show(String.Format("An error prevented the thumbnail upload from completing. You can try manually setting the thumbnail for the video on YouTube.\n{0}", progress.Exception),
                         "Error uploading thumbnail", MessageBoxButton.OK, MessageBoxImage.Error);
 
-                    CopyVideoAndThumbnailToDesktopWithShutdown();
+                    AppVariables.ErrorUploadingThumbnail = true;
 
                     break;
             }
