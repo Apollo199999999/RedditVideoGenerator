@@ -1,5 +1,6 @@
 ﻿using NAudio.Wave;
 using Reddit.Controllers;
+using Comment = Reddit.Controllers.Comment;
 using RedditVideoGenerator.Controls;
 using System;
 using System.Collections.Generic;
@@ -16,6 +17,16 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using Shell32;
 using System.Linq;
+using Google.Apis.Auth.OAuth2;
+using Google.Apis.Services;
+using Google.Apis.Upload;
+using Google.Apis.Util.Store;
+using Google.Apis.YouTube.v3;
+using Google.Apis.YouTube.v3.Data;
+using System.Threading;
+using System.Reflection;
+using System.IO.Pipes;
+using System.Web.UI.WebControls;
 
 namespace RedditVideoGenerator
 {
@@ -29,7 +40,7 @@ namespace RedditVideoGenerator
         public MainWindow()
         {
             InitializeComponent();
-            
+
             Loaded += (sender, args) =>
             {
                 //automatic theme switcher
@@ -166,6 +177,38 @@ namespace RedditVideoGenerator
             }
         }
 
+        public void CopyVideoAndThumbnailToDesktop()
+        {
+            //copy video file and thumbnail to user desktop
+            //remove invalid chars from post title
+            string CopiedVideoFilename = AppVariables.PostTitle;
+            string invalid = new string(Path.GetInvalidFileNameChars()) + new string(Path.GetInvalidPathChars());
+
+            foreach (char c in invalid)
+            {
+                CopiedVideoFilename = CopiedVideoFilename.Replace(c.ToString(), "");
+            }
+
+            //copy the output and thumbnail to the user's desktop
+            File.Copy(Path.Combine(AppVariables.OutputDirectory, "output.mp4"), Path.Combine(AppVariables.UserDesktopDirectory, AppVariables.PostId + " - " + CopiedVideoFilename + ".mp4"), true);
+            File.Copy(Path.Combine(AppVariables.OutputDirectory, "thumbnail.png"), Path.Combine(AppVariables.UserDesktopDirectory, "thumbnail - " + AppVariables.PostId + " - " + CopiedVideoFilename + ".png"), true);
+
+            //show both files in file explorer
+            Process.Start("explorer.exe", "/select," + Path.Combine(AppVariables.UserDesktopDirectory, CopiedVideoFilename + ".mp4"));
+
+            //clean up working directory
+            Directory.Delete(AppVariables.WorkingDirectory, true);
+
+        }
+
+        public void CopyVideoAndThumbnailToDesktopWithShutdown()
+        {
+            CopyVideoAndThumbnailToDesktop();
+
+            //exit application
+            Application.Current.Shutdown();
+        }
+
         #endregion
 
         #region Main function
@@ -178,6 +221,12 @@ namespace RedditVideoGenerator
 
             //store MainWindow as an instance in AppVariables
             AppVariables.mainWindow = this;
+
+            //delete working directory
+            if (Directory.Exists(AppVariables.WorkingDirectory))
+            {
+                Directory.Delete(AppVariables.WorkingDirectory, true);
+            }
 
             //create neccessary directories
             Directory.CreateDirectory(AppVariables.WorkingDirectory);
@@ -398,7 +447,7 @@ namespace RedditVideoGenerator
                     commentCard.CommentBodyText.Document.FontFamily = new FontFamily(@"/Resources/NotoSans/#Noto Sans");
                     commentCard.CommentBodyText.Document.TextAlignment = TextAlignment.Left;
                     commentCard.CommentBodyText.Document.LineHeight = 1.0;
-                    
+
 
                     //next, we extract the raw text from the richtextbox (which is the comment text) and clear it
                     string[] commentSentences = Regex.Split(StringFromRichTextBox(commentCard.CommentBodyText).Trim().Replace("•\t", "• "), @"(?<=[.!?])|(?=[\n])");
@@ -587,7 +636,7 @@ namespace RedditVideoGenerator
             await StartProcess("taskkill.exe", " /f /im ffmpeg.exe");
 
             //clean up
-            File.Delete(Path.Combine(AppVariables.OutputDirectory, "output_temp.mp4")); 
+            File.Delete(Path.Combine(AppVariables.OutputDirectory, "output_temp.mp4"));
             File.Delete(Path.Combine(AppVariables.AudioDirectory, "bgm.wav"));
 
             ConsoleOutput.AppendText("> Done adding background music.\r\n");
@@ -652,48 +701,209 @@ namespace RedditVideoGenerator
 
             #region Confirmation on whether to upload video
 
-            MessageBoxResult YoutubeMsgBoxResult = MessageBox.Show("Do you want to upload this video to YouTube?", 
+            MessageBoxResult YoutubeMsgBoxResult = MessageBox.Show("Do you want to upload this video to YouTube? \n" +
+                "(Note that this might not be successful, as multiple users may be using this app at the same time to upload videos to YouTube, " +
+                "which may cause RedditVideoGenerator to exceed it's daily quota usage for the YouTube API).",
                 "Upload to YouTube?", MessageBoxButton.YesNo, MessageBoxImage.Question);
 
             if (YoutubeMsgBoxResult == MessageBoxResult.No)
             {
-                //remove invalid chars from post title
-                string CopiedVideoFilename = AppVariables.PostTitle;
-                string invalid = new string(Path.GetInvalidFileNameChars()) + new string(Path.GetInvalidPathChars());
-
-                foreach (char c in invalid)
-                {
-                    CopiedVideoFilename = CopiedVideoFilename.Replace(c.ToString(), "");
-                }
-
-                //copy the output and thumbnail to the user's desktop
-                File.Copy(Path.Combine(AppVariables.OutputDirectory, "output.mp4"), Path.Combine(AppVariables.UserDesktopDirectory, CopiedVideoFilename + ".mp4"), true);
-                File.Copy(Path.Combine(AppVariables.OutputDirectory, "thumbnail.png"), Path.Combine(AppVariables.UserDesktopDirectory, "thumbnail - " + CopiedVideoFilename + ".png"), true);
-
-                //show both files in file explorer
-                Process.Start("explorer.exe", "/select," + Path.Combine(AppVariables.UserDesktopDirectory, CopiedVideoFilename + ".mp4"));
-
-                //clean up working directory
-                Directory.Delete(AppVariables.WorkingDirectory, true);
-
-                //exit application
-                Application.Current.Shutdown();
+                CopyVideoAndThumbnailToDesktopWithShutdown();
 
                 return;
             }
 
             #endregion
 
-            #region YouTube video settings
+            #region YouTube video settings and uploading
 
-            //init video title string
+            ConsoleOutput.AppendText("> Configuring video settings...\r\n");
+
+            await Task.Delay(100);
+
+            //init video title and description
             string VideoTitle = String.Format("[r/{0}] {1}", AppVariables.SubReddit, AppVariables.PostTitle);
+            string VideoDescription = VideoTitle + "\n" + "Thanks for watching! Leave a like if you have enjoyed this video and subscribe to never miss an upload. \n" + "Music: ";
+
+            //get music credits to put in video description
+            foreach (int i in RandomBGMFileNames)
+            {
+                string MusicLicensePath = Path.Combine(AppVariables.MusicLicenseDirectory, i.ToString() + ".txt");
+                VideoDescription += File.ReadAllText(MusicLicensePath) + "\n";
+            }
+
+            ConsoleOutput.AppendText("> Sign in to your Google Account when prompted.\r\n");
+
+            await Task.Delay(100);
+
+            //login to google account using oauth2
+            UserCredential credential;
+            var assembly = Assembly.GetExecutingAssembly();
+            using (var stream = assembly.GetManifestResourceStream("RedditVideoGenerator.Resources.client_secret.json"))
+            {
+                credential = await GoogleWebAuthorizationBroker.AuthorizeAsync(
+                    GoogleClientSecrets.FromStream(stream).Secrets,
+                    // This OAuth 2.0 access scope allows an application to upload files to the
+                    // authenticated user's YouTube channel, but doesn't allow other types of access.
+                    new[] { YouTubeService.Scope.YoutubeUpload },
+                    "user",
+                    CancellationToken.None
+                );
+            }
+
+            ConsoleOutput.AppendText("> Starting YouTube service...\r\n");
+
+            await Task.Delay(100);
+
+            //init youtubeservice to upload video
+            var youtubeService = new YouTubeService(new BaseClientService.Initializer()
+            {
+                HttpClientInitializer = credential,
+                ApplicationName = Assembly.GetExecutingAssembly().GetName().Name
+            });
+
+            //video properties
+            var YTVideo = new Video();
+            YTVideo.Snippet = new VideoSnippet();
+            YTVideo.Snippet.Title = VideoTitle;
+            YTVideo.Snippet.Description = VideoDescription;
+            YTVideo.Snippet.Tags = new string[] { "reddit", "r/askreddit", "funny", "comedy", "entertainment", "stories", "life", "video", "askreddit" };
+            YTVideo.Snippet.CategoryId = "24"; // See https://developers.google.com/youtube/v3/docs/videoCategories/list
+            YTVideo.Status = new VideoStatus();
+            YTVideo.Status.PrivacyStatus = "public"; // or "private" or "unlisted"
+            var filePath = Path.Combine(AppVariables.OutputDirectory, "output.mp4");
+
+            ConsoleOutput.AppendText("> Done starting YouTube service.\r\n");
+
+            await Task.Delay(100);
+
+            //upload video
+            using (var fileStream = new FileStream(filePath, FileMode.Open))
+            {
+                ConsoleOutput.AppendText("> Uploading video to YouTube...\r\n");
+
+                await Task.Delay(100);
+
+                var videosInsertRequest = youtubeService.Videos.Insert(YTVideo, "snippet,status", fileStream, "video/*");
+                videosInsertRequest.ProgressChanged += videosInsertRequest_ProgressChanged;
+                videosInsertRequest.ResponseReceived += videosInsertRequest_ResponseReceived;
+
+                await videosInsertRequest.UploadAsync();
+            }
+
+            //set video thumbnail
+            using (var fileStream = new FileStream(Path.Combine(AppVariables.OutputDirectory, "thumbnail.png"), FileMode.Open))
+            {
+                ConsoleOutput.AppendText("> Uploading video thumbnail...\r\n");
+
+                await Task.Delay(100);
+
+                var videoThumbnailRequest = youtubeService.Thumbnails.Set(YTVideo.Id, fileStream, "image/png");
+                videoThumbnailRequest.ProgressChanged += VideoThumbnailRequest_ProgressChanged;
+                videoThumbnailRequest.ResponseReceived += VideoThumbnailRequest_ResponseReceived;
+
+                await videoThumbnailRequest.UploadAsync();
+            }
+
+            ConsoleOutput.AppendText("> YouTube video link: https://youtu.be/" + YTVideo.Id + "\r\n");
+
+            await Task.Delay(100);
+
+            ConsoleOutput.AppendText("> Copying video file and thumbnail to your Desktop...\r\n");
+
+            await Task.Delay(100);
+
+            CopyVideoAndThumbnailToDesktop();
+
+            ConsoleOutput.AppendText("> You can now close RedditVideoGenerator.");
 
             #endregion
 
             #endregion
 
             return;
+        }
+
+        #endregion
+
+        #region YouTube API Event Handlers
+
+        private void videosInsertRequest_ProgressChanged(Google.Apis.Upload.IUploadProgress progress)
+        {
+            switch (progress.Status)
+            {
+                case UploadStatus.Uploading:
+
+                    this.Dispatcher.Invoke(() =>
+                    {
+                        ConsoleOutput.AppendText(String.Format("> {0} bytes sent.", progress.BytesSent) + "\r\n");
+                    });
+                    
+                    break;
+
+                case UploadStatus.Failed:
+
+                    this.Dispatcher.Invoke(() =>
+                    {
+                        ConsoleOutput.AppendText(String.Format("> An error prevented the upload from completing.\n{0}", progress.Exception) + "\r\n");
+                    });
+
+                    MessageBox.Show(String.Format("An error prevented the video upload from completing. You can try manually uploading the video to YouTube.\n{0}", progress.Exception),
+                        "Error uploading video", MessageBoxButton.OK, MessageBoxImage.Error);
+
+                    CopyVideoAndThumbnailToDesktopWithShutdown();
+
+                    break;
+            }
+        }
+
+        private async void videosInsertRequest_ResponseReceived(Video video)
+        {
+            this.Dispatcher.Invoke(() =>
+            {
+                ConsoleOutput.AppendText(String.Format("> Video id '{0}' was successfully uploaded.", video.Id) + "\r\n");
+            });
+
+            await Task.Delay(100);
+        }
+
+        private async void VideoThumbnailRequest_ResponseReceived(ThumbnailSetResponse obj)
+        {
+            this.Dispatcher.Invoke(() =>
+            {
+                ConsoleOutput.AppendText("> Successfully set video thumbnail.\r\n");
+            });
+
+            await Task.Delay(100);
+        }
+
+        private void VideoThumbnailRequest_ProgressChanged(IUploadProgress progress)
+        {
+            switch (progress.Status)
+            {
+                case UploadStatus.Uploading:
+
+                    this.Dispatcher.Invoke(() =>
+                    {
+                        ConsoleOutput.AppendText(String.Format("> {0} bytes sent.", progress.BytesSent) + "\r\n");
+                    });
+      
+                    break;
+
+                case UploadStatus.Failed:
+
+                    this.Dispatcher.Invoke(() =>
+                    {
+                        ConsoleOutput.AppendText(String.Format("> An error prevented the thumbnail upload from completing.\n{0}", progress.Exception) + "\r\n");
+                    });
+                    
+                    MessageBox.Show(String.Format("An error prevented the thumbnail upload from completing. You can try manually setting the thumbnail for the video on YouTube.\n{0}", progress.Exception),
+                        "Error uploading thumbnail", MessageBoxButton.OK, MessageBoxImage.Error);
+
+                    CopyVideoAndThumbnailToDesktopWithShutdown();
+
+                    break;
+            }
         }
 
         #endregion
