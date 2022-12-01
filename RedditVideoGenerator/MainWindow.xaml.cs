@@ -729,10 +729,10 @@ namespace RedditVideoGenerator
             foreach (int i in RandomBGMFileNames)
             {
                 string MusicLicensePath = Path.Combine(AppVariables.MusicLicenseDirectory, i.ToString() + ".txt");
-                VideoDescription += File.ReadAllText(MusicLicensePath) + "\n";
+                VideoDescription += File.ReadAllText(MusicLicensePath) + "\n\n";
             }
 
-            ConsoleOutput.AppendText("> Sign in to your Google Account when prompted.\r\n");
+            ConsoleOutput.AppendText("> Signing in to your Google Account...\r\n");
 
             await Task.Delay(100);
 
