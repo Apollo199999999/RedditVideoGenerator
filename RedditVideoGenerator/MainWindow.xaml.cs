@@ -27,6 +27,9 @@ using System.Threading;
 using System.Reflection;
 using System.IO.Pipes;
 using System.Web.UI.WebControls;
+using Octokit;
+using FileMode = System.IO.FileMode;
+using Application = System.Windows.Application;
 
 namespace RedditVideoGenerator
 {
@@ -53,8 +56,42 @@ namespace RedditVideoGenerator
             };
         }
 
-        private void ConsoleOutput_Loaded(object sender, RoutedEventArgs e)
+        private async void ConsoleOutput_Loaded(object sender, RoutedEventArgs e)
         {
+            //check for updates before calling main function
+            //compare the latest release tag with the app version. If they are different, update is available
+            GitHubClient client = new GitHubClient(new ProductHeaderValue("RedditVideoGenerator"));
+            IReadOnlyList<Release> releases = await client.Repository.Release.GetAll("Apollo199999999", "RedditVideoGenerator");
+            
+            if (releases.Count > 0)
+            {
+                Version latestGitHubVersion = new Version(releases[0].TagName);
+                Version localVersion = new Version(AppVariables.AppVersion);
+
+                //Compare versions
+                int versionComparison = localVersion.CompareTo(latestGitHubVersion);
+                if (versionComparison < 0)
+                {
+                    //The version on GitHub is more up to date than this local release.
+                    //show the messagebox
+                    var result = MessageBox.Show("An update is available for RedditVideoGenerator. " +
+                        "Would you like to go to GitHub to download it?", "Update available",
+                        MessageBoxButton.YesNo, MessageBoxImage.Question);
+
+                    if (result == MessageBoxResult.Yes)
+                    {
+                        //go to the github page
+                        Process.Start("https://github.com/Apollo199999999/RedditVideoGenerator/releases");
+
+                        //exit the application
+                        Application.Current.Shutdown();
+
+                        return;
+                    }
+                }
+
+            }
+
             //call main function which is the entry point of the video generation
             Main();
         }
@@ -64,7 +101,6 @@ namespace RedditVideoGenerator
             //scroll to end
             ConsoleOutput.ScrollToEnd();
         }
-
 
         private void AboutBtn_Click(object sender, RoutedEventArgs e)
         {
@@ -238,7 +274,7 @@ namespace RedditVideoGenerator
             await StartProcess("taskkill.exe", " /f /im ffmpeg.exe");
 
             //allow some time in case some libraries/code hasn't loaded yet
-            await Task.Delay(1000);
+            await Task.Delay(500);
 
             ConsoleOutput.AppendText("> Initialization complete \r\n");
 
@@ -771,6 +807,7 @@ namespace RedditVideoGenerator
             YTVideo.Snippet.CategoryId = "24"; // See https://developers.google.com/youtube/v3/docs/videoCategories/list
             YTVideo.Status = new VideoStatus();
             YTVideo.Status.MadeForKids = false;
+            YTVideo.Status.SelfDeclaredMadeForKids = false;
             YTVideo.Status.PrivacyStatus = "public"; // or "private" or "unlisted"
             var filePath = Path.Combine(AppVariables.OutputDirectory, "output.mp4");
 
