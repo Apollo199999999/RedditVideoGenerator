@@ -276,6 +276,12 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 ------------------------------------------------------------------------------------------------------------------------------------------------------------
 
+Microsoft.WindowsAPICodePack-Shell (https://www.nuget.org/packages/Microsoft.WindowsAPICodePack-Shell/1.1.0)
+
+(Unable to find license, but the NuGet package link is linked above.)
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+
 RedditVideoGenerator's application icon was designed using the Fluency Icons made by Icons8, as well as the Reddit logo.
 Sources: https://icons8.com/icon/YHmiPcbhIHTX/showing-video-frames and https://www.redditinc.com/brand
 

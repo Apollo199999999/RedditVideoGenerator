@@ -85,8 +85,6 @@ C:\Users\fligh\source\repos\RedditVideoGenerator\RedditVideoGenerator\bin\Debug\
 C:\Users\fligh\source\repos\RedditVideoGenerator\RedditVideoGenerator\bin\Debug\System.Security.Principal.Windows.xml
 C:\Users\fligh\source\repos\RedditVideoGenerator\RedditVideoGenerator\bin\Debug\Resources\transition.mp4
 C:\Users\fligh\source\repos\RedditVideoGenerator\RedditVideoGenerator\bin\Debug\Resources\outro.mp4
-C:\Users\fligh\source\repos\RedditVideoGenerator\RedditVideoGenerator\obj\Debug\Interop.Shell32.dll
-C:\Users\fligh\source\repos\RedditVideoGenerator\RedditVideoGenerator\obj\Debug\RedditVideoGenerator.csproj.ResolveComReference.cache
 C:\Users\fligh\source\repos\RedditVideoGenerator\RedditVideoGenerator\obj\Debug\Controls\ThumbnailImage.g.cs
 C:\Users\fligh\source\repos\RedditVideoGenerator\RedditVideoGenerator\obj\Debug\Controls\ThumbnailImage.baml
 C:\Users\fligh\source\repos\RedditVideoGenerator\RedditVideoGenerator\bin\Debug\Resources\IBMPlexSans\OFL.txt
@@ -159,3 +157,12 @@ C:\Users\fligh\source\repos\RedditVideoGenerator\RedditVideoGenerator\bin\Debug\
 C:\Users\fligh\source\repos\RedditVideoGenerator\RedditVideoGenerator\bin\Debug\Google.Apis.YouTube.v3.xml
 C:\Users\fligh\source\repos\RedditVideoGenerator\RedditVideoGenerator\bin\Debug\Octokit.dll
 C:\Users\fligh\source\repos\RedditVideoGenerator\RedditVideoGenerator\bin\Debug\Octokit.xml
+C:\Users\fligh\source\repos\RedditVideoGenerator\RedditVideoGenerator\bin\Debug\Microsoft.WindowsAPICodePack.dll
+C:\Users\fligh\source\repos\RedditVideoGenerator\RedditVideoGenerator\bin\Debug\Microsoft.WindowsAPICodePack.Shell.dll
+C:\Users\fligh\source\repos\RedditVideoGenerator\RedditVideoGenerator\bin\Debug\Microsoft.WindowsAPICodePack.ShellExtensions.dll
+C:\Users\fligh\source\repos\RedditVideoGenerator\RedditVideoGenerator\bin\Debug\Microsoft.WindowsAPICodePack.pdb
+C:\Users\fligh\source\repos\RedditVideoGenerator\RedditVideoGenerator\bin\Debug\Microsoft.WindowsAPICodePack.xml
+C:\Users\fligh\source\repos\RedditVideoGenerator\RedditVideoGenerator\bin\Debug\Microsoft.WindowsAPICodePack.Shell.pdb
+C:\Users\fligh\source\repos\RedditVideoGenerator\RedditVideoGenerator\bin\Debug\Microsoft.WindowsAPICodePack.Shell.xml
+C:\Users\fligh\source\repos\RedditVideoGenerator\RedditVideoGenerator\bin\Debug\Microsoft.WindowsAPICodePack.ShellExtensions.pdb
+C:\Users\fligh\source\repos\RedditVideoGenerator\RedditVideoGenerator\bin\Debug\Microsoft.WindowsAPICodePack.ShellExtensions.xml

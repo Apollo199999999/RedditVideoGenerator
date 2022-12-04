@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -51,21 +52,33 @@ namespace RedditVideoGenerator
 
             //choose random post from list
             Random rnd = new Random();
-            int r = rnd.Next(posts.Count);
+            Post RandomPost;
+
+            //keep generating a random post while the generatedpostids contains the randompost.id
+            do
+            {
+                int r = rnd.Next(posts.Count);
+                RandomPost = posts[r];
+            } while (Properties.Settings.Default.GeneratedPostIds.Contains(RandomPost.Id));
+
+            //add random post id to settings
+            Properties.Settings.Default.GeneratedPostIds.Add(RandomPost.Id);
+            Properties.Settings.Default.Save();
+            Properties.Settings.Default.Reload();
 
             //update app variables
-            AppVariables.PostTitle = posts[r].Title;
-            AppVariables.PostAuthor = posts[r].Author;
-            AppVariables.PostCommentCount = posts[r].Listing.NumComments;
-            AppVariables.PostUpvoteCount = posts[r].UpVotes;
-            AppVariables.PostCreationDate = posts[r].Created;
-            AppVariables.PostIsNSFW = posts[r].NSFW;
-            AppVariables.PostId = posts[r].Id;
-            AppVariables.PostPlatinumCount = posts[r].Awards.Platinum;
-            AppVariables.PostGoldCount = posts[r].Awards.Gold;
-            AppVariables.PostSilverCount = posts[r].Awards.Silver;
+            AppVariables.PostTitle = RandomPost.Title;
+            AppVariables.PostAuthor = RandomPost.Author;
+            AppVariables.PostCommentCount = RandomPost.Listing.NumComments;
+            AppVariables.PostUpvoteCount = RandomPost.UpVotes;
+            AppVariables.PostCreationDate = RandomPost.Created;
+            AppVariables.PostIsNSFW = RandomPost.NSFW;
+            AppVariables.PostId = RandomPost.Id;
+            AppVariables.PostPlatinumCount = RandomPost.Awards.Platinum;
+            AppVariables.PostGoldCount = RandomPost.Awards.Gold;
+            AppVariables.PostSilverCount = RandomPost.Awards.Silver;
 
-            return "t3_" + posts[r].Id;
+            return "t3_" + RandomPost.Id;
         }
 
         public List<Comment> GetPostTopComments(string postID)

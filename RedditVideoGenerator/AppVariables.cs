@@ -49,25 +49,9 @@ namespace RedditVideoGenerator
             new List<Color>() { Colors.Orange, Colors.Yellow, Colors.LightGreen, Colors.CornflowerBlue, Colors.DarkSalmon, 
                 Colors.DarkOrange, Color.FromRgb(255, 69, 0), Color.FromRgb(255, 168, 0), Color.FromRgb(251, 19, 58) };
 
-        //function to generate unique random numbers
-        public static List<int> GenerateUniqueRandInt(int LowerBound, int UpperBound, int times)
-        {
-            Random rand = new Random();
-            List<int> listNumbers = new List<int>();
-            int number;
-            for (int i = 0; i < times; i++)
-            {
-                do
-                {
-                    number = rand.Next(LowerBound, UpperBound);
-                } while (listNumbers.Contains(number));
-                listNumbers.Add(number);
-            }
-
-            return listNumbers;
-        }
-
         //YouTube variables
+        public static string VideoTitle;
+        public static string VideoDescription;
         public static bool ErrorUploadingVideo = false;
         public static bool ErrorUploadingThumbnail = false;
         public static string YTVideoId;

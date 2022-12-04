@@ -6,7 +6,6 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Speech.AudioFormat;
 using System.Speech.Synthesis;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -15,21 +14,20 @@ using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using Shell32;
 using System.Linq;
 using Google.Apis.Auth.OAuth2;
 using Google.Apis.Services;
 using Google.Apis.Upload;
-using Google.Apis.Util.Store;
 using Google.Apis.YouTube.v3;
 using Google.Apis.YouTube.v3.Data;
 using System.Threading;
 using System.Reflection;
-using System.IO.Pipes;
-using System.Web.UI.WebControls;
 using Octokit;
 using FileMode = System.IO.FileMode;
 using Application = System.Windows.Application;
+using Microsoft.WindowsAPICodePack.Shell.PropertySystem;
+using Microsoft.WindowsAPICodePack.Shell;
+using System.Runtime.InteropServices;
 
 namespace RedditVideoGenerator
 {
@@ -43,6 +41,14 @@ namespace RedditVideoGenerator
         public MainWindow()
         {
             InitializeComponent();
+
+            //Upgrade settings if needed
+            if (Properties.Settings.Default.UpgradeRequired)
+            {
+                Properties.Settings.Default.Upgrade();
+                Properties.Settings.Default.UpgradeRequired = false;
+                Properties.Settings.Default.Save();
+            }
 
             Loaded += (sender, args) =>
             {
@@ -59,37 +65,60 @@ namespace RedditVideoGenerator
         private async void ConsoleOutput_Loaded(object sender, RoutedEventArgs e)
         {
             //check for updates before calling main function
-            //compare the latest release tag with the app version. If they are different, update is available
-            GitHubClient client = new GitHubClient(new ProductHeaderValue("RedditVideoGenerator"));
-            IReadOnlyList<Release> releases = await client.Repository.Release.GetAll("Apollo199999999", "RedditVideoGenerator");
-            
-            if (releases.Count > 0)
+            ConsoleOutput.AppendText("> Checking for updates...\r\n");
+
+            await Task.Delay(100);
+
+            if (CheckForInternetConnection() == true)
             {
-                Version latestGitHubVersion = new Version(releases[0].TagName);
-                Version localVersion = new Version(AppVariables.AppVersion);
+                //compare the latest release tag with the app version. If they are different, update is available
+                GitHubClient client = new GitHubClient(new ProductHeaderValue("RedditVideoGenerator"));
+                IReadOnlyList<Release> releases = await client.Repository.Release.GetAll("Apollo199999999", "RedditVideoGenerator");
 
-                //Compare versions
-                int versionComparison = localVersion.CompareTo(latestGitHubVersion);
-                if (versionComparison < 0)
+                if (releases.Count > 0)
                 {
-                    //The version on GitHub is more up to date than this local release.
-                    //show the messagebox
-                    var result = MessageBox.Show("An update is available for RedditVideoGenerator. " +
-                        "Would you like to go to GitHub to download it?", "Update available",
-                        MessageBoxButton.YesNo, MessageBoxImage.Question);
+                    Version latestGitHubVersion = new Version(releases[0].TagName);
+                    Version localVersion = new Version(AppVariables.AppVersion);
 
-                    if (result == MessageBoxResult.Yes)
+                    //Compare versions
+                    int versionComparison = localVersion.CompareTo(latestGitHubVersion);
+                    if (versionComparison < 0)
                     {
-                        //go to the github page
-                        Process.Start("https://github.com/Apollo199999999/RedditVideoGenerator/releases");
+                        //The version on GitHub is more up to date than this local release.
 
-                        //exit the application
-                        Application.Current.Shutdown();
+                        ConsoleOutput.AppendText("> An update is available.\r\n");
 
-                        return;
+                        await Task.Delay(100);
+
+                        //show the messagebox
+                        var result = MessageBox.Show("An update is available for RedditVideoGenerator. " +
+                            "Would you like to go to GitHub to download it?", "Update available",
+                            MessageBoxButton.YesNo, MessageBoxImage.Question);
+
+                        if (result == MessageBoxResult.Yes)
+                        {
+                            //go to the github page
+                            Process.Start("https://github.com/Apollo199999999/RedditVideoGenerator/releases");
+
+                            //exit the application
+                            Application.Current.Shutdown();
+
+                            return;
+                        }
                     }
+
                 }
 
+                ConsoleOutput.AppendText("> No updates are available.\r\n");
+
+                await Task.Delay(100);
+            }
+            else
+            {
+                ConsoleOutput.AppendText("> Unable to check for updates. Check your internet connection, " +
+                    "and RedditVideoGenerator will check for updates on next launch.\r\n");
+
+                await Task.Delay(100);
             }
 
             //call main function which is the entry point of the video generation
@@ -112,6 +141,35 @@ namespace RedditVideoGenerator
         #endregion
 
         #region Helper functions
+
+        //Check Internet Connection Function
+        //Creating the extern function...  
+        [DllImport("wininet.dll")]
+        private extern static bool InternetGetConnectedState(out int Description, int ReservedValue);
+        public static bool CheckForInternetConnection()
+        {
+            int Desc;
+            return InternetGetConnectedState(out Desc, 0);
+        }
+
+        //function to generate unique random numbers
+        public static List<int> GenerateUniqueRandInt(int LowerBound, int UpperBound, int times)
+        {
+            Random rand = new Random();
+            List<int> listNumbers = new List<int>();
+            int number;
+            for (int i = 0; i < times; i++)
+            {
+                do
+                {
+                    number = rand.Next(LowerBound, UpperBound);
+                } while (listNumbers.Contains(number));
+                listNumbers.Add(number);
+            }
+
+            return listNumbers;
+        }
+
         public string StringFromRichTextBox(RichTextBox rtb)
         {
             TextRange textRange = new TextRange(
@@ -193,27 +251,17 @@ namespace RedditVideoGenerator
             }
         }
 
-        public static bool GetDuration(string filename, out TimeSpan duration)
+        public static TimeSpan GetDuration(string filename)
         {
-            try
+            using (var shell = ShellObject.FromParsingName(filename))
             {
-                var shl = new Shell();
-                var fldr = shl.NameSpace(Path.GetDirectoryName(filename));
-                var itm = fldr.ParseName(Path.GetFileName(filename));
-
-                // Index 27 is the video duration [This may not always be the case]
-                var propValue = fldr.GetDetailsOf(itm, 27);
-
-                return TimeSpan.TryParse(propValue, out duration);
-            }
-            catch (Exception)
-            {
-                duration = new TimeSpan();
-                return false;
+                IShellProperty prop = shell.Properties.System.Media.Duration;
+                var t = (ulong)prop.ValueAsObject;
+                return TimeSpan.FromTicks((long)t);
             }
         }
 
-        public void CopyVideoAndThumbnailToDesktop()
+        public void SaveVideoResourcesToDesktop()
         {
             //copy video file and thumbnail to user desktop
             //remove invalid chars from post title
@@ -229,17 +277,28 @@ namespace RedditVideoGenerator
             File.Copy(Path.Combine(AppVariables.OutputDirectory, "output.mp4"), Path.Combine(AppVariables.UserDesktopDirectory, CopiedVideoFilename + ".mp4"), true);
             File.Copy(Path.Combine(AppVariables.OutputDirectory, "thumbnail.png"), Path.Combine(AppVariables.UserDesktopDirectory, "thumbnail - " + CopiedVideoFilename + ".png"), true);
 
-            //show both files in file explorer
-            Process.Start("explorer.exe", "/select, \"" + Path.Combine(AppVariables.UserDesktopDirectory, CopiedVideoFilename + ".mp4") + "\"");
+            //write video title and description to text files on desktop
+            File.WriteAllText(Path.Combine(AppVariables.UserDesktopDirectory, "title - " + CopiedVideoFilename + ".txt"), AppVariables.VideoTitle);
+            File.WriteAllText(Path.Combine(AppVariables.UserDesktopDirectory, "description - " + CopiedVideoFilename + ".txt"), AppVariables.VideoDescription);
+
+            //create a array for the files to show
+            string[] FilesToShow = new string[] { CopiedVideoFilename + ".mp4", 
+                "thumbnail - " + CopiedVideoFilename + ".png",
+                "title - " + CopiedVideoFilename + ".txt",
+                "description - " + CopiedVideoFilename + ".txt"
+            };
+
+            //show the files in file explorer
+            ExplorerMethods.OpenFolderAndSelectFiles(AppVariables.UserDesktopDirectory, FilesToShow);
 
             //clean up working directory
             Directory.Delete(AppVariables.WorkingDirectory, true);
 
         }
 
-        public void CopyVideoAndThumbnailToDesktopWithShutdown()
+        public void SaveVideoResourcesToDesktopWithShutdown()
         {
-            CopyVideoAndThumbnailToDesktop();
+            SaveVideoResourcesToDesktop();
 
             //exit application
             Application.Current.Shutdown();
@@ -418,12 +477,7 @@ namespace RedditVideoGenerator
 
                 foreach (string video in OutputVideos)
                 {
-                    TimeSpan VideoDuration;
-
-                    if (GetDuration(video, out VideoDuration))
-                    {
-                        TotalDuration += VideoDuration;
-                    }
+                    TotalDuration += GetDuration(video);
                 }
 
                 if (TotalDuration >= new TimeSpan(0, 0, 15, 0))
@@ -640,7 +694,7 @@ namespace RedditVideoGenerator
             string[] BGMFiles = Directory.GetFiles(AppVariables.BGMusicDirectory);
 
             //pick 3 random numbers to use as filename for music
-            List<int> RandomBGMFileNames = AppVariables.GenerateUniqueRandInt(0, BGMFiles.Length, 3);
+            List<int> RandomBGMFileNames = GenerateUniqueRandInt(0, BGMFiles.Length, 3);
 
             string Bgm1Path = Path.Combine(AppVariables.BGMusicDirectory, RandomBGMFileNames[0].ToString() + ".wav");
             string Bgm2Path = Path.Combine(AppVariables.BGMusicDirectory, RandomBGMFileNames[1].ToString() + ".wav");
@@ -735,6 +789,29 @@ namespace RedditVideoGenerator
 
             #region Youtube video configuration and uploading
 
+            #region Generate video title and description
+
+            ConsoleOutput.AppendText("> Generating video title and description...\r\n");
+
+            await Task.Delay(100);
+
+            //init yt video title and description
+            AppVariables.VideoTitle = String.Format("[r/{0}] {1}", AppVariables.SubReddit, AppVariables.PostTitle);
+            AppVariables.VideoDescription = AppVariables.VideoTitle + "\n" + "Thanks for watching! Leave a like if you have enjoyed this video and subscribe to never miss an upload. \n\n" + "Music: \n";
+
+            //get music credits to put in video description
+            foreach (int i in RandomBGMFileNames)
+            {
+                string MusicLicensePath = Path.Combine(AppVariables.MusicLicenseDirectory, i.ToString() + ".txt");
+                AppVariables.VideoDescription += File.ReadAllText(MusicLicensePath) + "\n\n";
+            }
+
+            ConsoleOutput.AppendText("> Done generating video title and description.\r\n");
+
+            await Task.Delay(100);
+
+            #endregion
+
             #region Confirmation on whether to upload video
 
             MessageBoxResult YoutubeMsgBoxResult = MessageBox.Show("Do you want to upload this video to YouTube? \n" +
@@ -744,7 +821,7 @@ namespace RedditVideoGenerator
 
             if (YoutubeMsgBoxResult == MessageBoxResult.No)
             {
-                CopyVideoAndThumbnailToDesktopWithShutdown();
+                SaveVideoResourcesToDesktopWithShutdown();
 
                 return;
             }
@@ -752,21 +829,6 @@ namespace RedditVideoGenerator
             #endregion
 
             #region YouTube video settings and uploading
-
-            ConsoleOutput.AppendText("> Configuring video settings...\r\n");
-
-            await Task.Delay(100);
-
-            //init video title and description
-            string VideoTitle = String.Format("[r/{0}] {1}", AppVariables.SubReddit, AppVariables.PostTitle);
-            string VideoDescription = VideoTitle + "\n" + "Thanks for watching! Leave a like if you have enjoyed this video and subscribe to never miss an upload. \n\n" + "Music: \n";
-
-            //get music credits to put in video description
-            foreach (int i in RandomBGMFileNames)
-            {
-                string MusicLicensePath = Path.Combine(AppVariables.MusicLicenseDirectory, i.ToString() + ".txt");
-                VideoDescription += File.ReadAllText(MusicLicensePath) + "\n\n";
-            }
 
             ConsoleOutput.AppendText("> Signing in to your Google Account...\r\n");
 
@@ -786,7 +848,7 @@ namespace RedditVideoGenerator
                     CancellationToken.None
                 );
             }
-            
+
             ConsoleOutput.AppendText("> Starting YouTube service...\r\n");
 
             await Task.Delay(100);
@@ -801,8 +863,8 @@ namespace RedditVideoGenerator
             //video properties
             var YTVideo = new Video();
             YTVideo.Snippet = new VideoSnippet();
-            YTVideo.Snippet.Title = VideoTitle;
-            YTVideo.Snippet.Description = VideoDescription;
+            YTVideo.Snippet.Title = AppVariables.VideoTitle;
+            YTVideo.Snippet.Description = AppVariables.VideoDescription;
             YTVideo.Snippet.Tags = new string[] { "reddit", "r/askreddit", "funny", "comedy", "entertainment", "stories", "life", "video", "askreddit" };
             YTVideo.Snippet.CategoryId = "24"; // See https://developers.google.com/youtube/v3/docs/videoCategories/list
             YTVideo.Status = new VideoStatus();
@@ -831,7 +893,7 @@ namespace RedditVideoGenerator
 
             if (AppVariables.ErrorUploadingVideo == true)
             {
-                CopyVideoAndThumbnailToDesktopWithShutdown();
+                SaveVideoResourcesToDesktopWithShutdown();
                 return;
             }
 
@@ -851,7 +913,7 @@ namespace RedditVideoGenerator
 
             if (AppVariables.ErrorUploadingThumbnail == true)
             {
-                CopyVideoAndThumbnailToDesktopWithShutdown();
+                SaveVideoResourcesToDesktopWithShutdown();
                 return;
             }
 
@@ -859,11 +921,11 @@ namespace RedditVideoGenerator
 
             await Task.Delay(100);
 
-            ConsoleOutput.AppendText("> Copying video file and thumbnail to your Desktop...\r\n");
+            ConsoleOutput.AppendText("> Copying video resources to your Desktop...\r\n");
 
             await Task.Delay(100);
 
-            CopyVideoAndThumbnailToDesktop();
+            SaveVideoResourcesToDesktop();
 
             ConsoleOutput.AppendText("> You can now close RedditVideoGenerator.");
 
@@ -888,7 +950,7 @@ namespace RedditVideoGenerator
                     {
                         ConsoleOutput.AppendText(String.Format("> {0} bytes sent.", progress.BytesSent) + "\r\n");
                     });
-                    
+
                     break;
 
                 case UploadStatus.Failed:
@@ -939,7 +1001,7 @@ namespace RedditVideoGenerator
                     {
                         ConsoleOutput.AppendText(String.Format("> {0} bytes sent.", progress.BytesSent) + "\r\n");
                     });
-      
+
                     break;
 
                 case UploadStatus.Failed:
@@ -948,7 +1010,7 @@ namespace RedditVideoGenerator
                     {
                         ConsoleOutput.AppendText(String.Format("> An error prevented the thumbnail upload from completing.\n{0}", progress.Exception.Message) + "\r\n");
                     });
-                    
+
                     MessageBox.Show(String.Format("An error prevented the thumbnail upload from completing. You can try manually setting the thumbnail for the video on YouTube.\n{0}", progress.Exception),
                         "Error uploading thumbnail", MessageBoxButton.OK, MessageBoxImage.Error);
 
