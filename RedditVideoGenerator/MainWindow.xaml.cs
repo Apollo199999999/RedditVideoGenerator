@@ -22,6 +22,7 @@ using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using System.Windows.Threading;
 using Application = System.Windows.Application;
 using Comment = Reddit.Controllers.Comment;
 using FileMode = System.IO.FileMode;
@@ -31,9 +32,10 @@ namespace RedditVideoGenerator
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
+
     public partial class MainWindow
     {
-        #region Window setup and event handlers
+        #region Window setup and event handlers (including update checking)
 
         public MainWindow()
         {
@@ -47,16 +49,48 @@ namespace RedditVideoGenerator
                 Properties.Settings.Default.Save();
             }
 
-            Loaded += (sender, args) =>
+            //create a new dispatcher timer to update theme
+            DispatcherTimer ThemeUpdater = new DispatcherTimer();  
+            ThemeUpdater.Interval = TimeSpan.FromMilliseconds(1000);
+            ThemeUpdater.Tick += ThemeUpdater_Tick;
+            ThemeUpdater.Start();
+
+            Loaded += (s, e) =>
             {
-                //automatic theme switcher
-                Wpf.Ui.Appearance.Watcher.Watch(
-                    this,                                  // Window class
+                ThemeUpdater_Tick(null, null);
+            };
+        }
+
+        private void ThemeUpdater_Tick(object sender, EventArgs e)
+        {
+            Wpf.Ui.Appearance.Accent.Apply(Color.FromRgb(255, 69, 0));
+
+            bool is_light_mode = true;
+            try
+            {
+                var v = Microsoft.Win32.Registry.GetValue(@"HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Themes\Personalize", "AppsUseLightTheme", "1");
+                if (v != null && v.ToString() == "0")
+                    is_light_mode = false;
+            }
+            catch { }
+
+            if (is_light_mode == true)
+            {
+                Wpf.Ui.Appearance.Theme.Apply(
+                    Wpf.Ui.Appearance.ThemeType.Light,     // Theme type
                     Wpf.Ui.Appearance.BackgroundType.Mica, // Background type
                     false                                   // Whether to change accents automatically
                 );
-                Wpf.Ui.Appearance.Accent.Apply(Color.FromRgb(255, 69, 0));
-            };
+            }
+            else if (is_light_mode == false)
+            {
+                Wpf.Ui.Appearance.Theme.Apply(
+                  Wpf.Ui.Appearance.ThemeType.Dark,      // Theme type
+                  Wpf.Ui.Appearance.BackgroundType.Mica, // Background type
+                  false                                  // Whether to change accents automatically
+                );
+
+            }
         }
 
         private async void ConsoleOutput_Loaded(object sender, RoutedEventArgs e)
@@ -122,6 +156,9 @@ namespace RedditVideoGenerator
                 await Task.Delay(100);
             }
 
+            YTSignInDialog yTSignInDialog = new YTSignInDialog();
+            yTSignInDialog.ShowDialog();
+
             //call main function which is the entry point of the video generation
             Main();
         }
@@ -134,9 +171,15 @@ namespace RedditVideoGenerator
 
         private void AboutBtn_Click(object sender, RoutedEventArgs e)
         {
-            //show AboutWindow
+            //show AboutWindow (without blocking calling thread)
             AboutWindow aboutWindow = new AboutWindow();
-            aboutWindow.ShowDialog();
+            aboutWindow.Owner = this;
+            aboutWindow.Show();
+            this.IsEnabled = false;
+            aboutWindow.Closed += (s, args) =>
+            {
+                this.IsEnabled = true;
+            };
         }
 
         #endregion

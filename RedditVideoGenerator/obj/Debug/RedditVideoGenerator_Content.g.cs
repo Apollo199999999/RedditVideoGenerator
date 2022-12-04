@@ -48,6 +48,8 @@
 [assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("resources/outro.mp4")]
 [assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("resources/snoo.png")]
 [assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("resources/transition.mp4")]
+[assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("resources/ytdark.png")]
+[assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("resources/ytlight.png")]
 [assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("resources/notosans/notosans-black.ttf")]
 [assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("resources/notosans/notosans-blackitalic.ttf")]
 [assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("resources/notosans/notosans-bold.ttf")]

@@ -10,22 +10,20 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
+using System.IO;
+using Wpf.Ui.Appearance;
 using System.Windows.Threading;
 
 namespace RedditVideoGenerator
 {
     /// <summary>
-    /// Interaction logic for AboutWindow.xaml
+    /// Interaction logic for YTSignInDialog.xaml
     /// </summary>
-    public partial class AboutWindow
+    public partial class YTSignInDialog
     {
-        public AboutWindow()
+        public YTSignInDialog()
         {
             InitializeComponent();
-
-            //set text of version text
-            VersionText.Text = "Version " + AppVariables.AppVersion;
 
             //create a new dispatcher timer to update theme
             DispatcherTimer ThemeUpdater = new DispatcherTimer();
@@ -59,6 +57,8 @@ namespace RedditVideoGenerator
                     Wpf.Ui.Appearance.BackgroundType.Mica, // Background type
                     false                                   // Whether to change accents automatically
                 );
+
+                YTImage.Source = new BitmapImage(new Uri(Path.Combine(AppVariables.ResourcesDirectory, "YTLight.png")));
             }
             else if (is_light_mode == false)
             {
@@ -68,13 +68,8 @@ namespace RedditVideoGenerator
                   false                                  // Whether to change accents automatically
                 );
 
+                YTImage.Source = new BitmapImage(new Uri(Path.Combine(AppVariables.ResourcesDirectory, "YTDark.png")));
             }
-        }
-
-        private void CloseBtn_Click(object sender, RoutedEventArgs e)
-        {
-            //close this window
-            this.Close();
         }
     }
 }

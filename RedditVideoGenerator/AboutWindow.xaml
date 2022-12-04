@@ -12,6 +12,7 @@
     ExtendsContentIntoTitleBar="True"
     Icon="/Resources/icon.ico"
     ResizeMode="NoResize"
+    Style="{DynamicResource UiWindow}"
     WindowBackdropType="Mica"
     WindowCornerPreference="Round"
     WindowStartupLocation="CenterScreen"
@@ -41,7 +42,7 @@
                 Margin="0,10,0,0"
                 HorizontalAlignment="Center"
                 FontSize="16"
-                Text="Version 1.0.0" />
+                Text="Version x.x.x" />
 
             <ui:Hyperlink
                 Margin="0,15,0,0"

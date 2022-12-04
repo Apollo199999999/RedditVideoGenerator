@@ -12,6 +12,7 @@
     ExtendsContentIntoTitleBar="True"
     Icon="/Resources/icon.ico"
     ResizeMode="CanResize"
+    Style="{DynamicResource UiWindow}"
     WindowBackdropType="Mica"
     WindowCornerPreference="Round"
     WindowStartupLocation="CenterScreen"
