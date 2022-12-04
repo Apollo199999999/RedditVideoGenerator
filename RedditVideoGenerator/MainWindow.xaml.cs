@@ -1,11 +1,19 @@
-﻿using NAudio.Wave;
-using Reddit.Controllers;
-using Comment = Reddit.Controllers.Comment;
+﻿using Google.Apis.Auth.OAuth2;
+using Google.Apis.Upload;
+using Google.Apis.YouTube.v3;
+using Google.Apis.YouTube.v3.Data;
+using Microsoft.WindowsAPICodePack.Shell;
+using Microsoft.WindowsAPICodePack.Shell.PropertySystem;
+using NAudio.Wave;
+using Octokit;
 using RedditVideoGenerator.Controls;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
+using System.Runtime.InteropServices;
+using System.Security.Cryptography;
 using System.Speech.Synthesis;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -14,20 +22,9 @@ using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Linq;
-using Google.Apis.Auth.OAuth2;
-using Google.Apis.Services;
-using Google.Apis.Upload;
-using Google.Apis.YouTube.v3;
-using Google.Apis.YouTube.v3.Data;
-using System.Threading;
-using System.Reflection;
-using Octokit;
-using FileMode = System.IO.FileMode;
 using Application = System.Windows.Application;
-using Microsoft.WindowsAPICodePack.Shell.PropertySystem;
-using Microsoft.WindowsAPICodePack.Shell;
-using System.Runtime.InteropServices;
+using Comment = Reddit.Controllers.Comment;
+using FileMode = System.IO.FileMode;
 
 namespace RedditVideoGenerator
 {
@@ -105,13 +102,17 @@ namespace RedditVideoGenerator
 
                             return;
                         }
+
+                    }
+                    else
+                    {
+                        ConsoleOutput.AppendText("> No updates are available.\r\n");
+
+                        await Task.Delay(100);
                     }
 
                 }
 
-                ConsoleOutput.AppendText("> No updates are available.\r\n");
-
-                await Task.Delay(100);
             }
             else
             {
@@ -282,7 +283,7 @@ namespace RedditVideoGenerator
             File.WriteAllText(Path.Combine(AppVariables.UserDesktopDirectory, "description - " + CopiedVideoFilename + ".txt"), AppVariables.VideoDescription);
 
             //create a array for the files to show
-            string[] FilesToShow = new string[] { CopiedVideoFilename + ".mp4", 
+            string[] FilesToShow = new string[] { CopiedVideoFilename + ".mp4",
                 "thumbnail - " + CopiedVideoFilename + ".png",
                 "title - " + CopiedVideoFilename + ".txt",
                 "description - " + CopiedVideoFilename + ".txt"
@@ -787,7 +788,7 @@ namespace RedditVideoGenerator
 
             #endregion
 
-            #region Youtube video configuration and uploading
+            #region Youtube API Queries
 
             #region Generate video title and description
 
@@ -828,39 +829,31 @@ namespace RedditVideoGenerator
 
             #endregion
 
-            #region YouTube video settings and uploading
+            #region YouTube video uploading
+
+            #region Sign in using OAuth
 
             ConsoleOutput.AppendText("> Signing in to your Google Account...\r\n");
 
             await Task.Delay(100);
 
-            //login to google account using oauth2
-            UserCredential credential;
-            var assembly = Assembly.GetExecutingAssembly();
-            using (var stream = assembly.GetManifestResourceStream("RedditVideoGenerator.Resources.client_secret.json"))
-            {
-                credential = await GoogleWebAuthorizationBroker.AuthorizeAsync(
-                    GoogleClientSecrets.FromStream(stream).Secrets,
-                    // This OAuth 2.0 access scope allows an application to upload files to the
-                    // authenticated user's YouTube channel, but doesn't allow other types of access.
-                    new[] { YouTubeService.Scope.YoutubeUpload },
-                    "user",
-                    CancellationToken.None
-                );
-            }
+            GoogleFunctions googleFunctions = new GoogleFunctions();
+
+            //sign in to google account using oauth
+            UserCredential credential = await googleFunctions.OAuthSignIn();
+
+            #endregion
+
+            #region Start YT Service and init Video
 
             ConsoleOutput.AppendText("> Starting YouTube service...\r\n");
 
             await Task.Delay(100);
 
-            //init youtubeservice to upload video
-            var youtubeService = new YouTubeService(new BaseClientService.Initializer()
-            {
-                HttpClientInitializer = credential,
-                ApplicationName = Assembly.GetExecutingAssembly().GetName().Name
-            });
+            //start yt service
+            YouTubeService youTubeService = googleFunctions.StartYouTubeService(credential);
 
-            //video properties
+            //init video properties
             var YTVideo = new Video();
             YTVideo.Snippet = new VideoSnippet();
             YTVideo.Snippet.Title = AppVariables.VideoTitle;
@@ -877,19 +870,17 @@ namespace RedditVideoGenerator
 
             await Task.Delay(100);
 
-            //upload video
-            using (var fileStream = new FileStream(filePath, FileMode.Open))
-            {
-                ConsoleOutput.AppendText("> Uploading video to YouTube...\r\n");
+            #endregion
 
-                await Task.Delay(100);
+            #region Upload Video
 
-                var videosInsertRequest = youtubeService.Videos.Insert(YTVideo, "snippet,status", fileStream, "video/*");
-                videosInsertRequest.ProgressChanged += videosInsertRequest_ProgressChanged;
-                videosInsertRequest.ResponseReceived += videosInsertRequest_ResponseReceived;
+            //upload video to YT
+            ConsoleOutput.AppendText("> Uploading video to YouTube...\r\n");
 
-                await videosInsertRequest.UploadAsync();
-            }
+            await Task.Delay(100);
+
+            //upload video to yt
+            await googleFunctions.UploadVideo(filePath, YTVideo, youTubeService);
 
             if (AppVariables.ErrorUploadingVideo == true)
             {
@@ -897,25 +888,29 @@ namespace RedditVideoGenerator
                 return;
             }
 
-            //set video thumbnail
-            using (var fileStream = new FileStream(Path.Combine(AppVariables.OutputDirectory, "thumbnail.png"), FileMode.Open))
-            {
-                ConsoleOutput.AppendText("> Uploading video thumbnail...\r\n");
+            #endregion
 
-                await Task.Delay(100);
+            #region Upload thumbnail
 
-                var videoThumbnailRequest = youtubeService.Thumbnails.Set(AppVariables.YTVideoId, fileStream, "image/png");
-                videoThumbnailRequest.ProgressChanged += VideoThumbnailRequest_ProgressChanged;
-                videoThumbnailRequest.ResponseReceived += VideoThumbnailRequest_ResponseReceived;
+            ConsoleOutput.AppendText("> Uploading video thumbnail...\r\n");
 
-                await videoThumbnailRequest.UploadAsync();
-            }
+            await Task.Delay(100);
+
+            await googleFunctions.UploadThumbnail(Path.Combine(AppVariables.OutputDirectory, "thumbnail.png"), AppVariables.YTVideoId, youTubeService);
 
             if (AppVariables.ErrorUploadingThumbnail == true)
             {
                 SaveVideoResourcesToDesktopWithShutdown();
                 return;
             }
+
+            #endregion
+
+            #endregion
+
+            #endregion
+
+            #region Cleaning up
 
             ConsoleOutput.AppendText("> YouTube video link: https://youtu.be/" + AppVariables.YTVideoId + "\r\n");
 
@@ -931,93 +926,7 @@ namespace RedditVideoGenerator
 
             #endregion
 
-            #endregion
-
             return;
-        }
-
-        #endregion
-
-        #region YouTube API Event Handlers
-
-        private void videosInsertRequest_ProgressChanged(Google.Apis.Upload.IUploadProgress progress)
-        {
-            switch (progress.Status)
-            {
-                case UploadStatus.Uploading:
-
-                    this.Dispatcher.Invoke(() =>
-                    {
-                        ConsoleOutput.AppendText(String.Format("> {0} bytes sent.", progress.BytesSent) + "\r\n");
-                    });
-
-                    break;
-
-                case UploadStatus.Failed:
-
-                    this.Dispatcher.Invoke(() =>
-                    {
-                        ConsoleOutput.AppendText(String.Format("> An error prevented the upload from completing.\n{0}", progress.Exception.Message) + "\r\n");
-                    });
-
-                    MessageBox.Show(String.Format("An error prevented the video upload from completing. You can try manually uploading the video to YouTube.\n{0}", progress.Exception),
-                        "Error uploading video", MessageBoxButton.OK, MessageBoxImage.Error);
-
-                    AppVariables.ErrorUploadingVideo = true;
-
-                    break;
-            }
-        }
-
-        private async void videosInsertRequest_ResponseReceived(Video video)
-        {
-            this.Dispatcher.Invoke(() =>
-            {
-                ConsoleOutput.AppendText(String.Format("> Video id '{0}' was successfully uploaded.", video.Id) + "\r\n");
-            });
-
-            AppVariables.YTVideoId = video.Id;
-
-            await Task.Delay(100);
-        }
-
-        private async void VideoThumbnailRequest_ResponseReceived(ThumbnailSetResponse obj)
-        {
-            this.Dispatcher.Invoke(() =>
-            {
-                ConsoleOutput.AppendText("> Successfully set video thumbnail.\r\n");
-            });
-
-            await Task.Delay(100);
-        }
-
-        private void VideoThumbnailRequest_ProgressChanged(IUploadProgress progress)
-        {
-            switch (progress.Status)
-            {
-                case UploadStatus.Uploading:
-
-                    this.Dispatcher.Invoke(() =>
-                    {
-                        ConsoleOutput.AppendText(String.Format("> {0} bytes sent.", progress.BytesSent) + "\r\n");
-                    });
-
-                    break;
-
-                case UploadStatus.Failed:
-
-                    this.Dispatcher.Invoke(() =>
-                    {
-                        ConsoleOutput.AppendText(String.Format("> An error prevented the thumbnail upload from completing.\n{0}", progress.Exception.Message) + "\r\n");
-                    });
-
-                    MessageBox.Show(String.Format("An error prevented the thumbnail upload from completing. You can try manually setting the thumbnail for the video on YouTube.\n{0}", progress.Exception),
-                        "Error uploading thumbnail", MessageBoxButton.OK, MessageBoxImage.Error);
-
-                    AppVariables.ErrorUploadingThumbnail = true;
-
-                    break;
-            }
         }
 
         #endregion

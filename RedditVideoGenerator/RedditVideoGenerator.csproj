@@ -153,6 +153,7 @@
       <DependentUpon>TitleCard.xaml</DependentUpon>
     </Compile>
     <Compile Include="ExplorerMethods.cs" />
+    <Compile Include="GoogleFunctions.cs" />
     <Compile Include="HtmlRichTextBoxBehavior.cs" />
     <Compile Include="RedditFunctions.cs" />
     <Compile Include="TypeExtensions.cs" />

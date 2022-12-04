@@ -1,15 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Documents;
-using Reddit;
+﻿using Reddit;
 using Reddit.Controllers;
 using Reddit.Inputs;
+using System;
+using System.Collections.Generic;
+using System.Windows;
 
 namespace RedditVideoGenerator
 {
@@ -22,7 +16,7 @@ namespace RedditVideoGenerator
             try
             {
                 //init reddit client
-                redditClient = new RedditClient(appId: APIKeys.RedditAppID, appSecret: APIKeys.RedditAppSecret, 
+                redditClient = new RedditClient(appId: APIKeys.RedditAppID, appSecret: APIKeys.RedditAppSecret,
                     accessToken: APIKeys.RedditAccessToken, refreshToken: APIKeys.RedditRefreshToken);
 
                 //try querying something from reddit
@@ -88,5 +82,6 @@ namespace RedditVideoGenerator
             List<Comment> comments = post.Comments.GetTop(depth: 0, showMore: true, limit: 500);
             return comments;
         }
+
     }
 }
