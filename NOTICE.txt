@@ -287,6 +287,10 @@ Sources: https://icons8.com/icon/YHmiPcbhIHTX/showing-video-frames and https://w
 
 ------------------------------------------------------------------------------------------------------------------------------------------------------------
 
+RedditVideoGenerator also uses the 'Help' icon from Icons8's Fluency Icons: https://icons8.com/icon/IchwUEgoxNcw/help
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+
 The respective licenses for the custom fonts used in RedditVideoGenerator can be found in their respective font folders, which are located in 
 RedditVideoGenerator's resources folder.
 

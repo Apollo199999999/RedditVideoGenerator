@@ -122,11 +122,43 @@ namespace RedditVideoGenerator
                         await Task.Delay(100);
 
                         //show the messagebox
-                        var result = MessageBox.Show("An update is available for RedditVideoGenerator. " +
-                            "Would you like to go to GitHub to download it?", "Update available",
-                            MessageBoxButton.YesNo, MessageBoxImage.Question);
+                        Wpf.Ui.Controls.MessageBox messageBox = new Wpf.Ui.Controls.MessageBox();
+                        messageBox.Content = new Grid()
+                        {
+                            Height = 45,
+                            VerticalAlignment = VerticalAlignment.Top,
+                            Children =
+                            {
+                                new Image()
+                                {
+                                    Source = new BitmapImage(new Uri(Path.Combine(AppVariables.ResourcesDirectory, "HelpIcon.png"))),
+                                    VerticalAlignment = VerticalAlignment.Center,
+                                    HorizontalAlignment = HorizontalAlignment.Left,
+                                    Width = 45,
+                                    Height = 45
+                                },
 
-                        if (result == MessageBoxResult.Yes)
+                                new TextBlock()
+                                {
+                                    Text = "An update is available for RedditVideoGenerator. Would you like to go to GitHub to download it?",
+                                    TextWrapping = TextWrapping.Wrap,
+                                    VerticalAlignment = VerticalAlignment.Center,
+                                    HorizontalAlignment = HorizontalAlignment.Left,
+                                    Margin = new Thickness(55, 0, 0, 0),
+                                    FontSize = 14
+                                }
+                            }
+                        };
+
+                        messageBox.Title = "Update available";
+                        messageBox.ButtonLeftName = "Yes";
+                        messageBox.ButtonLeftAppearance = Wpf.Ui.Common.ControlAppearance.Primary;
+                        messageBox.ButtonRightName = "No";
+                        messageBox.ButtonRightAppearance = Wpf.Ui.Common.ControlAppearance.Secondary;
+                        messageBox.MicaEnabled = true;
+                        messageBox.ResizeMode = ResizeMode.NoResize;
+                        messageBox.Height = 185;
+                        messageBox.ButtonLeftClick += (s, args) =>
                         {
                             //go to the github page
                             Process.Start("https://github.com/Apollo199999999/RedditVideoGenerator/releases");
@@ -135,7 +167,14 @@ namespace RedditVideoGenerator
                             Application.Current.Shutdown();
 
                             return;
-                        }
+                        };
+
+                        messageBox.ButtonRightClick += (s, args) =>
+                        {
+                            messageBox.Close();
+                        };
+
+                        messageBox.ShowDialog();
 
                     }
                     else
@@ -172,11 +211,27 @@ namespace RedditVideoGenerator
             AboutWindow aboutWindow = new AboutWindow();
             aboutWindow.Owner = this;
             aboutWindow.Show();
+            aboutWindow.Activate();
             this.IsEnabled = false;
             aboutWindow.Closed += (s, args) =>
             {
                 this.IsEnabled = true;
             };
+        }
+
+        private void MainWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            e.Cancel = true;
+
+            //save video resources in case of app crashes
+            try
+            {
+                SaveVideoResourcesToDesktopWithShutdown();
+            }
+            catch
+            {
+                Application.Current.Shutdown();
+            }
         }
 
         #endregion
@@ -348,6 +403,7 @@ namespace RedditVideoGenerator
         #endregion
 
         #region Main function
+
         public async void Main()
         {
             #region Initialization code
@@ -855,17 +911,60 @@ namespace RedditVideoGenerator
 
             #region Confirmation on whether to upload video
 
-            MessageBoxResult YoutubeMsgBoxResult = MessageBox.Show("Do you want to upload this video to YouTube? \n" +
-                "(Note that this might not be successful, as multiple users may be using this app at the same time to upload videos to YouTube, " +
-                "which may cause RedditVideoGenerator to exceed it's daily quota usage for the YouTube API).",
-                "Upload to YouTube?", MessageBoxButton.YesNo, MessageBoxImage.Question);
-
-            if (YoutubeMsgBoxResult == MessageBoxResult.No)
+            //show the messagebox
+            Wpf.Ui.Controls.MessageBox messageBox = new Wpf.Ui.Controls.MessageBox();
+            messageBox.Content = new Grid()
             {
-                SaveVideoResourcesToDesktopWithShutdown();
+                VerticalAlignment = VerticalAlignment.Top,
+                Children =
+                {
+                    new Image()
+                    {
+                        Source = new BitmapImage(new Uri(Path.Combine(AppVariables.ResourcesDirectory, "HelpIcon.png"))),
+                        VerticalAlignment = VerticalAlignment.Top,
+                        HorizontalAlignment = HorizontalAlignment.Left,
+                        Width = 45,
+                        Height = 45
+                    },
+
+                    new TextBlock()
+                    {
+                        Text = "Do you want to upload this video to YouTube? \n" +
+                        "(Note that this might not be successful, as multiple users may be using this app at the same time to upload videos to YouTube, " +
+                        "which may cause RedditVideoGenerator to exceed it's daily quota usage for the YouTube API).",
+                        TextWrapping = TextWrapping.Wrap,
+                        VerticalAlignment = VerticalAlignment.Top,
+                        HorizontalAlignment = HorizontalAlignment.Left,
+                        Margin = new Thickness(55, 0, 0, 0),
+                        FontSize = 14
+                    }
+                }
+            };
+           
+            messageBox.Title = "Upload to YouTube?";
+            messageBox.ButtonLeftName = "Yes";
+            messageBox.ButtonLeftAppearance = Wpf.Ui.Common.ControlAppearance.Primary;
+            messageBox.ButtonRightName = "No";
+            messageBox.ButtonRightAppearance = Wpf.Ui.Common.ControlAppearance.Secondary;
+            messageBox.ResizeMode = ResizeMode.NoResize;
+            messageBox.MicaEnabled = true;
+            messageBox.Height = 250;
+            messageBox.Width = 420;
+            messageBox.ButtonLeftClick += (s, args) =>
+            {
+                messageBox.Close();
+            };
+
+            messageBox.ButtonRightClick += (s, args) =>
+            {
+                messageBox.Close();
+
+                this.Close();
 
                 return;
-            }
+            };
+
+            messageBox.ShowDialog();
 
             #endregion
 
@@ -881,11 +980,17 @@ namespace RedditVideoGenerator
 
             await Task.Delay(100);
 
+            //show yt sign in dialog
             YTSignInDialog yTSignInDialog = new YTSignInDialog();
+            yTSignInDialog.Owner = this;
             bool? OAuthConsentResult = yTSignInDialog.ShowDialog();
+            yTSignInDialog.Activate();
+            this.IsEnabled = false;
 
             if (OAuthConsentResult == true)
             {
+                this.IsEnabled = true;
+
                 ConsoleOutput.AppendText("> Signing in to your YouTube account...\r\n");
 
                 await Task.Delay(100);
@@ -895,7 +1000,10 @@ namespace RedditVideoGenerator
             }
             else
             {
-                SaveVideoResourcesToDesktopWithShutdown();
+                this.IsEnabled = true;
+
+                this.Close();
+
                 return;
             }
 
@@ -915,7 +1023,7 @@ namespace RedditVideoGenerator
             YTVideo.Snippet = new VideoSnippet();
             YTVideo.Snippet.Title = AppVariables.VideoTitle;
             YTVideo.Snippet.Description = AppVariables.VideoDescription;
-            YTVideo.Snippet.Tags = new string[] { "reddit", "r/askreddit", "funny", "comedy", "entertainment", "stories", "life", "video", "askreddit" };
+            YTVideo.Snippet.Tags = new string[] { "reddit", "r/askreddit", "funny", "comedy", "entertainment", "stories", "life", "video", "askreddit", "humor", "humour" };
             YTVideo.Snippet.CategoryId = "24"; // See https://developers.google.com/youtube/v3/docs/videoCategories/list
             YTVideo.Status = new VideoStatus();
             YTVideo.Status.MadeForKids = false;
@@ -941,7 +1049,7 @@ namespace RedditVideoGenerator
 
             if (AppVariables.ErrorUploadingVideo == true)
             {
-                SaveVideoResourcesToDesktopWithShutdown();
+                this.Close();
                 return;
             }
 
@@ -957,7 +1065,7 @@ namespace RedditVideoGenerator
 
             if (AppVariables.ErrorUploadingThumbnail == true)
             {
-                SaveVideoResourcesToDesktopWithShutdown();
+                this.Close();
                 return;
             }
 
@@ -987,6 +1095,5 @@ namespace RedditVideoGenerator
         }
 
         #endregion
-
     }
 }

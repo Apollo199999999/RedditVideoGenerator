@@ -97,7 +97,7 @@ namespace RedditVideoGenerator
                         AppVariables.mainWindow.ConsoleOutput.AppendText(String.Format("> An error prevented the upload from completing.\n{0}", progress.Exception.Message) + "\r\n");
                     });
 
-                    MessageBox.Show(String.Format("An error prevented the video upload from completing. You can try manually uploading the video to YouTube.\n{0}", progress.Exception),
+                    MessageBox.Show(String.Format("An error prevented the video upload from completing. You can try manually uploading the video to YouTube.\n{0}", progress.Exception.Message),
                         "Error uploading video", MessageBoxButton.OK, MessageBoxImage.Error);
 
                     AppVariables.ErrorUploadingVideo = true;
@@ -148,7 +148,7 @@ namespace RedditVideoGenerator
                         AppVariables.mainWindow.ConsoleOutput.AppendText(String.Format("> An error prevented the thumbnail upload from completing.\n{0}", progress.Exception.Message) + "\r\n");
                     });
 
-                    MessageBox.Show(String.Format("An error prevented the thumbnail upload from completing. You can try manually setting the thumbnail for the video on YouTube.\n{0}", progress.Exception),
+                    MessageBox.Show(String.Format("An error prevented the thumbnail upload from completing. You can try manually setting the thumbnail for the video on YouTube.\n{0}", progress.Exception.Message),
                         "Error uploading thumbnail", MessageBoxButton.OK, MessageBoxImage.Error);
 
                     AppVariables.ErrorUploadingThumbnail = true;

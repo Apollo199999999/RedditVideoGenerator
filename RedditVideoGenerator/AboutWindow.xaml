@@ -8,7 +8,8 @@
     xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
     Title="About RedditVideoGenerator"
     Width="500"
-    Height="435"
+    Height="460"
+    d:WindowStyle="None"
     ExtendsContentIntoTitleBar="True"
     Icon="/Resources/icon.ico"
     ResizeMode="NoResize"
@@ -45,7 +46,7 @@
                 Text="Version x.x.x" />
 
             <ui:Hyperlink
-                Margin="0,15,0,0"
+                Margin="0,10,0,0"
                 HorizontalAlignment="Center"
                 Content="Visit RedditVideoGenerator's GitHub respository"
                 FontSize="14"
@@ -75,6 +76,14 @@
                 FontSize="14"
                 Icon="Link48"
                 NavigateUri="https://github.com/Apollo199999999/RedditVideoGenerator/blob/main/PRIVACYPOLICY.md" />
+
+            <ui:Hyperlink
+                Margin="0,7,0,0"
+                HorizontalAlignment="Center"
+                Content="Report a bug/issue"
+                FontSize="14"
+                Icon="Link48"
+                NavigateUri="https://github.com/Apollo199999999/RedditVideoGenerator/issues" />
         </StackPanel>
 
         <ui:Button

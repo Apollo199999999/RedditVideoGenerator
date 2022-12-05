@@ -41,6 +41,7 @@
 [assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("resources/bgm/music/7.wav")]
 [assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("resources/bgm/music/8.wav")]
 [assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("resources/bgm/music/9.wav")]
+[assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("resources/helpicon.png")]
 [assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("resources/ibmplexsans/ofl.txt")]
 [assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("resources/notosans/ofl.txt")]
 [assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("resources/transparentchannelicon.png")]
