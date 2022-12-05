@@ -83,9 +83,9 @@ namespace RedditVideoGenerator
         public struct WIN32_FIND_DATAW
         {
             public uint dwFileAttributes;
-            public FILETIME ftCreationTime;
-            public FILETIME ftLastAccessTime;
-            public FILETIME ftLastWriteTime;
+            public System.Runtime.InteropServices.ComTypes.FILETIME ftCreationTime;
+            public System.Runtime.InteropServices.ComTypes.FILETIME ftLastAccessTime;
+            public System.Runtime.InteropServices.ComTypes.FILETIME ftLastWriteTime;
             public uint nFileSizeHigh;
             public uint nFileSizeLow;
             public uint dwReserved0;

@@ -8,8 +8,9 @@
     xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
     Title="Sign in to YouTube"
     Width="400"
-    Height="226"
+    Height="200"
     MinHeight="0"
+    Closing="YTSignInDialog_Closing"
     ExtendsContentIntoTitleBar="True"
     Icon="/Resources/icon.ico"
     ResizeMode="NoResize"
@@ -37,17 +38,20 @@
                 TextWrapping="Wrap" />
             <Image
                 x:Name="YTImage"
-                Width="150"
-                Height="34"
+                Width="135"
+                Height="30"
                 Margin="0,20,0,0"
                 HorizontalAlignment="Center"
                 Source="/Resources/YTLight.png" />
 
             <ui:Button
+                x:Name="SignInBtn"
                 Margin="0,20,0,0"
                 HorizontalAlignment="Center"
                 Appearance="Primary"
-                Content="Sign in to your YouTube account" />
+                Click="SignInBtn_Click"
+                Content="Sign in to your YouTube account"
+                IsDefault="True" />
         </StackPanel>
     </Grid>
 </ui:UiWindow>

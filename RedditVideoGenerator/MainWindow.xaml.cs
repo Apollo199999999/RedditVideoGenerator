@@ -50,7 +50,7 @@ namespace RedditVideoGenerator
             }
 
             //create a new dispatcher timer to update theme
-            DispatcherTimer ThemeUpdater = new DispatcherTimer();  
+            DispatcherTimer ThemeUpdater = new DispatcherTimer();
             ThemeUpdater.Interval = TimeSpan.FromMilliseconds(1000);
             ThemeUpdater.Tick += ThemeUpdater_Tick;
             ThemeUpdater.Start();
@@ -155,9 +155,6 @@ namespace RedditVideoGenerator
 
                 await Task.Delay(100);
             }
-
-            YTSignInDialog yTSignInDialog = new YTSignInDialog();
-            yTSignInDialog.ShowDialog();
 
             //call main function which is the entry point of the video generation
             Main();
@@ -876,14 +873,31 @@ namespace RedditVideoGenerator
 
             #region Sign in using OAuth
 
-            ConsoleOutput.AppendText("> Signing in to your Google Account...\r\n");
+            //init OAuth variables
+            GoogleFunctions googleFunctions = new GoogleFunctions();
+            UserCredential credential;
+
+            ConsoleOutput.AppendText("> Sign in to your YouTube account when prompted.\r\n");
 
             await Task.Delay(100);
 
-            GoogleFunctions googleFunctions = new GoogleFunctions();
+            YTSignInDialog yTSignInDialog = new YTSignInDialog();
+            bool? OAuthConsentResult = yTSignInDialog.ShowDialog();
 
-            //sign in to google account using oauth
-            UserCredential credential = await googleFunctions.OAuthSignIn();
+            if (OAuthConsentResult == true)
+            {
+                ConsoleOutput.AppendText("> Signing in to your YouTube account...\r\n");
+
+                await Task.Delay(100);
+
+                //sign in to google account using oauth
+                credential = await googleFunctions.OAuthSignIn();
+            }
+            else
+            {
+                SaveVideoResourcesToDesktopWithShutdown();
+                return;
+            }
 
             #endregion
 

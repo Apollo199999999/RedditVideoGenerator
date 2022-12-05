@@ -16,8 +16,8 @@ namespace RedditVideoGenerator
             try
             {
                 //init reddit client
-                redditClient = new RedditClient(appId: APIKeys.RedditAppID, appSecret: APIKeys.RedditAppSecret,
-                    accessToken: APIKeys.RedditAccessToken, refreshToken: APIKeys.RedditRefreshToken);
+                redditClient = new RedditClient(appId: RedditAPIKeys.RedditAppID, appSecret: RedditAPIKeys.RedditAppSecret,
+                    accessToken: RedditAPIKeys.RedditAccessToken, refreshToken: RedditAPIKeys.RedditRefreshToken);
 
                 //try querying something from reddit
                 var subreddit = redditClient.Subreddit(AppVariables.SubReddit);
