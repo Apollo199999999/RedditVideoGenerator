@@ -77,5 +77,18 @@ namespace RedditVideoGenerator
 
             return Source.Remove(place, Find.Length).Insert(place, Replace);
         }
+
+        public static string ToUTF8(this string from)
+        {
+            var bytes = Encoding.UTF8.GetBytes(from);
+            return new string(bytes.Select(b => (char)b).ToArray());
+        }
+
+        public static string TruncateLongString(this string str, int maxLength)
+        {
+            if (string.IsNullOrEmpty(str)) return str;
+
+            return str.Substring(0, Math.Min(str.Length, maxLength));
+        }
     }
 }

@@ -67,7 +67,7 @@ namespace RedditVideoGenerator
             //set video thumbnail
             using (var fileStream = new FileStream(filePath, FileMode.Open))
             {
-                var videoThumbnailRequest = youtubeService.Thumbnails.Set(AppVariables.YTVideoId, fileStream, "image/png");
+                var videoThumbnailRequest = youtubeService.Thumbnails.Set(VideoId, fileStream, "image/png");
                 videoThumbnailRequest.ProgressChanged += VideoThumbnailRequest_ProgressChanged;
                 videoThumbnailRequest.ResponseReceived += VideoThumbnailRequest_ResponseReceived;
 
