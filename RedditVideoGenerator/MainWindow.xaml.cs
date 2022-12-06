@@ -449,7 +449,7 @@ namespace RedditVideoGenerator
 
             //start redditfunctions
             RedditFunctions redditFunctions = new RedditFunctions();
-            redditFunctions.TryInitializeRedditClient();
+            await Task.Run(() => redditFunctions.TryInitializeRedditClient());
 
             ConsoleOutput.AppendText("> Done initializing Reddit client.\r\n");
 
@@ -465,7 +465,7 @@ namespace RedditVideoGenerator
             await Task.Delay(500);
 
             //get id of random top monthly post
-            string TopPostID = redditFunctions.GetRandomTopMonthlyPostID();
+            string TopPostID = await Task.Run(() => redditFunctions.GetRandomTopMonthlyPostID());
 
             ConsoleOutput.AppendText(String.Format("> Got post: '{0}' with id: {1}\r\n", AppVariables.PostTitle, AppVariables.PostId));
 
@@ -552,7 +552,7 @@ namespace RedditVideoGenerator
             await Task.Delay(100);
 
             //get top comments from said post
-            List<Comment> comments = redditFunctions.GetPostTopComments(TopPostID);
+            List<Comment> comments = await Task.Run(() => redditFunctions.GetPostTopComments(TopPostID));
 
             await Task.Delay(100);
 

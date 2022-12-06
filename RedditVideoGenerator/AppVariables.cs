@@ -13,7 +13,7 @@ namespace RedditVideoGenerator
 {
     public static class AppVariables
     {
-        //version of app
+        //redditvideogenerator app version
         public static string AppVersion = "1.0.0";
 
         //instance of mainwindow that will be assigned to after mainwindow initializes
