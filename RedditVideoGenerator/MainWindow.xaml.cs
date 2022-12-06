@@ -904,12 +904,13 @@ namespace RedditVideoGenerator
                 AppVariables.VideoDescription += File.ReadAllText(MusicLicensePath) + "\n\n";
             }
 
+            //convert title and description to UTF-8 so that YouTube can parse it
             AppVariables.VideoTitle = AppVariables.VideoTitle.ToUTF8().Replace("<", "[").Replace(">", "]");
 
             //if videotitle too long, remove the "[r/AskReddit]" portion, and truncate the string to 100 chars after
             if (AppVariables.VideoTitle.Length > 100)
             {
-                AppVariables.VideoTitle.ReplaceFirst(String.Format("[r/{0}]", AppVariables.SubReddit), "");
+                AppVariables.VideoTitle.ReplaceFirst(String.Format("[r/{0}] ", AppVariables.SubReddit), "");
             }
 
             AppVariables.VideoTitle = AppVariables.VideoTitle.ToUTF8().Replace("<", "[").Replace(">", "]").TruncateLongString(100);
