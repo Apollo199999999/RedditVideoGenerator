@@ -894,8 +894,8 @@ namespace RedditVideoGenerator
             await Task.Delay(100);
 
             //init yt video title and description
-            AppVariables.VideoTitle = String.Format("[r/{0}] {1}", AppVariables.SubReddit, AppVariables.PostTitle);
-            AppVariables.VideoDescription = AppVariables.VideoTitle + "\n" + "Thanks for watching! Leave a like if you have enjoyed this video and subscribe to never miss an upload. \n\n" + "Music: \n";
+            AppVariables.VideoTitle = String.Format("[r/{0}] {1}", AppVariables.SubReddit, AppVariables.PostTitle).Trim();
+            AppVariables.VideoDescription = AppVariables.VideoTitle + "\n\n" + "Thanks for watching! Leave a like if you have enjoyed this video and subscribe to never miss an upload. \n\n" + "Music: \n";
 
             //get music credits to put in video description
             foreach (int i in RandomBGMFileNames)
@@ -905,7 +905,7 @@ namespace RedditVideoGenerator
             }
 
             //convert title and description to UTF-8 so that YouTube can parse it
-            AppVariables.VideoTitle = AppVariables.VideoTitle.ToUTF8().Replace("<", "[").Replace(">", "]");
+            AppVariables.VideoTitle = AppVariables.VideoTitle.Trim().ToUTF8().Replace("<", "[").Replace(">", "]");
 
             //if videotitle too long, remove the "[r/AskReddit]" portion, and truncate the string to 100 chars after
             if (AppVariables.VideoTitle.Length > 100)
@@ -913,9 +913,9 @@ namespace RedditVideoGenerator
                 AppVariables.VideoTitle = AppVariables.VideoTitle.ReplaceFirst(String.Format("[r/{0}] ", AppVariables.SubReddit), "");
             }
 
-            AppVariables.VideoTitle = AppVariables.VideoTitle.ToUTF8().Replace("<", "[").Replace(">", "]").TruncateLongString(100);
+            AppVariables.VideoTitle = AppVariables.VideoTitle.Trim().ToUTF8().Replace("<", "[").Replace(">", "]").TruncateLongString(100);
 
-            AppVariables.VideoDescription = AppVariables.VideoDescription.ToUTF8().Replace("<", "[").Replace(">", "]").TruncateLongString(5000);
+            AppVariables.VideoDescription = AppVariables.VideoDescription.Trim().ToUTF8().Replace("<", "[").Replace(">", "]").TruncateLongString(5000);
 
             ConsoleOutput.AppendText("> Done generating video title and description.\r\n");
 
