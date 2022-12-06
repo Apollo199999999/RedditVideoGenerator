@@ -16,6 +16,7 @@ using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 using System.Speech.Synthesis;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -227,6 +228,7 @@ namespace RedditVideoGenerator
             try
             {
                 SaveVideoResourcesToDesktopWithShutdown();
+                CleanUp();
             }
             catch
             {
@@ -387,9 +389,6 @@ namespace RedditVideoGenerator
             //show the files in file explorer
             ExplorerMethods.OpenFolderAndSelectFiles(AppVariables.UserDesktopDirectory, FilesToShow);
 
-            //clean up working directory
-            Directory.Delete(AppVariables.WorkingDirectory, true);
-
         }
 
         public void SaveVideoResourcesToDesktopWithShutdown()
@@ -398,6 +397,18 @@ namespace RedditVideoGenerator
 
             //exit application
             Application.Current.Shutdown();
+        }
+
+        public void CleanUp(UserCredential credential = null)
+        {
+            //clean up working directory
+            Directory.Delete(AppVariables.WorkingDirectory, true);
+
+            if (credential != null)
+            {
+                //revoke google api token (logs user out)
+                credential.RevokeTokenAsync(new CancellationToken());
+            }
         }
 
         #endregion
@@ -1100,6 +1111,7 @@ namespace RedditVideoGenerator
             await Task.Delay(100);
 
             SaveVideoResourcesToDesktop();
+            CleanUp(credential);
 
             ConsoleOutput.AppendText("> You can now close RedditVideoGenerator.");
 
