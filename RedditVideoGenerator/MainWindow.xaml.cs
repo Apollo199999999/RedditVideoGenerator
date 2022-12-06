@@ -577,6 +577,7 @@ namespace RedditVideoGenerator
                     TotalDuration += GetDuration(video);
                 }
 
+                //set max duration here
                 if (TotalDuration >= new TimeSpan(0, 0, 15, 0))
                 {
                     break;
@@ -893,7 +894,7 @@ namespace RedditVideoGenerator
             await Task.Delay(100);
 
             //init yt video title and description
-            AppVariables.VideoTitle = String.Format("[r/{0}] {1}", AppVariables.SubReddit, AppVariables.PostTitle).ToUTF8().Replace("<", "[").Replace(">", "]").TruncateLongString(100);
+            AppVariables.VideoTitle = String.Format("[r/{0}] {1}", AppVariables.SubReddit, AppVariables.PostTitle);
             AppVariables.VideoDescription = AppVariables.VideoTitle + "\n" + "Thanks for watching! Leave a like if you have enjoyed this video and subscribe to never miss an upload. \n\n" + "Music: \n";
 
             //get music credits to put in video description
@@ -902,6 +903,16 @@ namespace RedditVideoGenerator
                 string MusicLicensePath = Path.Combine(AppVariables.MusicLicenseDirectory, i.ToString() + ".txt");
                 AppVariables.VideoDescription += File.ReadAllText(MusicLicensePath) + "\n\n";
             }
+
+            AppVariables.VideoTitle = AppVariables.VideoTitle.ToUTF8().Replace("<", "[").Replace(">", "]");
+
+            //if videotitle too long, remove the "[r/AskReddit]" portion, and truncate the string to 100 chars after
+            if (AppVariables.VideoTitle.Length > 100)
+            {
+                AppVariables.VideoTitle.ReplaceFirst(String.Format("[r/{0}]", AppVariables.SubReddit), "");
+            }
+
+            AppVariables.VideoTitle = AppVariables.VideoTitle.ToUTF8().Replace("<", "[").Replace(">", "]").TruncateLongString(100);
 
             AppVariables.VideoDescription = AppVariables.VideoDescription.ToUTF8().Replace("<", "[").Replace(">", "]").TruncateLongString(5000);
 
