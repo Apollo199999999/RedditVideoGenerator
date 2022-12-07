@@ -227,8 +227,9 @@ namespace RedditVideoGenerator
             //save video resources in case of app crashes
             try
             {
-                SaveVideoResourcesToDesktopWithShutdown();
-                CleanUp();
+                SaveVideoResourcesToDesktop();
+                CleanUp(AppVariables.userCredential);
+                Application.Current.Shutdown();
             }
             catch
             {
@@ -389,14 +390,6 @@ namespace RedditVideoGenerator
             //show the files in file explorer
             ExplorerMethods.OpenFolderAndSelectFiles(AppVariables.UserDesktopDirectory, FilesToShow);
 
-        }
-
-        public void SaveVideoResourcesToDesktopWithShutdown()
-        {
-            SaveVideoResourcesToDesktop();
-
-            //exit application
-            Application.Current.Shutdown();
         }
 
         public void CleanUp(UserCredential credential = null)
@@ -861,7 +854,7 @@ namespace RedditVideoGenerator
             await Task.Delay(200);
             thumbnailImage.SubredditText.Text = "r/" + AppVariables.SubReddit;
             thumbnailImage.TitleText.Text = AppVariables.PostTitle;
-            thumbnailImage.SetAccentColor(AppVariables.ThumbnailAccentColors[AccentIndex]);
+            thumbnailImage.SetAccentColorAndTag(AppVariables.ThumbnailAccentColors[AccentIndex], AppVariables.PostIsNSFW);
             //add delay to give time for titletext control to load and for layout to be updated
             await Task.Delay(200);
             thumbnailImage.SetVariableTitleFontSize();
@@ -905,7 +898,15 @@ namespace RedditVideoGenerator
             await Task.Delay(100);
 
             //init yt video title and description
-            AppVariables.VideoTitle = String.Format("[r/{0}] {1}", AppVariables.SubReddit, AppVariables.PostTitle).Trim();
+            if (AppVariables.PostIsNSFW == true)
+            {
+                AppVariables.VideoTitle = String.Format("(r/{0}) [nsfw] {1}", AppVariables.SubReddit, AppVariables.PostTitle).Trim();
+            }
+            else
+            {
+                AppVariables.VideoTitle = String.Format("(r/{0}) {1}", AppVariables.SubReddit, AppVariables.PostTitle).Trim();
+            }
+
             AppVariables.VideoDescription = AppVariables.VideoTitle + "\n\n" + "Thanks for watching! Leave a like if you have enjoyed this video and subscribe to never miss an upload. \n\n" + "Music: \n";
 
             //get music credits to put in video description
@@ -921,7 +922,7 @@ namespace RedditVideoGenerator
             //if videotitle too long, remove the "[r/AskReddit]" portion, and truncate the string to 100 chars after
             if (AppVariables.VideoTitle.Length > 100)
             {
-                AppVariables.VideoTitle = AppVariables.VideoTitle.ReplaceFirst(String.Format("[r/{0}] ", AppVariables.SubReddit), "");
+                AppVariables.VideoTitle = AppVariables.VideoTitle.ReplaceFirst(String.Format("(r/{0}) ", AppVariables.SubReddit), "");
             }
 
             AppVariables.VideoTitle = AppVariables.VideoTitle.Trim().ToUTF8().Replace("<", "[").Replace(">", "]").TruncateLongString(100);
@@ -999,7 +1000,6 @@ namespace RedditVideoGenerator
 
             //init OAuth variables
             GoogleFunctions googleFunctions = new GoogleFunctions();
-            UserCredential credential;
 
             ConsoleOutput.AppendText("> Sign in to your YouTube account when prompted.\r\n");
 
@@ -1021,7 +1021,7 @@ namespace RedditVideoGenerator
                 await Task.Delay(100);
 
                 //sign in to google account using oauth
-                credential = await googleFunctions.OAuthSignIn();
+                AppVariables.userCredential = await googleFunctions.OAuthSignIn();
             }
             else
             {
@@ -1041,7 +1041,7 @@ namespace RedditVideoGenerator
             await Task.Delay(100);
 
             //start yt service
-            YouTubeService youTubeService = googleFunctions.StartYouTubeService(credential);
+            YouTubeService youTubeService = googleFunctions.StartYouTubeService(AppVariables.userCredential);
 
             //init video properties
             var YTVideo = new Video();
@@ -1111,7 +1111,7 @@ namespace RedditVideoGenerator
             await Task.Delay(100);
 
             SaveVideoResourcesToDesktop();
-            CleanUp(credential);
+            CleanUp(AppVariables.userCredential);
 
             ConsoleOutput.AppendText("> You can now close RedditVideoGenerator.");
 

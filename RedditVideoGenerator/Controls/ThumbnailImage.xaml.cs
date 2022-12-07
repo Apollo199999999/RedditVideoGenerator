@@ -33,7 +33,7 @@ namespace RedditVideoGenerator.Controls
             this.Arrange(new Rect(0, 0, this.DesiredSize.Width, this.DesiredSize.Height));
         }
 
-        public void SetAccentColor(Color color)
+        public void SetAccentColorAndTag(Color color, bool IsNSFW)
         {
             //set control accents
             SolidColorBrush AccentBrush = new SolidColorBrush(color);
@@ -103,6 +103,12 @@ namespace RedditVideoGenerator.Controls
             //now set the respective colours of the words using run element
             TitleText.Text = String.Empty;
             TitleText.Inlines.Clear();
+
+            if (IsNSFW == true)
+            {
+                TitleText.Inlines.Add(new Run("[nsfw] ") { Foreground = new SolidColorBrush(Color.FromRgb(255, 88, 91)) });
+            }
+
             foreach (string phrase in TitleTextSplitWords)
             {
                 if (StartWordsToHighlight.Contains(phrase) || LastWordsToHighlight.Contains(phrase))

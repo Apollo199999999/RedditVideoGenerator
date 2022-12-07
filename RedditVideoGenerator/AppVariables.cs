@@ -8,6 +8,7 @@ using System.Web;
 using System.Threading;
 using System.Windows.Media;
 using NAudio.Codecs;
+using Google.Apis.Auth.OAuth2;
 
 namespace RedditVideoGenerator
 {
@@ -50,6 +51,7 @@ namespace RedditVideoGenerator
                 Colors.DarkOrange, Color.FromRgb(255, 69, 0), Color.FromRgb(255, 168, 0), Color.FromRgb(251, 19, 58) };
 
         //YouTube variables
+        public static UserCredential userCredential = null;
         public static string VideoTitle;
         public static string VideoDescription;
         public static bool ErrorUploadingVideo = false;

@@ -8,7 +8,7 @@
     xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
     Title="RedditVideoGenerator - Generate r/AskReddit Reddit videos and upload them to YouTube automatically"
     Width="900"
-    Height="600"
+    Height="582"
     Closing="MainWindow_Closing"
     ExtendsContentIntoTitleBar="True"
     Icon="/Resources/icon.ico"
