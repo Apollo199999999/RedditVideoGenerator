@@ -75,6 +75,14 @@ namespace RedditVideoGenerator
             this.Close();
         }
 
+        private void CancelBtn_Click(object sender, RoutedEventArgs e)
+        {
+            //set dialog result
+            this.DialogResult = false;
+
+            this.Close();
+        }
+
         private void YTSignInDialog_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             //set dialog result

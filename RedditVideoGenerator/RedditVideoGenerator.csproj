@@ -316,6 +316,9 @@
     <Content Include="Resources\IBMPlexSans\OFL.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="Resources\LoginIcon.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Resources\NotoSans\OFL.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

@@ -7,11 +7,11 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
     Title="About RedditVideoGenerator"
-    Width="500"
-    Height="460"
+    Width="420"
+    Height="441"
     d:WindowStyle="None"
+    Background="{ui:ThemeResource ApplicationBackgroundBrush}"
     ExtendsContentIntoTitleBar="True"
-    Icon="/Resources/icon.ico"
     ResizeMode="NoResize"
     Style="{DynamicResource UiWindow}"
     WindowBackdropType="Mica"
@@ -21,79 +21,96 @@
     <Grid>
         <ui:TitleBar
             Title="About RedditVideoGenerator"
+            Height="30"
+            Padding="10,7,0,0"
             CanMaximize="False"
-            Icon="/Resources/icon.ico"
             ShowMaximize="False"
             ShowMinimize="False"
             UseSnapLayout="True" />
 
-        <StackPanel Margin="20,51,20,20">
-            <Image
-                Width="96"
-                Height="96"
-                HorizontalAlignment="Center"
-                Source="/Resources/icon.ico" />
-            <TextBlock
-                HorizontalAlignment="Center"
-                FontSize="24"
-                FontWeight="Bold"
-                Text="RedditVideoGenerator" />
-            <TextBlock
-                x:Name="VersionText"
+        <Grid Margin="0,35,0,0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto" />
+                <RowDefinition Height="auto" />
+            </Grid.RowDefinitions>
+
+            <StackPanel
+                Grid.Row="0"
+                Margin="10,0,10,0"
+                VerticalAlignment="Top">
+                <Image
+                    Width="96"
+                    Height="96"
+                    HorizontalAlignment="Center"
+                    Source="/Resources/icon.ico" />
+                <TextBlock
+                    HorizontalAlignment="Center"
+                    FontSize="24"
+                    FontWeight="Bold"
+                    Text="RedditVideoGenerator" />
+                <TextBlock
+                    x:Name="VersionText"
+                    Margin="0,10,0,0"
+                    HorizontalAlignment="Center"
+                    FontSize="14"
+                    Text="Version x.x.x" />
+
+                <ui:Hyperlink
+                    Margin="0,10,0,0"
+                    HorizontalAlignment="Center"
+                    Content="Visit RedditVideoGenerator's GitHub respository"
+                    FontSize="14"
+                    Icon="Link48"
+                    NavigateUri="https://github.com/Apollo199999999/RedditVideoGenerator" />
+
+                <ui:Hyperlink
+                    Margin="0,5,0,0"
+                    HorizontalAlignment="Center"
+                    Content="View RedditVideoGenerator's MIT license"
+                    FontSize="14"
+                    Icon="Link48"
+                    NavigateUri="https://github.com/Apollo199999999/RedditVideoGenerator/blob/main/LICENSE" />
+
+                <ui:Hyperlink
+                    Margin="0,5,0,0"
+                    HorizontalAlignment="Center"
+                    Content="View third party notices and licenses"
+                    FontSize="14"
+                    Icon="Link48"
+                    NavigateUri="https://github.com/Apollo199999999/RedditVideoGenerator/blob/main/NOTICE.txt" />
+
+                <ui:Hyperlink
+                    Margin="0,5,0,0"
+                    HorizontalAlignment="Center"
+                    Content="View RedditVideoGenerator's privacy policy"
+                    FontSize="14"
+                    Icon="Link48"
+                    NavigateUri="https://github.com/Apollo199999999/RedditVideoGenerator/blob/main/PRIVACYPOLICY.md" />
+
+                <ui:Hyperlink
+                    Margin="0,5,0,0"
+                    HorizontalAlignment="Center"
+                    Content="Report a bug/issue"
+                    FontSize="14"
+                    Icon="Link48"
+                    NavigateUri="https://github.com/Apollo199999999/RedditVideoGenerator/issues" />
+            </StackPanel>
+
+            <Grid
+                Grid.Row="1"
                 Margin="0,10,0,0"
-                HorizontalAlignment="Center"
-                FontSize="16"
-                Text="Version x.x.x" />
+                VerticalAlignment="Top"
+                Background="{DynamicResource ControlFillColorDefaultBrush}">
+                <ui:Button
+                    x:Name="CloseBtn"
+                    Width="200"
+                    Margin="15"
+                    HorizontalAlignment="Center"
+                    Appearance="Primary"
+                    Click="CloseBtn_Click"
+                    Content="Close" />
+            </Grid>
 
-            <ui:Hyperlink
-                Margin="0,10,0,0"
-                HorizontalAlignment="Center"
-                Content="Visit RedditVideoGenerator's GitHub respository"
-                FontSize="14"
-                Icon="Link48"
-                NavigateUri="https://github.com/Apollo199999999/RedditVideoGenerator" />
-
-            <ui:Hyperlink
-                Margin="0,7,0,0"
-                HorizontalAlignment="Center"
-                Content="View RedditVideoGenerator's MIT license"
-                FontSize="14"
-                Icon="Link48"
-                NavigateUri="https://github.com/Apollo199999999/RedditVideoGenerator/blob/main/LICENSE" />
-
-            <ui:Hyperlink
-                Margin="0,7,0,0"
-                HorizontalAlignment="Center"
-                Content="View third party notices and licenses"
-                FontSize="14"
-                Icon="Link48"
-                NavigateUri="https://github.com/Apollo199999999/RedditVideoGenerator/blob/main/NOTICE.txt" />
-
-            <ui:Hyperlink
-                Margin="0,7,0,0"
-                HorizontalAlignment="Center"
-                Content="View RedditVideoGenerator's privacy policy"
-                FontSize="14"
-                Icon="Link48"
-                NavigateUri="https://github.com/Apollo199999999/RedditVideoGenerator/blob/main/PRIVACYPOLICY.md" />
-
-            <ui:Hyperlink
-                Margin="0,7,0,0"
-                HorizontalAlignment="Center"
-                Content="Report a bug/issue"
-                FontSize="14"
-                Icon="Link48"
-                NavigateUri="https://github.com/Apollo199999999/RedditVideoGenerator/issues" />
-        </StackPanel>
-
-        <ui:Button
-            x:Name="CloseBtn"
-            Width="96"
-            Margin="0,0,20,20"
-            HorizontalAlignment="Right"
-            VerticalAlignment="Bottom"
-            Appearance="Primary"
-            Click="CloseBtn_Click"
-            Content="Close" />
+        </Grid>
     </Grid>
 </ui:UiWindow>

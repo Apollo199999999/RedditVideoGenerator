@@ -291,6 +291,10 @@ RedditVideoGenerator also uses the 'Help' icon from Icons8's Fluency Icons: http
 
 ------------------------------------------------------------------------------------------------------------------------------------------------------------
 
+RedditVideoGenerator also uses the 'Login' icon from Icons8's Fluency Icons: https://icons8.com/icon/1CE0gYy8a1e6/login
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+
 The respective licenses for the custom fonts used in RedditVideoGenerator can be found in their respective font folders, which are located in 
 RedditVideoGenerator's resources folder.
 

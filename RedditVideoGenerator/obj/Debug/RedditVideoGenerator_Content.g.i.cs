@@ -44,6 +44,7 @@
 [assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("resources/cascadiacode/ofl.txt")]
 [assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("resources/helpicon.png")]
 [assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("resources/ibmplexsans/ofl.txt")]
+[assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("resources/loginicon.png")]
 [assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("resources/notosans/ofl.txt")]
 [assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("resources/transparentchannelicon.png")]
 [assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("resources/alegreyasans/ofl.txt")]

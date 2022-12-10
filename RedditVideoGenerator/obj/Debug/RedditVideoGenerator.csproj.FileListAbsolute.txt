@@ -180,3 +180,4 @@ C:\Users\fligh\source\repos\RedditVideoGenerator\RedditVideoGenerator\bin\Debug\
 C:\Users\fligh\source\repos\RedditVideoGenerator\RedditVideoGenerator\bin\Debug\Resources\CascadiaCode\CascadiaMonoItalic.ttf
 C:\Users\fligh\source\repos\RedditVideoGenerator\RedditVideoGenerator\bin\Debug\Resources\CascadiaCode\CascadiaMonoPL.ttf
 C:\Users\fligh\source\repos\RedditVideoGenerator\RedditVideoGenerator\bin\Debug\Resources\CascadiaCode\CascadiaMonoPLItalic.ttf
+C:\Users\fligh\source\repos\RedditVideoGenerator\RedditVideoGenerator\bin\Debug\Resources\LoginIcon.png

@@ -9,6 +9,8 @@
     Title="RedditVideoGenerator - Generate r/AskReddit Reddit videos and upload them to YouTube automatically"
     Width="900"
     Height="600"
+    MinWidth="720"
+    MinHeight="320"
     Background="{ui:ThemeResource ApplicationBackgroundBrush}"
     Closing="MainWindow_Closing"
     ExtendsContentIntoTitleBar="True"

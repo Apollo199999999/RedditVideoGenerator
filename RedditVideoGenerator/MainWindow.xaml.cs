@@ -216,11 +216,6 @@ namespace RedditVideoGenerator
             aboutWindow.Owner = this;
             aboutWindow.Show();
             aboutWindow.Activate();
-            this.IsEnabled = false;
-            aboutWindow.Closed += (s, args) =>
-            {
-                this.IsEnabled = true;
-            };
         }
 
         private void MainWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
@@ -1026,14 +1021,11 @@ namespace RedditVideoGenerator
             //show yt sign in dialog
             YTSignInDialog yTSignInDialog = new YTSignInDialog();
             yTSignInDialog.Owner = this;
-            bool? OAuthConsentResult = yTSignInDialog.ShowDialog();
             yTSignInDialog.Activate();
-            this.IsEnabled = false;
+            bool? OAuthConsentResult = yTSignInDialog.ShowDialog();
 
             if (OAuthConsentResult == true)
             {
-                this.IsEnabled = true;
-
                 ConsoleOutput.AppendText("> Signing in to your YouTube account...\r\n");
 
                 await Task.Delay(100);
@@ -1043,8 +1035,6 @@ namespace RedditVideoGenerator
             }
             else
             {
-                this.IsEnabled = true;
-
                 this.Close();
 
                 return;
@@ -1124,11 +1114,12 @@ namespace RedditVideoGenerator
 
             await Task.Delay(100);
 
-            ConsoleOutput.AppendText("> Copying video resources to your Desktop...\r\n");
+            ConsoleOutput.AppendText("> Copying video resources to your desktop...\r\n");
 
             await Task.Delay(100);
 
             SaveVideoResourcesToDesktop();
+
             CleanUp(AppVariables.userCredential);
 
             ConsoleOutput.AppendText("> You may now close RedditVideoGenerator.");

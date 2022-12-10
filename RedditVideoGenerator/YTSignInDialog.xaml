@@ -7,13 +7,13 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
     Title="Sign in to YouTube"
-    Width="400"
-    Height="205"
+    Width="450"
+    Height="230"
     MinHeight="0"
     d:WindowStyle="None"
+    Background="{ui:ThemeResource ApplicationBackgroundBrush}"
     Closing="YTSignInDialog_Closing"
     ExtendsContentIntoTitleBar="True"
-    Icon="/Resources/icon.ico"
     ResizeMode="NoResize"
     Style="{DynamicResource UiWindow}"
     WindowBackdropType="Mica"
@@ -23,36 +23,68 @@
     <Grid>
         <ui:TitleBar
             Title="Sign in to YouTube"
+            Height="30"
+            Padding="10,7,0,0"
             CanMaximize="False"
-            Icon="/Resources/icon.ico"
             ShowMaximize="False"
             ShowMinimize="False"
             UseSnapLayout="True" />
 
-        <StackPanel Margin="10,51,10,10">
-            <TextBlock
-                HorizontalAlignment="Center"
-                FontSize="16"
-                FontWeight="Bold"
-                Text="Sign in to your YouTube account to continue:"
-                TextAlignment="Center"
-                TextWrapping="Wrap" />
+        <Grid Margin="10,40,10,0" VerticalAlignment="Stretch">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="auto" />
+            </Grid.RowDefinitions>
+
+            <Grid Grid.Row="0">
+                <Image
+                    Width="45"
+                    Height="45"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Top"
+                    Source="/Resources/LoginIcon.png" />
+
+                <TextBlock
+                    Margin="55,0,0,0"
+                    HorizontalAlignment="Left"
+                    FontSize="14"
+                    Text="To continue, sign in to your YouTube account so that RedditVideoGenerator can access your YouTube channel and upload videos there."
+                    TextAlignment="Left"
+                    TextWrapping="Wrap" />
+            </Grid>
+
             <Image
                 x:Name="YTImage"
-                Width="135"
+                Grid.Row="1"
+                Width="136"
                 Height="30"
-                Margin="0,20,0,0"
                 HorizontalAlignment="Center"
+                VerticalAlignment="Center"
                 Source="/Resources/YTLight.png" />
 
-            <ui:Button
-                x:Name="SignInBtn"
-                Margin="0,20,0,0"
-                HorizontalAlignment="Center"
-                Appearance="Primary"
-                Click="SignInBtn_Click"
-                Content="Sign in to your YouTube account"
-                IsDefault="True" />
-        </StackPanel>
+            <Grid
+                Grid.Row="2"
+                Margin="-10,10,-10,0"
+                Background="{DynamicResource ControlFillColorDefaultBrush}">
+                <ui:Button
+                    x:Name="SignInBtn"
+                    Width="230"
+                    Margin="15,15,0,15"
+                    HorizontalAlignment="Left"
+                    Appearance="Primary"
+                    Click="SignInBtn_Click"
+                    Content="Sign in to your YouTube account"
+                    IsDefault="True" />
+                <ui:Button
+                    x:Name="CancelBtn"
+                    Width="180"
+                    Margin="0,15,15,15"
+                    HorizontalAlignment="Right"
+                    Click="CancelBtn_Click"
+                    Content="Cancel"
+                    IsDefault="True" />
+            </Grid>
+        </Grid>
     </Grid>
 </ui:UiWindow>
