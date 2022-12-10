@@ -163,6 +163,8 @@ namespace RedditVideoGenerator
                         messageBox.Height = 185;
                         messageBox.ButtonLeftClick += (s, args) =>
                         {
+                            this.IsEnabled = true;
+
                             //go to the github page
                             Process.Start("https://github.com/Apollo199999999/RedditVideoGenerator/releases");
 
@@ -174,10 +176,13 @@ namespace RedditVideoGenerator
 
                         messageBox.ButtonRightClick += (s, args) =>
                         {
+                            this.IsEnabled = true;
+
                             messageBox.Close();
                         };
 
                         messageBox.Activate();
+                        this.IsEnabled = false;
                         messageBox.ShowDialog();
 
                     }
@@ -199,8 +204,14 @@ namespace RedditVideoGenerator
                 await Task.Delay(100);
             }
 
+            //show yt sign in dialog
+            YTSignInDialog yTSignInDialog = new YTSignInDialog();
+            yTSignInDialog.Activate();
+            this.IsEnabled = false;
+            bool? OAuthConsentResult = yTSignInDialog.ShowDialog();
+
             //call main function which is the entry point of the video generation
-            Main();
+            //Main();
         }
 
         private void ConsoleOutput_TextChanged(object sender, TextChangedEventArgs e)
@@ -995,11 +1006,15 @@ namespace RedditVideoGenerator
             messageBox.Width = 420;
             messageBox.ButtonLeftClick += (s, args) =>
             {
+                this.IsEnabled = true;
+
                 messageBox.Close();
             };
 
             messageBox.ButtonRightClick += (s, args) =>
             {
+                this.IsEnabled = true;
+
                 messageBox.Close();
 
                 this.Close();
@@ -1008,6 +1023,7 @@ namespace RedditVideoGenerator
             };
 
             messageBox.Activate();
+            this.IsEnabled = false;
             messageBox.ShowDialog();
 
             #endregion
@@ -1026,9 +1042,9 @@ namespace RedditVideoGenerator
             //show yt sign in dialog
             YTSignInDialog yTSignInDialog = new YTSignInDialog();
             yTSignInDialog.Owner = this;
-            bool? OAuthConsentResult = yTSignInDialog.ShowDialog();
             yTSignInDialog.Activate();
             this.IsEnabled = false;
+            bool? OAuthConsentResult = yTSignInDialog.ShowDialog();
 
             if (OAuthConsentResult == true)
             {
