@@ -171,3 +171,12 @@ C:\Users\fligh\source\repos\RedditVideoGenerator\RedditVideoGenerator\obj\Debug\
 C:\Users\fligh\source\repos\RedditVideoGenerator\RedditVideoGenerator\obj\Debug\RedditVideoGenerator.csproj.CopyComplete
 C:\Users\fligh\source\repos\RedditVideoGenerator\RedditVideoGenerator\obj\Debug\RedditVideoGenerator.exe
 C:\Users\fligh\source\repos\RedditVideoGenerator\RedditVideoGenerator\obj\Debug\RedditVideoGenerator.pdb
+C:\Users\fligh\source\repos\RedditVideoGenerator\RedditVideoGenerator\bin\Debug\Resources\CascadiaCode\OFL.txt
+C:\Users\fligh\source\repos\RedditVideoGenerator\RedditVideoGenerator\bin\Debug\Resources\CascadiaCode\CascadiaCode.ttf
+C:\Users\fligh\source\repos\RedditVideoGenerator\RedditVideoGenerator\bin\Debug\Resources\CascadiaCode\CascadiaCodeItalic.ttf
+C:\Users\fligh\source\repos\RedditVideoGenerator\RedditVideoGenerator\bin\Debug\Resources\CascadiaCode\CascadiaCodePL.ttf
+C:\Users\fligh\source\repos\RedditVideoGenerator\RedditVideoGenerator\bin\Debug\Resources\CascadiaCode\CascadiaCodePLItalic.ttf
+C:\Users\fligh\source\repos\RedditVideoGenerator\RedditVideoGenerator\bin\Debug\Resources\CascadiaCode\CascadiaMono.ttf
+C:\Users\fligh\source\repos\RedditVideoGenerator\RedditVideoGenerator\bin\Debug\Resources\CascadiaCode\CascadiaMonoItalic.ttf
+C:\Users\fligh\source\repos\RedditVideoGenerator\RedditVideoGenerator\bin\Debug\Resources\CascadiaCode\CascadiaMonoPL.ttf
+C:\Users\fligh\source\repos\RedditVideoGenerator\RedditVideoGenerator\bin\Debug\Resources\CascadiaCode\CascadiaMonoPLItalic.ttf

@@ -29,7 +29,7 @@
             ShowMinimize="False"
             UseSnapLayout="True" />
 
-        <StackPanel Margin="20,51,20,20">
+        <StackPanel Margin="10,51,10,10">
             <TextBlock
                 HorizontalAlignment="Center"
                 FontSize="16"

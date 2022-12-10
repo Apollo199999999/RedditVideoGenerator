@@ -24,6 +24,7 @@ using System.Windows.Documents;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
+using Wpf.Ui.Extensions;
 using Application = System.Windows.Application;
 using Comment = Reddit.Controllers.Comment;
 using FileMode = System.IO.FileMode;
@@ -157,6 +158,7 @@ namespace RedditVideoGenerator
                         messageBox.ButtonRightName = "No";
                         messageBox.ButtonRightAppearance = Wpf.Ui.Common.ControlAppearance.Secondary;
                         messageBox.MicaEnabled = true;
+                        Wpf.Ui.Appearance.Background.Apply(messageBox, Wpf.Ui.Appearance.BackgroundType.Mica, true);
                         messageBox.ResizeMode = ResizeMode.NoResize;
                         messageBox.Height = 185;
                         messageBox.ButtonLeftClick += (s, args) =>
@@ -175,6 +177,7 @@ namespace RedditVideoGenerator
                             messageBox.Close();
                         };
 
+                        messageBox.Activate();
                         messageBox.ShowDialog();
 
                     }
@@ -445,15 +448,26 @@ namespace RedditVideoGenerator
 
             #region Reddit API Queries and Video Generation
 
-            #region Initialize Reddit Client
+            #region Obtain Reddit API Access Token and initialize Reddit Client
+
+            //start redditfunctions
+            RedditFunctions redditFunctions = new RedditFunctions();
+
+            ConsoleOutput.AppendText("> Obtaining Reddit API access token...\r\n");
+
+            await Task.Delay(100);
+
+            string accessToken = await redditFunctions.GenerateAccessToken();
+
+            ConsoleOutput.AppendText("> Done obtaining Reddit API access token.\r\n");
+
+            await Task.Delay(100);
 
             ConsoleOutput.AppendText("> Initializing Reddit client...\r\n");
 
             await Task.Delay(100);
 
-            //start redditfunctions
-            RedditFunctions redditFunctions = new RedditFunctions();
-            await Task.Run(() => redditFunctions.TryInitializeRedditClient());
+            await Task.Run(() => redditFunctions.TryInitializeRedditClient(accessToken));
 
             ConsoleOutput.AppendText("> Done initializing Reddit client.\r\n");
 
@@ -463,7 +477,7 @@ namespace RedditVideoGenerator
 
             #region Get random top yearly post
 
-            ConsoleOutput.AppendText("> Getting random top yearly post from r/" + AppVariables.SubReddit + "\r\n");
+            ConsoleOutput.AppendText("> Getting random top yearly post from r/" + AppVariables.SubReddit + "...\r\n");
 
             //wait a while
             await Task.Delay(500);
@@ -557,6 +571,8 @@ namespace RedditVideoGenerator
 
             //get top comments from said post
             List<Comment> comments = await Task.Run(() => redditFunctions.GetPostTopComments(TopPostID));
+
+            ConsoleOutput.AppendText("> Done getting top comments.\r\n");
 
             await Task.Delay(100);
 
@@ -881,7 +897,7 @@ namespace RedditVideoGenerator
 
             SaveControlAsImage(thumbnailImage, Path.Combine(AppVariables.OutputDirectory, "thumbnail.png"));
 
-            ConsoleOutput.AppendText("> Thumbnail generation complete.\r\n");
+            ConsoleOutput.AppendText("> Finished generating thumbnail.\r\n");
 
             await Task.Delay(100);
 
@@ -974,6 +990,7 @@ namespace RedditVideoGenerator
             messageBox.ButtonRightAppearance = Wpf.Ui.Common.ControlAppearance.Secondary;
             messageBox.ResizeMode = ResizeMode.NoResize;
             messageBox.MicaEnabled = true;
+            Wpf.Ui.Appearance.Background.Apply(messageBox, Wpf.Ui.Appearance.BackgroundType.Mica, true);
             messageBox.Height = 250;
             messageBox.Width = 420;
             messageBox.ButtonLeftClick += (s, args) =>
@@ -990,6 +1007,7 @@ namespace RedditVideoGenerator
                 return;
             };
 
+            messageBox.Activate();
             messageBox.ShowDialog();
 
             #endregion
@@ -1113,7 +1131,7 @@ namespace RedditVideoGenerator
             SaveVideoResourcesToDesktop();
             CleanUp(AppVariables.userCredential);
 
-            ConsoleOutput.AppendText("> You can now close RedditVideoGenerator.");
+            ConsoleOutput.AppendText("> You may now close RedditVideoGenerator.");
 
             #endregion
 

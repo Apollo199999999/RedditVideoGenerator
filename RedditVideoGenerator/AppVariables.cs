@@ -32,6 +32,8 @@ namespace RedditVideoGenerator
         public static string UserDesktopDirectory = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory);
 
         //reddit variables
+        public static string RedditDeviceId;
+        public static string RedditAppId = "EPe81-ibf25Ivll9AYmEgA";
         public static string SubReddit = "AskReddit";
         //post variables
         public static string PostTitle;

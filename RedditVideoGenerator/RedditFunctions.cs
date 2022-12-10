@@ -1,9 +1,17 @@
-﻿using Reddit;
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using Reddit;
 using Reddit.Controllers;
 using Reddit.Inputs;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Net;
+using System.Net.Http;
+using System.Text;
+using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Markup;
 
 namespace RedditVideoGenerator
 {
@@ -11,13 +19,50 @@ namespace RedditVideoGenerator
     {
         public RedditClient redditClient;
 
-        public void TryInitializeRedditClient()
+        public async Task<string> GenerateAccessToken() 
+        {
+            string accessToken = "";
+
+            //generate unique device id
+            AppVariables.RedditDeviceId = Guid.NewGuid().ToString();
+
+            using (HttpClient client = new HttpClient())
+            {
+                //make a POST request to reddit api to obtain app specific access token
+                var values = new Dictionary<string, string>
+                {
+                    { "grant_type", "https://oauth.reddit.com/grants/installed_client" },
+                    { "device_id", AppVariables.RedditDeviceId }
+                };
+
+                //add http auth header to request (username being clientid)
+                var username = AppVariables.RedditAppId;
+                var password = "";
+                string encoded = System.Convert.ToBase64String(Encoding.GetEncoding("ISO-8859-1")
+                                               .GetBytes(username + ":" + password));
+
+                client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Basic", encoded);
+
+                var content = new FormUrlEncodedContent(values);
+
+                var response = await client.PostAsync("https://www.reddit.com/api/v1/access_token", content);
+
+                var responseString = await response.Content.ReadAsStringAsync();
+
+                //deserialize the json response
+                JObject jObject = JObject.Parse(responseString);
+                accessToken = jObject["access_token"].Value<string>();
+            }
+
+            return accessToken;
+        }
+
+        public void TryInitializeRedditClient(string accessToken)
         {
             try
             {
                 //init reddit client
-                redditClient = new RedditClient(appId: RedditAPIKeys.RedditAppID, appSecret: RedditAPIKeys.RedditAppSecret,
-                    accessToken: RedditAPIKeys.RedditAccessToken, refreshToken: RedditAPIKeys.RedditRefreshToken);
+                redditClient = new RedditClient(appId: AppVariables.RedditAppId, accessToken: accessToken);
 
                 //try querying something from reddit
                 var subreddit = redditClient.Subreddit(AppVariables.SubReddit);
