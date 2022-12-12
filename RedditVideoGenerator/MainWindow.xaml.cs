@@ -13,7 +13,6 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
-using System.Security.Cryptography;
 using System.Speech.Synthesis;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -24,10 +23,10 @@ using System.Windows.Documents;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
+using Wpf.Ui.Controls;
 using Wpf.Ui.Extensions;
 using Application = System.Windows.Application;
 using Comment = Reddit.Controllers.Comment;
-using FileMode = System.IO.FileMode;
 
 namespace RedditVideoGenerator
 {
@@ -125,33 +124,38 @@ namespace RedditVideoGenerator
 
                         //show the messagebox
                         Wpf.Ui.Controls.MessageBox messageBox = new Wpf.Ui.Controls.MessageBox();
-                        messageBox.Content = new Grid()
+
+                        //create messagebox content
+                        Grid MsgBoxGrid = new Grid()
                         {
                             Height = 45,
                             VerticalAlignment = VerticalAlignment.Top,
-                            Children =
-                            {
-                                new Image()
-                                {
-                                    Source = new BitmapImage(new Uri(Path.Combine(AppVariables.ResourcesDirectory, "HelpIcon.png"))),
-                                    VerticalAlignment = VerticalAlignment.Center,
-                                    HorizontalAlignment = HorizontalAlignment.Left,
-                                    Width = 45,
-                                    Height = 45
-                                },
-
-                                new TextBlock()
-                                {
-                                    Text = "An update is available for RedditVideoGenerator. Would you like to go to GitHub to download it?",
-                                    TextWrapping = TextWrapping.Wrap,
-                                    VerticalAlignment = VerticalAlignment.Center,
-                                    HorizontalAlignment = HorizontalAlignment.Left,
-                                    Margin = new Thickness(55, 0, 0, 0),
-                                    FontSize = 14
-                                }
-                            }
                         };
 
+                        Image MsgBoxImage = new Image()
+                        {
+                            Source = new BitmapImage(new Uri(Path.Combine(AppVariables.ResourcesDirectory, "HelpIcon.png"))),
+                            VerticalAlignment = VerticalAlignment.Center,
+                            HorizontalAlignment = HorizontalAlignment.Left,
+                            Width = 45,
+                            Height = 45
+                        };
+
+                        TextBlock MsgBoxText = new TextBlock()
+                        {
+                            Text = "An update is available for RedditVideoGenerator. Would you like to go to GitHub to download it?",
+                            TextWrapping = TextWrapping.Wrap,
+                            VerticalAlignment = VerticalAlignment.Center,
+                            HorizontalAlignment = HorizontalAlignment.Left,
+                            Margin = new Thickness(55, 0, 0, 0),
+                            FontSize = 14
+                        };
+                        MsgBoxText.SetResourceReference(TextBlock.ForegroundProperty, "TextFillColorPrimaryBrush");
+
+                        MsgBoxGrid.Children.Add(MsgBoxImage);
+                        MsgBoxGrid.Children.Add(MsgBoxText);
+
+                        messageBox.Content = MsgBoxGrid;
                         messageBox.Title = "Update available";
                         messageBox.ButtonLeftName = "Yes";
                         messageBox.ButtonLeftAppearance = Wpf.Ui.Common.ControlAppearance.Primary;
@@ -161,6 +165,22 @@ namespace RedditVideoGenerator
                         Wpf.Ui.Appearance.Background.Apply(messageBox, Wpf.Ui.Appearance.BackgroundType.Mica, true);
                         messageBox.ResizeMode = ResizeMode.NoResize;
                         messageBox.Height = 185;
+                        messageBox.RemoveTitlebar();
+
+                        //change messagebox footer background
+                        messageBox.Loaded += (s, args) =>
+                        {
+                            foreach (Border border in FindVisualChildren<Border>(messageBox))
+                            {
+                                SolidColorBrush BorderBackground = border.Background as SolidColorBrush;
+
+                                if (BorderBackground.Color == (Color)Application.Current.Resources["ControlStrokeColorSecondary"])
+                                {
+                                    border.SetResourceReference(Border.BackgroundProperty, "SubtleFillColorSecondaryBrush");
+                                }
+                            }
+                        };
+
                         messageBox.ButtonLeftClick += (s, args) =>
                         {
                             //go to the github page
@@ -238,6 +258,19 @@ namespace RedditVideoGenerator
         #endregion
 
         #region Helper functions
+
+        //function to find children of control
+        public static IEnumerable<T> FindVisualChildren<T>(DependencyObject depObj) where T : DependencyObject
+        {
+            if (depObj == null) yield return (T)Enumerable.Empty<T>();
+            for (int i = 0; i < VisualTreeHelper.GetChildrenCount(depObj); i++)
+            {
+                DependencyObject ithChild = VisualTreeHelper.GetChild(depObj, i);
+                if (ithChild == null) continue;
+                if (ithChild is T t) yield return t;
+                foreach (T childOfChild in FindVisualChildren<T>(ithChild)) yield return childOfChild;
+            }
+        }
 
         //Check Internet Connection Function
         //Creating the extern function...  
@@ -950,34 +983,39 @@ namespace RedditVideoGenerator
 
             //show the messagebox
             Wpf.Ui.Controls.MessageBox messageBox = new Wpf.Ui.Controls.MessageBox();
-            messageBox.Content = new Grid()
+
+            //create messagebox content
+            Grid MsgBoxGrid = new Grid()
             {
                 VerticalAlignment = VerticalAlignment.Top,
-                Children =
-                {
-                    new Image()
-                    {
-                        Source = new BitmapImage(new Uri(Path.Combine(AppVariables.ResourcesDirectory, "HelpIcon.png"))),
-                        VerticalAlignment = VerticalAlignment.Top,
-                        HorizontalAlignment = HorizontalAlignment.Left,
-                        Width = 45,
-                        Height = 45
-                    },
+            };
 
-                    new TextBlock()
-                    {
-                        Text = "Do you want to upload this video to YouTube? \n" +
+            Image MsgBoxImage = new Image()
+            {
+                Source = new BitmapImage(new Uri(Path.Combine(AppVariables.ResourcesDirectory, "HelpIcon.png"))),
+                VerticalAlignment = VerticalAlignment.Top,
+                HorizontalAlignment = HorizontalAlignment.Left,
+                Width = 45,
+                Height = 45
+            };
+
+            TextBlock MsgBoxText = new TextBlock()
+            {
+                Text = "Do you want to upload this video to YouTube? \n" +
                         "(Note that this might not be successful, as multiple users may be using this app at the same time to upload videos to YouTube, " +
                         "which may cause RedditVideoGenerator to exceed it's daily quota usage for the YouTube API).",
-                        TextWrapping = TextWrapping.Wrap,
-                        VerticalAlignment = VerticalAlignment.Top,
-                        HorizontalAlignment = HorizontalAlignment.Left,
-                        Margin = new Thickness(55, 0, 0, 0),
-                        FontSize = 14
-                    }
-                }
+                TextWrapping = TextWrapping.Wrap,
+                VerticalAlignment = VerticalAlignment.Top,
+                HorizontalAlignment = HorizontalAlignment.Left,
+                Margin = new Thickness(55, 0, 0, 0),
+                FontSize = 14
             };
-           
+            MsgBoxText.SetResourceReference(TextBlock.ForegroundProperty, "TextFillColorPrimaryBrush");
+
+            MsgBoxGrid.Children.Add(MsgBoxImage);
+            MsgBoxGrid.Children.Add(MsgBoxText);
+
+            messageBox.Content = MsgBoxGrid;
             messageBox.Title = "Upload to YouTube?";
             messageBox.ButtonLeftName = "Yes";
             messageBox.ButtonLeftAppearance = Wpf.Ui.Common.ControlAppearance.Primary;
@@ -988,6 +1026,22 @@ namespace RedditVideoGenerator
             Wpf.Ui.Appearance.Background.Apply(messageBox, Wpf.Ui.Appearance.BackgroundType.Mica, true);
             messageBox.Height = 250;
             messageBox.Width = 420;
+            messageBox.RemoveTitlebar();
+
+            //change messagebox footer background
+            messageBox.Loaded += (s, args) =>
+            {
+                foreach (Border border in FindVisualChildren<Border>(messageBox))
+                {
+                    SolidColorBrush BorderBackground = border.Background as SolidColorBrush;
+
+                    if (BorderBackground.Color == (Color)Application.Current.Resources["ControlStrokeColorSecondary"])
+                    {
+                        border.SetResourceReference(Border.BackgroundProperty, "SubtleFillColorSecondaryBrush");
+                    }
+                }
+            };
+
             messageBox.ButtonLeftClick += (s, args) =>
             {
                 messageBox.Close();
