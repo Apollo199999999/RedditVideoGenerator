@@ -35,7 +35,7 @@ namespace RedditVideoGenerator
         public static string RedditDeviceId;
         public static string RedditAppId = "EPe81-ibf25Ivll9AYmEgA";
         public static string SubReddit = "AskReddit";
-        //post variables
+        //reddit post variables
         public static string PostTitle;
         public static string PostAuthor;
         public static int PostCommentCount;
@@ -53,7 +53,9 @@ namespace RedditVideoGenerator
                 Colors.DarkOrange, Color.FromRgb(255, 69, 0), Color.FromRgb(255, 168, 0), Color.FromRgb(251, 19, 58) };
 
         //YouTube variables
+        //UserCredential object for Google OAuth
         public static UserCredential userCredential = null;
+        //YouTube video variables
         public static string VideoTitle;
         public static string VideoDescription;
         public static bool ErrorUploadingVideo = false;
