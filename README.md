@@ -22,8 +22,8 @@ This recent trend in Reddit Text-To-Speech Videos consists (usually) of a very s
 4) Once the Text To Speech is complete, the next sentence of text is revealed.
 5) Repeat till the whole comment has been read out
 6) A transition video is played
-7) Move on to the next comment
-   Repeat steps 2-7 till you have a long enough video.
+7) Move on to the next comment  
+8) Repeat steps 2-7 till you have a long enough video
 
 As the format of this process is mostly unchanged, it can therefore be automated.
 
