@@ -46,7 +46,7 @@
 [assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("resources/ibmplexsans/ofl.txt")]
 [assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("resources/loginicon.png")]
 [assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("resources/notosans/ofl.txt")]
-[assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("resources/transparentchannelicon.png")]
+[assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("resources/channelicon.png")]
 [assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("resources/alegreyasans/ofl.txt")]
 [assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("resources/outro.mp4")]
 [assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("resources/snoo.png")]

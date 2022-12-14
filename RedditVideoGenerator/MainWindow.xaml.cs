@@ -238,6 +238,22 @@ namespace RedditVideoGenerator
             aboutWindow.Activate();
         }
 
+        private void DocsBtn_Click(object sender, RoutedEventArgs e)
+        {
+            //show README
+            Process.Start("https://github.com/Apollo199999999/RedditVideoGenerator/blob/main/README.md");
+        }
+
+        private void IconBtn_Loaded(object sender, RoutedEventArgs e)
+        {
+            //change the margin and font size of the symbolicon
+            foreach (Wpf.Ui.Controls.SymbolIcon symbolIcon in FindVisualChildren<Wpf.Ui.Controls.SymbolIcon>(sender as Wpf.Ui.Controls.Button))
+            {
+                symbolIcon.FontSize = 15;
+                symbolIcon.Margin = new Thickness(0, 1, 8, 0);
+            }
+        }
+
         private void MainWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             e.Cancel = true;

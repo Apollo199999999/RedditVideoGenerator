@@ -137,7 +137,7 @@
                 <Image
                     Width="250"
                     Height="250"
-                    Source="/Resources/TransparentChannelIcon.png" />
+                    Source="/Resources/ChannelIcon.png" />
             </Grid>
         </Grid>
     </Border>

@@ -322,7 +322,7 @@
     <Content Include="Resources\NotoSans\OFL.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Resources\TransparentChannelIcon.png">
+    <Content Include="Resources\ChannelIcon.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Resources\AlegreyaSans\OFL.txt">
