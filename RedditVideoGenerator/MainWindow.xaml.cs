@@ -511,7 +511,13 @@ namespace RedditVideoGenerator
 
             await Task.Delay(100);
 
-            await Task.Run(() => redditFunctions.TryInitializeRedditClient(accessToken));
+            int RedditClientExitCode = await Task.Run(() => redditFunctions.TryInitializeRedditClient(accessToken));
+
+            if (RedditClientExitCode == 1)
+            {
+                //shutdown app if cannot init reddit client
+                Application.Current.Shutdown();
+            }
 
             ConsoleOutput.AppendText("> Done initializing Reddit client.\r\n");
 
@@ -976,18 +982,15 @@ namespace RedditVideoGenerator
                 AppVariables.VideoDescription += File.ReadAllText(MusicLicensePath) + "\n\n";
             }
 
-            //convert title and description to UTF-8 so that YouTube can parse it
-            AppVariables.VideoTitle = AppVariables.VideoTitle.Trim().ToUTF8().Replace("<", "[").Replace(">", "]");
-
-            //if videotitle too long, remove the "[r/AskReddit]" portion, and truncate the string to 100 chars after
+            //if videotitle too long, remove the "(r/AskReddit)" portion, and truncate the string to 100 chars after
             if (AppVariables.VideoTitle.Length > 100)
             {
                 AppVariables.VideoTitle = AppVariables.VideoTitle.ReplaceFirst(String.Format("(r/{0}) ", AppVariables.SubReddit), "");
             }
 
-            AppVariables.VideoTitle = AppVariables.VideoTitle.Trim().ToUTF8().Replace("<", "[").Replace(">", "]").TruncateLongString(100);
-
-            AppVariables.VideoDescription = AppVariables.VideoDescription.Trim().ToUTF8().Replace("<", "[").Replace(">", "]").TruncateLongString(5000);
+            //replace <> chars in title and description so that YouTube can parse the title and description
+            AppVariables.VideoTitle = AppVariables.VideoTitle.Replace("<", "[").Replace(">", "]").Trim().TruncateLongString(100);
+            AppVariables.VideoDescription = AppVariables.VideoDescription.Replace("<", "[").Replace(">", "]").Trim().TruncateLongString(5000);
 
             ConsoleOutput.AppendText("> Done generating video title and description.\r\n");
 

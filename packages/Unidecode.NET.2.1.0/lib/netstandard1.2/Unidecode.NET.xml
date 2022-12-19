@@ -1,0 +1,38 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Unidecode.NET</name>
+    </assembly>
+    <members>
+        <member name="T:Unidecode.NET.Unidecoder">
+            <summary>
+            ASCII transliterations of Unicode text
+            </summary>
+        </member>
+        <member name="M:Unidecode.NET.Unidecoder.Unidecode(System.String,System.Nullable{System.Int32})">
+            <summary>
+            Transliterate Unicode string to ASCII string.
+            </summary>
+            <param name="input">String you want to transliterate into ASCII</param>
+            <param name="tempStringBuilderCapacity">
+                If you know the length of the result,
+                pass the value for StringBuilder capacity.
+                InputString.Length*2 is used by default.
+            </param>
+            <returns>
+                ASCII string. There are [?] (3 characters) in places of some unknown(?) unicode characters.
+                It is this way in Python code as well.
+            </returns>
+        </member>
+        <member name="M:Unidecode.NET.Unidecoder.Unidecode(System.Char)">
+            <summary>
+            Transliterate Unicode character to ASCII string.
+            </summary>
+            <param name="c">Character you want to transliterate into ASCII</param>
+            <returns>
+                ASCII string. Unknown(?) unicode characters will return [?] (3 characters).
+                It is this way in Python code as well.
+            </returns>
+        </member>
+    </members>
+</doc>
