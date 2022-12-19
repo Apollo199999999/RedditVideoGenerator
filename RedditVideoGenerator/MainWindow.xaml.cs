@@ -265,8 +265,9 @@ namespace RedditVideoGenerator
                 CleanUp(AppVariables.userCredential);
                 Application.Current.Shutdown();
             }
-            catch
+            catch (Exception ex)
             {
+                Debug.WriteLine(ex);
                 Application.Current.Shutdown();
             }
         }
