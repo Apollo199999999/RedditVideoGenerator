@@ -6,7 +6,7 @@ Project site: https://clickphase.vercel.app/redditvideogenerator
 
 ## Overview
 
-RedditVideoGenerator - Generate r/AskReddit Reddit videos and upload them to YouTube automatically.
+RedditVideoGenerator - Generate r/AskReddit Reddit videos and upload them to YouTube automatically
 
 ![RedditVideoGenerator screensot](https://user-images.githubusercontent.com/60572589/205099521-8ea63443-154f-46a9-b119-3a32b6c956c3.png)
 
