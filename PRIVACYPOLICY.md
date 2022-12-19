@@ -10,7 +10,7 @@ By using the app "RedditVideoGenerator" you are consenting to our policies regar
 
 * RedditVideoGenerator uses **YouTube API Services** to do so.
 
-*  The data that we access about your YouTube channel will not be stored, shared, or collected. We will also not use, collect, store, or share any other information associated with your YouTube channel that is not needed for the purposes of uploading videos to Youtube. 
+* The data that we access about your YouTube channel will not be stored, shared, or collected. We will also not use, collect, store, or share any other information associated with your YouTube channel that is not needed for the purposes of uploading videos to Youtube. 
 
 * Any data collected by YouTube is covered under Google Privacy Policy at http://www.google.com/policies/privacy and is not our responsibility. 
 
