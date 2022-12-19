@@ -75,7 +75,7 @@
                 <ui:Hyperlink
                     Margin="0,5,0,0"
                     HorizontalAlignment="Center"
-                    Content="View RedditVideoGenerator's MIT license"
+                    Content="View RedditVideoGenerator's MIT License"
                     FontSize="14"
                     Icon="Link48"
                     NavigateUri="https://github.com/Apollo199999999/RedditVideoGenerator/blob/main/LICENSE" />
