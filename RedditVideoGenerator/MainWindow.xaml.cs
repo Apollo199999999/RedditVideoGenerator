@@ -527,7 +527,7 @@ namespace RedditVideoGenerator
 
             #region Get random top yearly post
 
-            ConsoleOutput.AppendText("> Getting random top yearly post from r/" + AppVariables.SubReddit + "...\r\n");
+            ConsoleOutput.AppendText("> Getting random unique top yearly post from r/" + AppVariables.SubReddit + "...\r\n");
 
             //wait a while
             await Task.Delay(500);
