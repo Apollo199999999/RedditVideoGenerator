@@ -485,7 +485,7 @@ namespace RedditVideoGenerator
             //allow some time in case some libraries/code hasn't loaded yet
             await Task.Delay(500);
 
-            ConsoleOutput.AppendText("> Initialization complete \r\n");
+            ConsoleOutput.AppendText("> Initialization complete.\r\n");
 
             //wait a while
             await Task.Delay(100);
