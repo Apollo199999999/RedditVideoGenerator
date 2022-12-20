@@ -263,11 +263,12 @@ namespace RedditVideoGenerator
             {
                 SaveVideoResourcesToDesktop();
                 CleanUp(AppVariables.userCredential);
+                this.Closing -= MainWindow_Closing;
                 Application.Current.Shutdown();
             }
-            catch (Exception ex)
+            catch
             {
-                Debug.WriteLine(ex);
+                this.Closing -= MainWindow_Closing;
                 Application.Current.Shutdown();
             }
         }
@@ -442,14 +443,14 @@ namespace RedditVideoGenerator
 
         public void CleanUp(UserCredential credential = null)
         {
-            //clean up working directory
-            Directory.Delete(AppVariables.WorkingDirectory, true);
-
             if (credential != null)
             {
                 //revoke google api token (logs user out)
                 credential.RevokeTokenAsync(new CancellationToken());
             }
+
+            //clean up working directory
+            Directory.Delete(AppVariables.WorkingDirectory, true);
         }
 
         #endregion
@@ -990,8 +991,8 @@ namespace RedditVideoGenerator
             }
 
             //replace <> chars in title and description so that YouTube can parse the title and description
-            AppVariables.VideoTitle = AppVariables.VideoTitle.Replace("<", "[").Replace(">", "]").Trim().TruncateLongString(100);
-            AppVariables.VideoDescription = AppVariables.VideoDescription.Replace("<", "[").Replace(">", "]").Trim().TruncateLongString(5000);
+            AppVariables.VideoTitle = AppVariables.VideoTitle.Replace("<", "[").Replace(">", "]").Trim().ToUTF8().TruncateLongString(100);
+            AppVariables.VideoDescription = AppVariables.VideoDescription.Replace("<", "[").Replace(">", "]").Trim().ToUTF8().TruncateLongString(5000);
 
             ConsoleOutput.AppendText("> Done generating video title and description.\r\n");
 
@@ -1195,6 +1196,8 @@ namespace RedditVideoGenerator
             SaveVideoResourcesToDesktop();
 
             CleanUp(AppVariables.userCredential);
+
+            this.Closing -= MainWindow_Closing;
 
             ConsoleOutput.AppendText("> You may now close RedditVideoGenerator.");
 
