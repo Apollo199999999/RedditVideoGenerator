@@ -54,13 +54,19 @@ As the format of this process is mostly unchanged, it can therefore be automated
 13) The video thumbnail is then generated using the ThumbnailImage control
 14) If the user has indicated that they want to upload the video to YouTube, RedditVideoGenerator queries the YouTube API and signs in to the user's Google account using OAuth 2.0. **Note that video uploading may not always be successful, as there is a daily quota limit for the number of videos that RedditVideoGenerator can upload to YouTube.** For details about how RedditVideoGenerator utilises data associated with your YouTube channel, view our [privacy policy](https://github.com/Apollo199999999/RedditVideoGenerator/blob/main/PRIVACYPOLICY.md).
 
+## How to use
+
+To use RedditVideoGenerator, simply download and install the latest version of RedditVideoGenerator from [releases](https://github.com/Apollo199999999/RedditVideoGenerator/releases) and run it. RedditVideoGenerator will automatically start generating the Reddit video after being opened. 
+
 ## Customisation
 
 RedditVideoGenerator currently does not offer any built-in customisation options for the generated Reddit videos. However, if you wish to edit the resources used for generating the video (such as the images used in the video), you can modify them in-place in RedditVideoGenerator's resources folder, located in the same directory where you installed RedditVideoGenerator. If you do decide to modify those images, ensure that the file name(s) of the new image(s) are the same as the file name(s) of the old images. However, **I do not recommend modifying the videos in the resources directory (such as the outro and transition videos),** as those videos are encoded using a specific video and audio encoder in order to work with RedditVideoGenerator. Modifying those videos may result in unwanted outcomes. You can always modify the generated Reddit video in a video editor.
 
-## How to use
+## Minimum system requirements
 
-Unfortunately, as of now, I have not yet published a release of RedditVideoGenerator, pending YouTube's audit on RedditVideoGenerator and further testing being required. If you are part of YouTube's audit team, email me and I will provide you with a build of RedditVideoGenerator if needed.
+* At least 1GB of free space
+
+* Windows 10 or Windows 11 (I have not tested RedditVideoGenerator with Windows 7 or Windows 8.1, so use RedditVideoGenerator at your own risk if you are on those operating systems) 
 
 ## Privacy Policy
 
