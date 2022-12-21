@@ -593,7 +593,7 @@ namespace RedditVideoGenerator
                 Path.Combine(AppVariables.AudioDirectory, "title.wav"));
 
             //run ffmpeg commands to generate title video
-            string TitleCommand = System.String.Format(" -nostdin -loop 1 -i {0} -i {1} -shortest -vcodec libx264 -acodec aac -ac 1 -ar 48000 -pix_fmt yuv420p -s 1920x1080 -bsf:v h264_mp4toannexb -r 30 -fps_mode cfr {2}",
+            string TitleCommand = System.String.Format(" -nostdin -loop 1 -i \"{0}\" -i \"{1}\" -shortest -vcodec libx264 -acodec aac -ac 1 -ar 48000 -pix_fmt yuv420p -s 1920x1080 -bsf:v h264_mp4toannexb -r 30 -fps_mode cfr \"{2}\"",
                 Path.Combine(AppVariables.FramesDirectory, "title.png"),
                 Path.Combine(AppVariables.AudioDirectory, "title.wav"),
                 Path.Combine(AppVariables.OutputDirectory, "title.mp4"));
@@ -727,7 +727,7 @@ namespace RedditVideoGenerator
                         SpeakText(sentence, Path.Combine(AppVariables.AudioDirectory, FilenameCount.ToString() + ".wav"));
 
                         //run ffmpeg
-                        string SentenceCommand = System.String.Format(" -nostdin -loop 1 -i {0} -i {1} -shortest -vcodec libx264 -acodec aac -ac 1 -ar 48000 -pix_fmt yuv420p -s 1920x1080 -bsf:v h264_mp4toannexb -r 30 -fps_mode cfr {2}",
+                        string SentenceCommand = System.String.Format(" -nostdin -loop 1 -i \"{0}\" -i \"{1}\" -shortest -vcodec libx264 -acodec aac -ac 1 -ar 48000 -pix_fmt yuv420p -s 1920x1080 -bsf:v h264_mp4toannexb -r 30 -fps_mode cfr \"{2}\"",
                             Path.Combine(AppVariables.FramesDirectory, FilenameCount.ToString() + ".png"),
                             Path.Combine(AppVariables.AudioDirectory, FilenameCount.ToString() + ".wav"),
                             Path.Combine(CommentSentenceOutputDir, FilenameCount.ToString() + ".mp4"));
@@ -761,7 +761,7 @@ namespace RedditVideoGenerator
                     sw.Dispose();
 
                     //cmd commands
-                    string CommentCommand = String.Format(" -nostdin -f concat -safe 0 -i {0} -c copy -r 30 -fps_mode cfr {1}",
+                    string CommentCommand = String.Format(" -nostdin -f concat -safe 0 -i \"{0}\" -c copy -r 30 -fps_mode cfr \"{1}\"",
                         Path.Combine(CommentSentenceOutputDir, "FFmpegFiles.txt"),
                         Path.Combine(AppVariables.OutputDirectory, comment.Id + ".mp4"));
 
@@ -827,7 +827,7 @@ namespace RedditVideoGenerator
             streamWriter.Dispose();
 
             //cmd commands
-            string VideoCommand = String.Format(" -nostdin -f concat -safe 0 -i {0} -c copy -r 30 -fps_mode cfr {1}",
+            string VideoCommand = String.Format(" -nostdin -f concat -safe 0 -i \"{0}\" -c copy -r 30 -fps_mode cfr \"{1}\"",
                 Path.Combine(AppVariables.OutputDirectory, "FFmpegFiles.txt"),
                 Path.Combine(AppVariables.OutputDirectory, "output_temp.mp4"));
 
@@ -871,7 +871,7 @@ namespace RedditVideoGenerator
             string Bgm3Path = Path.Combine(AppVariables.BGMusicDirectory, RandomBGMFileNames[2].ToString() + ".wav");
 
             //concat the 3 music files using ffmpeg
-            string BGMConcatCommand = String.Format(" -i {0} -i {1} -i {2} -filter_complex concat=n=3:v=0:a=1 -vn {3}",
+            string BGMConcatCommand = String.Format(" -i \"{0}\" -i \"{1}\" -i \"{2}\" -filter_complex concat=n=3:v=0:a=1 -vn \"{3}\"",
                 Bgm1Path,
                 Bgm2Path,
                 Bgm3Path,
@@ -884,7 +884,7 @@ namespace RedditVideoGenerator
             await StartProcess("taskkill.exe", " /f /im ffmpeg.exe");
 
             //combine bgm with video
-            string BGMCombineCommand = String.Format(" -i {0} -stream_loop -1 -i {1} -filter_complex \"[0:a][1:a]amerge=inputs=2[a]\" -map 0:v -map \"[a]\" -c:v copy -ac 2 -shortest {2}",
+            string BGMCombineCommand = String.Format(" -i \"{0}\" -stream_loop -1 -i \"{1}\" -filter_complex \"[0:a][1:a]amerge=inputs=2[a]\" -map 0:v -map \"[a]\" -c:v copy -ac 2 -shortest \"{2}\"",
                 Path.Combine(AppVariables.OutputDirectory, "output_temp.mp4"),
                 Path.Combine(AppVariables.AudioDirectory, "bgm.wav"),
                 Path.Combine(AppVariables.OutputDirectory, "output.mp4"));
