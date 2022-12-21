@@ -66,7 +66,7 @@ RedditVideoGenerator currently does not offer any built-in customisation options
 
 * At least 1GB of free space
 
-* Windows 10 or Windows 11 (I have not tested RedditVideoGenerator with Windows 7 or Windows 8.1, so use RedditVideoGenerator at your own risk if you are on those operating systems) 
+* Windows 10 or Windows 11 (I have not tested RedditVideoGenerator with Windows 7 or Windows 8.1, so use RedditVideoGenerator at your own risk if you are using those operating systems) 
 
 ## Privacy Policy
 
