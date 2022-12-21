@@ -56,7 +56,7 @@ As the format of this process is mostly unchanged, it can therefore be automated
 
 ## How to use
 
-To use RedditVideoGenerator, simply download and install the latest version of RedditVideoGenerator from [releases](https://github.com/Apollo199999999/RedditVideoGenerator/releases) and run it. RedditVideoGenerator will automatically start generating the Reddit video after being opened. 
+To use RedditVideoGenerator, simply download and install the latest version of RedditVideoGenerator from [releases](https://github.com/Apollo199999999/RedditVideoGenerator/releases) and run it. RedditVideoGenerator will automatically start generating the Reddit video after being run. 
 
 ## Customisation
 
