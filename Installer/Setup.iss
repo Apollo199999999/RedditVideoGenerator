@@ -25,7 +25,7 @@ DisableProgramGroupPage=yes
 LicenseFile=C:\Users\fligh\source\repos\RedditVideoGenerator\LICENSE.txt
 ; Uncomment the following line to run in non administrative install mode (install for current user only.)
 ;PrivilegesRequired=lowest
-OutputDir=C:\Users\fligh\source\repos\RedditVideoGenerator\Installer
+OutputDir=C:\Users\fligh\source\repos\RedditVideoGenerator\Installer\InstallerExecutables
 OutputBaseFilename=RedditVideoGenerator_1.0.0_Setup
 SetupIconFile=C:\Users\fligh\source\repos\RedditVideoGenerator\RedditVideoGenerator\bin\Release\Resources\icon.ico
 Compression=lzma
