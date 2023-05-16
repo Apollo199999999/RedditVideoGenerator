@@ -45,7 +45,9 @@ namespace RedditVideoGenerator
                     string encoded = System.Convert.ToBase64String(Encoding.GetEncoding("ISO-8859-1")
                                                    .GetBytes(username + ":" + password));
 
+                    //Set httpclient headers
                     client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Basic", encoded);
+                    client.DefaultRequestHeaders.UserAgent.ParseAdd("windows-redditvideogenerator-v1.0.1 (build by u/Apollo199999999)");
 
                     var content = new FormUrlEncodedContent(values);
 
