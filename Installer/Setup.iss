@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "RedditVideoGenerator"
-#define MyAppVersion "1.0.0"
+#define MyAppVersion "1.0.1"
 #define MyAppPublisher "ClickPhase"
 #define MyAppURL "https://clickphase.vercel.app/RedditVideoGenerator"
 #define MyAppExeName "RedditVideoGenerator.exe"
@@ -26,12 +26,12 @@ LicenseFile=C:\Users\fligh\source\repos\RedditVideoGenerator\LICENSE.txt
 ; Uncomment the following line to run in non administrative install mode (install for current user only.)
 ;PrivilegesRequired=lowest
 OutputDir=C:\Users\fligh\source\repos\RedditVideoGenerator\Installer\InstallerExecutables
-OutputBaseFilename=RedditVideoGenerator_1.0.0_Setup
+OutputBaseFilename=RedditVideoGenerator_1.0.1_Setup
 SetupIconFile=C:\Users\fligh\source\repos\RedditVideoGenerator\RedditVideoGenerator\bin\Release\Resources\icon.ico
 Compression=lzma
 SolidCompression=yes
 WizardStyle=modern
-VersionInfoVersion = 1.0.0
+VersionInfoVersion = 1.0.1
 UninstallDisplayIcon={app}\RedditVideoGenerator.exe
 UninstallDisplayName=RedditVideoGenerator
 
