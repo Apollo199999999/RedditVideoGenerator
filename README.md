@@ -39,7 +39,7 @@ As the format of this process is mostly unchanged, it can therefore be automated
 
 ## How video generation works
 
-1) RedditVideoGenerator queries the Reddit API to get a random top yearly post
+1) RedditVideoGenerator queries the Reddit API to get a random top daily post
 2) Details about the post are fed into the TitleCard control, and an image is generated from the control
 3) The post title is then fed into Microsoft's C# Text-To-Speech API (System.Speech), which generate a wave audio file.
 4) The image and audio are then combined to form a video using FFmpeg
