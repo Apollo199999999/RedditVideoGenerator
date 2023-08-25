@@ -109,7 +109,7 @@ namespace RedditVideoGenerator
         {
             //get top monthpy posts from subreddit
             var subreddit = redditClient.Subreddit(AppVariables.SubReddit);
-            List<Post> posts = subreddit.Posts.GetTop(new TimedCatSrListingInput(t: "year", limit: 100));
+            List<Post> posts = subreddit.Posts.GetTop(new TimedCatSrListingInput(t: "day", limit: 100));
 
             //choose random post from list
             Random rnd = new Random();
